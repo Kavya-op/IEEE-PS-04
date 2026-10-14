@@ -12,7 +12,8 @@ import {
   Lock,
   X,
   Radio,
-  FileSearch
+  FileSearch,
+  Scan
 } from 'lucide-react';
 
 export default function Sidebar({
@@ -40,6 +41,13 @@ export default function Sidebar({
       label: 'Alert Feed',
       icon: ShieldAlert,
       badge: alertCount > 0 ? alertCount : null
+    },
+    {
+      id: 'TargetedSweep',
+      alias: 'Targeted Sweep',
+      label: 'Targeted Sweep',
+      icon: Scan,
+      badge: 'Gov'
     },
     {
       id: 'Misinformation',

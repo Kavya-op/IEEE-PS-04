@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAppMotion } from '../context/MotionContext';
+import { useOSINT } from '../context/OSINTContext';
 import {
   Menu,
   Bell,
@@ -10,7 +11,9 @@ import {
   ShieldCheck,
   Zap,
   CheckCircle2,
-  AlertTriangle
+  AlertTriangle,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 export default function Header({
@@ -21,9 +24,39 @@ export default function Header({
   onLockTerminal
 }) {
   const { shouldReduceMotion, neuButtonProps } = useAppMotion();
+  const { activeIngressRate, lastIngestedAt, liveThreats } = useOSINT();
   const [time, setTime] = useState('');
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return document.documentElement.classList.contains('dark');
+  });
+
+  useEffect(() => {
+    const handleThemeEvent = (e) => {
+      if (typeof e.detail?.darkMode === 'boolean') {
+        setIsDark(e.detail.darkMode);
+      }
+    };
+    window.addEventListener('themechange', handleThemeEvent);
+    return () => window.removeEventListener('themechange', handleThemeEvent);
+  }, []);
+
+  const handleToggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    const root = document.documentElement;
+    if (next) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { darkMode: next } }));
+  };
 
   useEffect(() => {
     const updateTime = () => {
@@ -71,9 +104,21 @@ export default function Header({
                 SKIT004
               </span>
             </h1>
-            <span className="text-[11px] text-[#52607B] font-mono hidden md:block">
-              Perimeter Telemetry &bull; Strict Soft UI &bull; Neural Node: active
-            </span>
+            <div className="flex items-center gap-2 text-[11px] text-[#52607B] font-mono hidden md:flex">
+              <span>Ingress: <strong className="text-emerald-700">{activeIngressRate}</strong></span>
+              <span>&bull;</span>
+              <span>Synced: <strong className="text-[#1A253C]">{lastIngestedAt}</strong></span>
+              <span>&bull;</span>
+              <span className="text-[#2563EB] font-bold">Verified Source: r/cybersecurity (Reddit Native API)</span>
+              <a
+                href={liveThreats[0]?.link || "https://www.reddit.com/r/cybersecurity"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#2563EB] hover:underline font-bold"
+              >
+                [View Original Reddit Post ↗]
+              </a>
+            </div>
           </div>
         </div>
 
@@ -122,6 +167,23 @@ export default function Header({
             className="p-2.5 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-[#52607B] hover:text-[#1A253C] cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
+          </motion.button>
+
+          {/* Dark Mode Theme Toggle Button */}
+          <motion.button
+            onClick={handleToggleTheme}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.05, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
+            whileTap={shouldReduceMotion ? {} : { scale: 0.95, boxShadow: 'inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF' }}
+            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 450, damping: 25 }}
+            aria-label={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            title={isDark ? 'Dark Theme: Active (Click for Light Theme)' : 'Light Theme: Active (Click for Dark Theme)'}
+            className="p-2.5 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-[#52607B] hover:text-[#1A253C] cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 flex items-center justify-center transition-colors"
+          >
+            {isDark ? (
+              <Moon className="w-4 h-4 text-blue-400" />
+            ) : (
+              <Sun className="w-4 h-4 text-amber-500" />
+            )}
           </motion.button>
 
           {/* Live UTC Clock */}

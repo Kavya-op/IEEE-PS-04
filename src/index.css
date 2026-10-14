@@ -4,7 +4,14 @@
 
 @layer base {
   :root {
-    --neu-base: #E0E5EC;
+    --bg-main: #F0F3F8;
+    --card-surface: #FFFFFF;
+    --border-stroke: #E5E9F2;
+    --accent-cobalt: #2563EB;
+    --accent-dark-cobalt: #172554;
+    --text-primary: #1A253C;
+    --text-muted: #64748B;
+    --neu-base: #F0F3F8;
     --neu-shadow-dark: #A3B1C6;
     --neu-shadow-light: #FFFFFF;
     --neu-text: #1A253C;
@@ -12,15 +19,53 @@
     --neu-accent: #2563EB;
   }
 
+  .dark {
+    --bg-main: #0B1120;
+    --card-surface: #151E32;
+    --border-stroke: #1E293B;
+    --text-primary: #F1F5F9;
+    --text-muted: #94A3B8;
+  }
+
   body {
-    background-color: #E0E5EC;
-    color: #1A253C;
+    background-color: var(--bg-main);
+    color: var(--text-primary);
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     min-height: 100vh;
     overflow-x: hidden;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
+}
+
+/* ==============================================================================
+   CRYPTO-FINTECH DASHBOARD ARCHITECTURE UTILITIES
+   ============================================================================== */
+
+/* Pure White Surface with Gentle Border Stroke & Soft Shadow */
+.fintech-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E9F2;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border-radius: 1rem;
+}
+
+.dark .fintech-card {
+  background-color: #151E32;
+  border-color: #1E293B;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+
+/* Cobalt Blue Accent Strip */
+.fintech-header-cobalt {
+  background-color: #2563EB;
+  color: #FFFFFF;
+}
+
+/* Dark Cobalt Ticker Strip */
+.fintech-ticker-dark {
+  background-color: #172554;
+  color: #E2E8F0;
 }
 
 /* ==============================================================================
@@ -132,12 +177,147 @@
    UNIVERSAL ACCESSIBILITY (a11y) TOGGLE ENGINES
    ============================================================================== */
 
-/* 1. High Contrast Mode [🌓] (Overrides soft shadows with stark outlines and black text) */
+/* ==============================================================================
+   DARK THEME / DARK MODE ENGINE (Cyber Neumorphism)
+   ============================================================================== */
+
+html.dark,
+.dark {
+  --neu-base: #171E2E;
+  --neu-shadow-dark: #090D17;
+  --neu-shadow-light: #243048;
+  --neu-text: #F1F5F9;
+  --neu-text-muted: #94A3B8;
+  --neu-accent: #3B82F6;
+  color-scheme: dark;
+}
+
+html.dark body {
+  background-color: #0F1422 !important;
+  color: #F1F5F9 !important;
+}
+
+/* Base surface overrides for light-neumorphic containers in dark mode */
+html.dark .bg-\[\#E0E5EC\],
+html.dark [class*="bg-[#E0E5EC]"],
+html.dark aside,
+html.dark header > div,
+html.dark .neu-outset,
+html.dark .neu-inset {
+  background-color: #171E2E !important;
+}
+
+/* Primary text override in dark mode */
+html.dark .text-\[\#1A253C\],
+html.dark [class*="text-[#1A253C]"],
+html.dark h1,
+html.dark h2,
+html.dark h3,
+html.dark h4 {
+  color: #F1F5F9 !important;
+}
+
+/* Muted / secondary text override in dark mode */
+html.dark .text-\[\#52607B\],
+html.dark [class*="text-[#52607B]"] {
+  color: #94A3B8 !important;
+}
+
+/* Dark Neumorphic Outset Shadows */
+html.dark .neu-outset,
+html.dark [class*="shadow-[9px_9px_16px_#A3B1C6"],
+html.dark [class*="shadow-[6px_6px_12px_#A3B1C6"],
+html.dark [class*="shadow-[4px_4px_8px_#A3B1C6"],
+html.dark [class*="shadow-[3px_3px_6px_#A3B1C6"],
+html.dark [class*="shadow-[5px_5px_10px_#A3B1C6"],
+html.dark [class*="shadow-[8px_8px_16px_#A3B1C6"] {
+  box-shadow: 6px 6px 14px #090D17, -6px -6px 14px #243048 !important;
+}
+
+/* Dark Neumorphic Inset Shadows (inputs, wells, active chips) */
+html.dark .neu-inset,
+html.dark [class*="shadow-[inset_6px_6px_12px_#A3B1C6"],
+html.dark [class*="shadow-[inset_4px_4px_8px_#A3B1C6"],
+html.dark [class*="shadow-[inset_3px_3px_6px_#A3B1C6"],
+html.dark [class*="shadow-[inset_2px_2px_4px_#A3B1C6"],
+html.dark [class*="shadow-[inset_1px_1px_2px_#A3B1C6"] {
+  box-shadow: inset 3px 3px 6px #090D17, inset -3px -3px 6px #243048 !important;
+}
+
+/* Modal Deep Outset Shadows */
+html.dark [class*="shadow-[16px_16px_32px_#A3B1C6"] {
+  box-shadow: 14px 14px 30px #060910, -14px -14px 30px #283652 !important;
+}
+
+/* Dark Border Overrides (subtle luminous cyber lines) */
+html.dark .border-white\/80,
+html.dark .border-white\/60,
+html.dark .border-white\/50,
+html.dark .border-white\/40,
+html.dark .border-white\/30,
+html.dark .border-white\/20,
+html.dark .border-white\/10 {
+  border-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+html.dark .border-\[\#A3B1C6\]\/30,
+html.dark .border-\[\#A3B1C6\]\/20 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Dark Inputs, Textareas & Search Bars */
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: #111724 !important;
+  color: #F8FAFC !important;
+  box-shadow: inset 3px 3px 6px #090D17, inset -3px -3px 6px #243048 !important;
+}
+
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: #64748B !important;
+}
+
+/* Subtle Glowing Dark Mode Badges */
+html.dark .bg-rose-100 {
+  background-color: rgba(244, 63, 94, 0.2) !important;
+  color: #FDA4AF !important;
+}
+html.dark .bg-amber-100 {
+  background-color: rgba(245, 158, 11, 0.2) !important;
+  color: #FCD34D !important;
+}
+html.dark .bg-emerald-100 {
+  background-color: rgba(16, 185, 129, 0.2) !important;
+  color: #6EE7B7 !important;
+}
+html.dark .bg-blue-100 {
+  background-color: rgba(59, 130, 246, 0.2) !important;
+  color: #93C5FD !important;
+}
+
+/* Dark Mode Scrollbars */
+html.dark ::-webkit-scrollbar-track,
+html.dark .custom-scrollbar::-webkit-scrollbar-track {
+  background: #111724 !important;
+  box-shadow: inset 1px 1px 3px #090D17, inset -1px -1px 3px #243048 !important;
+}
+html.dark ::-webkit-scrollbar-thumb,
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #334155 !important;
+}
+html.dark ::-webkit-scrollbar-thumb:hover,
+html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #475569 !important;
+}
+
+/* High Contrast Mode [Stark Outlines for Low-Vision Accessibility] */
 .high-contrast {
-  --neu-base: #FFFFFF;
-  --neu-text: #000000;
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
+  --neu-base: #000000;
+  --neu-text: #FFFFFF;
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
 }
 
 .high-contrast body,
@@ -148,8 +328,8 @@
 .high-contrast article,
 .high-contrast main,
 .high-contrast footer {
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
   box-shadow: none !important;
 }
 
@@ -159,31 +339,18 @@
 .high-contrast .neu-inset-sm,
 .high-contrast .neu-btn {
   box-shadow: none !important;
-  border: 2px solid #000000 !important;
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
-}
-
-.high-contrast .neu-btn-blue {
+  border: 2px solid #FFFFFF !important;
   background-color: #000000 !important;
   color: #FFFFFF !important;
-  border: 2px solid #000000 !important;
-  box-shadow: none !important;
 }
 
 .high-contrast input,
 .high-contrast textarea,
 .high-contrast select {
-  border: 2px solid #000000 !important;
-  background-color: #FFFFFF !important;
-  color: #000000 !important;
+  border: 2px solid #FFFFFF !important;
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
   box-shadow: none !important;
-}
-
-.high-contrast :focus-visible {
-  outline: 4px solid #000000 !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 4px #FFFF00 !important;
 }
 
 /* 2. Dyslexic Font Mode [Abc] */
@@ -248,4 +415,23 @@
 .skip-to-content:focus {
   top: 1.5rem;
   outline: 3px solid #1A253C;
+}
+
+/* Custom Neumorphic Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #E0E5EC;
+  border-radius: 9999px;
+  box-shadow: inset 1px 1px 3px #A3B1C6, inset -1px -1px 3px #FFFFFF;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #A3B1C6;
+  border-radius: 9999px;
+  transition: background 0.2s;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #52607B;
 }

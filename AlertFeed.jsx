@@ -1,4 +1,4 @@
-import AlertFeed from './src/AlertFeed.jsx';
+import AlertFeed from './src/components/AlertFeed.jsx';
 
 export default AlertFeed;
 export { AlertFeed };

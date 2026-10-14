@@ -3,14 +3,14 @@ import {
   Volume2,
   VolumeX,
   Type,
-  SunMoon,
+  Moon,
+  Sun,
   SpellCheck,
   RotateCcw,
-  Sparkles,
-  Check,
-  ChevronDown,
   ZapOff,
-  Zap
+  Zap,
+  Eye,
+  Sliders
 } from 'lucide-react';
 import { useAppMotion } from '../context/MotionContext';
 
@@ -23,8 +23,10 @@ export default function AccessibilityControls() {
   const [textScale, setTextScale] = useState(() => {
     return localStorage.getItem('a11y_text_scale') || 'normal'; // 'normal' | 'large' | 'xlarge'
   });
-  const [highContrast, setHighContrast] = useState(() => {
-    return localStorage.getItem('a11y_contrast') === 'true';
+  const [darkMode, setDarkMode] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return document.documentElement.classList.contains('dark');
   });
   const [dyslexicFont, setDyslexicFont] = useState(() => {
     return localStorage.getItem('a11y_dyslexic') === 'true';
@@ -60,13 +62,13 @@ export default function AccessibilityControls() {
     if (textScale === 'xlarge') root.classList.add('text-scale-xlarge');
     localStorage.setItem('a11y_text_scale', textScale);
 
-    // 3. High Contrast Mode
-    if (highContrast) {
-      root.classList.add('high-contrast');
+    // 3. Dark Theme Mode
+    if (darkMode) {
+      root.classList.add('dark');
     } else {
-      root.classList.remove('high-contrast');
+      root.classList.remove('dark');
     }
-    localStorage.setItem('a11y_contrast', highContrast);
+    localStorage.setItem('theme', darkMode ? 'dark' : 'light');
 
     // 4. Dyslexic Font Mode
     if (dyslexicFont) {
@@ -75,7 +77,18 @@ export default function AccessibilityControls() {
       root.classList.remove('dyslexia-font');
     }
     localStorage.setItem('a11y_dyslexic', dyslexicFont);
-  }, [screenReaderMode, textScale, highContrast, dyslexicFont]);
+  }, [screenReaderMode, textScale, darkMode, dyslexicFont]);
+
+  // Synchronize with external theme triggers (e.g. Header theme button)
+  useEffect(() => {
+    const handleThemeEvent = (e) => {
+      if (typeof e.detail?.darkMode === 'boolean') {
+        setDarkMode(e.detail.darkMode);
+      }
+    };
+    window.addEventListener('themechange', handleThemeEvent);
+    return () => window.removeEventListener('themechange', handleThemeEvent);
+  }, []);
 
   const toggleScreenReader = () => {
     const next = !screenReaderMode;
@@ -84,30 +97,38 @@ export default function AccessibilityControls() {
       ? 'Screen reader assistance enabled. Vocalized highlights and enhanced ARIA descriptions active.'
       : 'Screen reader mode disabled.';
     setAnnouncement(msg);
-    if (next && 'speechSynthesis' in window) {
-      window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(msg);
-      window.speechSynthesis.speak(u);
-    }
+    speakText(msg);
   };
 
   const cycleTextScale = () => {
-    const scales = ['normal', 'large', 'xlarge'];
-    const nextIndex = (scales.indexOf(textScale) + 1) % scales.length;
-    const nextScale = scales[nextIndex];
-    setTextScale(nextScale);
-    const label = nextScale === 'normal' ? 'Standard 100%' : nextScale === 'large' ? 'Large 114%' : 'X-Large 128%';
-    const msg = `Base text scaled to ${label}`;
+    let next = 'normal';
+    let label = 'Standard 100%';
+    if (textScale === 'normal') {
+      next = 'large';
+      label = 'Enlarged 115%';
+    } else if (textScale === 'large') {
+      next = 'xlarge';
+      label = 'Maximum 130%';
+    }
+    setTextScale(next);
+    const msg = `Text size changed to ${label}.`;
     setAnnouncement(msg);
     speakText(msg);
   };
 
-  const toggleContrast = () => {
-    const next = !highContrast;
-    setHighContrast(next);
-    const msg = next
-      ? 'High Contrast mode active: Soft neumorphic shadows overridden with stark high-contrast borders.'
-      : 'Standard Neumorphic soft shadows restored.';
+  const toggleDarkMode = () => {
+    const next = !darkMode;
+    setDarkMode(next);
+    const root = document.documentElement;
+    if (next) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { darkMode: next } }));
+    const msg = next ? 'Dark mode enabled.' : 'Light mode enabled.';
     setAnnouncement(msg);
     speakText(msg);
   };
@@ -116,8 +137,8 @@ export default function AccessibilityControls() {
     const next = !dyslexicFont;
     setDyslexicFont(next);
     const msg = next
-      ? 'Bottom-heavy Dyslexic font enabled.'
-      : 'Standard interface typeface restored.';
+      ? 'Dyslexia-friendly high-contrast typeface applied.'
+      : 'Standard system font restored.';
     setAnnouncement(msg);
     speakText(msg);
   };
@@ -135,7 +156,10 @@ export default function AccessibilityControls() {
   const resetAll = () => {
     setScreenReaderMode(false);
     setTextScale('normal');
-    setHighContrast(false);
+    setDarkMode(false);
+    document.documentElement.classList.remove('dark');
+    localStorage.setItem('theme', 'light');
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { darkMode: false } }));
     setDyslexicFont(false);
     if (manualReducedMotion) {
       toggleReducedMotion();
@@ -144,118 +168,138 @@ export default function AccessibilityControls() {
     speakText('All accessibility settings reset to default.');
   };
 
+  const hasOverrides = screenReaderMode || textScale !== 'normal' || darkMode || dyslexicFont || manualReducedMotion;
+
   return (
     <aside
-      aria-label="Universal Accessibility Panel"
-      className="fixed top-3 right-4 z-50 select-none print:hidden"
+      aria-label="Universal Accessibility Controls"
+      className="w-full select-none print:hidden overflow-hidden"
     >
       {/* Live ARIA region for screen readers */}
       <div role="status" aria-live="assertive" className="sr-only">
         {announcement}
       </div>
 
-      {/* Floating Neumorphic Toolbar Strip */}
-      <div className="bg-[#E0E5EC] rounded-2xl p-1.5 shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] border border-white/40 flex items-center gap-1.5 transition-all">
-        {/* Toggle 1: Screen Reader Mode [SR] */}
-        <button
-          onClick={toggleScreenReader}
-          aria-pressed={screenReaderMode}
-          aria-label="Screen Reader Mode [SR]. Enhances ARIA labels and highlights vocalized elements."
-          title="Screen Reader Mode [SR]: Enhances ARIA labels and highlights vocalized elements"
-          className={`h-9 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
-            screenReaderMode
-              ? 'bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-blue-600'
-              : 'bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-[#1A253C]'
-          }`}
-        >
-          {screenReaderMode ? (
-            <Volume2 className="w-4 h-4 text-blue-600 animate-pulse" />
-          ) : (
-            <VolumeX className="w-4 h-4 text-[#52607B]" />
-          )}
-          <span>[SR]</span>
-        </button>
-
-        {/* Toggle 2: A+ Text Size */}
-        <button
-          onClick={cycleTextScale}
-          aria-label={`A+ Text Size. Current size: ${textScale}. Scales up base typography globally for improved legibility.`}
-          title="A+ Text Size: Scales up base typography globally for improved legibility"
-          className={`h-9 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
-            textScale !== 'normal'
-              ? 'bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-blue-600'
-              : 'bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-[#1A253C]'
-          }`}
-        >
-          <Type className="w-3.5 h-3.5 text-blue-600" />
-          <span>
-            {textScale === 'normal' ? 'A+' : textScale === 'large' ? 'A++' : 'A+++'}
+      {/* Clean Crypto-Fintech Panel Container */}
+      <div className="w-full bg-white dark:bg-[#151E32] rounded-2xl p-4 border border-[#E5E9F2] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3">
+        <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
+          <div className="flex items-center gap-1.5 min-w-0">
+            <Sliders className="w-4 h-4 text-[#2563EB] shrink-0" />
+            <h4 className="text-xs font-mono font-extrabold text-[#1A253C] dark:text-white uppercase tracking-wider truncate">
+              Accessibility & Display
+            </h4>
+          </div>
+          <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-blue-50 text-[#2563EB] dark:bg-blue-950/60 dark:text-blue-400 border border-blue-200 dark:border-blue-800 shrink-0">
+            WCAG 2.1 AA
           </span>
-        </button>
+        </div>
 
-        {/* Toggle 3: Contrast [🌓] */}
-        <button
-          onClick={toggleContrast}
-          aria-pressed={highContrast}
-          aria-label="Contrast Mode [🌓]. Overrides soft shadows with stark outlines and black text."
-          title="Contrast [🌓]: Overrides soft shadows with stark outlines and black text for visually impaired users"
-          className={`h-9 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
-            highContrast
-              ? 'bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-blue-600'
-              : 'bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-[#1A253C]'
-          }`}
-        >
-          <SunMoon className="w-4 h-4 text-amber-600" />
-          <span>[🌓]</span>
-        </button>
-
-        {/* Toggle 4: Dyslexic Font [Abc] */}
-        <button
-          onClick={toggleDyslexicFont}
-          aria-pressed={dyslexicFont}
-          aria-label="Dyslexic Font [Abc]. Swaps the global font family to a bottom-heavy typeface."
-          title="Dyslexic Font [Abc]: Swaps global font family to a bottom-heavy typeface (Lexend/OpenDyslexic)"
-          className={`h-9 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
-            dyslexicFont
-              ? 'bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-blue-600'
-              : 'bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-[#1A253C]'
-          }`}
-        >
-          <SpellCheck className="w-4 h-4 text-emerald-600" />
-          <span>[Abc]</span>
-        </button>
-
-        {/* Toggle 5: Reduced Motion [RM] */}
-        <button
-          onClick={handleToggleReducedMotion}
-          aria-pressed={shouldReduceMotion}
-          aria-label="Reduced Motion Mode [RM]. Disables slide and fade animations and defaults to zero animation."
-          title="Reduced Motion [RM]: Disables all slide and fade transitions (prefers-reduced-motion / WCAG 2.3.3)"
-          className={`h-9 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
-            shouldReduceMotion
-              ? 'bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-blue-600'
-              : 'bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-[#1A253C]'
-          }`}
-        >
-          {shouldReduceMotion ? (
-            <ZapOff className="w-4 h-4 text-blue-600" />
-          ) : (
-            <Zap className="w-4 h-4 text-[#52607B]" />
-          )}
-          <span>[RM]</span>
-        </button>
-
-        {/* Reset / More Toggle */}
-        {(screenReaderMode || textScale !== 'normal' || highContrast || dyslexicFont || manualReducedMotion) && (
+        {/* Toolbar Buttons Grid / Row */}
+        <div className="flex flex-wrap items-center gap-1.5">
+          {/* Toggle 1: Screen Reader Mode [SR] */}
           <button
-            onClick={resetAll}
-            aria-label="Reset all accessibility settings to standard Soft UI"
-            title="Reset accessibility overrides"
-            className="h-9 w-9 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] active:shadow-[inset_3px_3px_6px_#A3B1C6] text-rose-600 hover:text-rose-700 flex items-center justify-center transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+            onClick={toggleScreenReader}
+            aria-pressed={screenReaderMode}
+            aria-label="Screen Reader Mode [SR]. Enhances ARIA labels and highlights vocalized elements."
+            title="Screen Reader Mode [SR]: Enhances ARIA labels and vocalizes highlights"
+            className={`h-8 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0 ${
+              screenReaderMode
+                ? 'bg-blue-50 text-[#2563EB] border border-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800 shadow-2xs font-extrabold'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
+            }`}
           >
-            <RotateCcw className="w-3.5 h-3.5" />
+            {screenReaderMode ? (
+              <Volume2 className="w-3.5 h-3.5 text-[#2563EB] animate-pulse" />
+            ) : (
+              <VolumeX className="w-3.5 h-3.5 text-slate-400" />
+            )}
+            <span>[SR]</span>
           </button>
-        )}
+
+          {/* Toggle 2: A+ Text Size */}
+          <button
+            onClick={cycleTextScale}
+            aria-label={`Text Scaling. Current size: ${textScale}.`}
+            title="A+ Text Scale: Enlarge typography globally"
+            className={`h-8 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0 ${
+              textScale !== 'normal'
+                ? 'bg-blue-50 text-[#2563EB] border border-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800 shadow-2xs font-extrabold'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
+            }`}
+          >
+            <Type className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            <span>{textScale === 'normal' ? 'A+' : textScale === 'large' ? 'A++' : 'A+++'}</span>
+          </button>
+
+          {/* Toggle 3: Dark Mode / Dark Theme */}
+          <button
+            onClick={toggleDarkMode}
+            aria-pressed={darkMode}
+            aria-label={darkMode ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
+            title={darkMode ? 'Theme: Dark (Click for Light)' : 'Theme: Light (Click for Dark)'}
+            className={`h-8 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0 ${
+              darkMode
+                ? 'bg-blue-50 text-[#2563EB] border border-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800 shadow-2xs font-extrabold'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
+            }`}
+          >
+            {darkMode ? (
+              <Moon className="w-3.5 h-3.5 text-blue-400" />
+            ) : (
+              <Sun className="w-3.5 h-3.5 text-amber-500" />
+            )}
+            <span>{darkMode ? '[Dark]' : '[Light]'}</span>
+          </button>
+
+          {/* Toggle 4: Dyslexic Font [Abc] */}
+          <button
+            onClick={toggleDyslexicFont}
+            aria-pressed={dyslexicFont}
+            aria-label="Dyslexic Font [Abc]. Swaps global font family to a bottom-heavy typeface."
+            title="Dyslexic Font [Abc]: High legibility typeface"
+            className={`h-8 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0 ${
+              dyslexicFont
+                ? 'bg-blue-50 text-[#2563EB] border border-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800 shadow-2xs font-extrabold'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
+            }`}
+          >
+            <SpellCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+            <span>[Abc]</span>
+          </button>
+
+          {/* Toggle 5: Reduced Motion [RM] */}
+          <button
+            onClick={handleToggleReducedMotion}
+            aria-pressed={shouldReduceMotion}
+            aria-label="Reduced Motion Mode [RM]. Disables animations."
+            title="Reduced Motion [RM]: Disable transitions (prefers-reduced-motion)"
+            className={`h-8 px-2.5 rounded-xl text-xs font-mono font-bold flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 shrink-0 ${
+              shouldReduceMotion
+                ? 'bg-blue-50 text-[#2563EB] border border-blue-200 dark:bg-blue-950/60 dark:text-blue-400 dark:border-blue-800 shadow-2xs font-extrabold'
+                : 'bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-750'
+            }`}
+          >
+            {shouldReduceMotion ? (
+              <ZapOff className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+            ) : (
+              <Zap className="w-3.5 h-3.5 text-slate-400" />
+            )}
+            <span>[RM]</span>
+          </button>
+
+          {/* Reset Action */}
+          {hasOverrides && (
+            <button
+              onClick={resetAll}
+              aria-label="Reset accessibility settings"
+              title="Reset accessibility overrides to default"
+              className="h-8 px-2 rounded-xl bg-rose-50 hover:bg-rose-100 dark:bg-rose-950/40 dark:hover:bg-rose-900/40 text-rose-600 dark:text-rose-400 border border-rose-200 dark:border-rose-900/60 flex items-center gap-1 text-[11px] font-mono font-bold transition-all cursor-pointer shrink-0"
+            >
+              <RotateCcw className="w-3 h-3" />
+              <span>Reset</span>
+            </button>
+          )}
+        </div>
       </div>
     </aside>
   );

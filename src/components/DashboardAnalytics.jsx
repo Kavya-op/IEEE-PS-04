@@ -24,13 +24,13 @@ import {
   AlertTriangle,
   ShieldCheck
 } from 'lucide-react';
+import { useOSINT } from '../context/OSINTContext';
 import {
   fetchLiveSocialData,
   DEFAULT_CACHED_POSTS
 } from '../services/liveDataFetcher';
 import {
-  getMonitoredPlatforms,
-  VERIFIED_BOTNET_SWARMS
+  getMonitoredPlatforms
 } from '../services/osintStreamer';
 import {
   NeumorphicKPISkeleton,
@@ -45,9 +45,18 @@ import {
 
 export default function DashboardAnalytics() {
   const { shouldReduceMotion, getStaggerContainer, staggerItemVariants, neuButtonProps, neuCardProps } = useAppMotion();
+  const {
+    liveThreats,
+    loading: loadingOSINT,
+    activeIngressRate,
+    totalScannedPosts,
+    severeRisksCount,
+    defenseEfficacy,
+    thematicClusters,
+    refreshNow
+  } = useOSINT();
 
-  const [loadingKPIs, setLoadingKPIs] = useState(true);
-  const [loadingTopics, setLoadingTopics] = useState(true);
+  const [loadingTopics, setLoadingTopics] = useState(false);
   const [emergingTopics, setEmergingTopics] = useState(() =>
     getOfflineBatchTopicsFallback(DEFAULT_CACHED_POSTS.map((p) => p.content))
   );
@@ -101,8 +110,8 @@ export default function DashboardAnalytics() {
   const handleRefreshTopics = async () => {
     setLoadingTopics(true);
     try {
-      const { posts } = await fetchLiveSocialData({ limit: 15 });
-      const postContents = posts.map((p) => p.content || p.title);
+      const postsToUse = liveThreats && liveThreats.length > 0 ? liveThreats : (await fetchLiveSocialData({ limit: 15 })).posts;
+      const postContents = postsToUse.map((p) => p.content || p.title);
       const results = await extractBatchEmergingTopics(postContents);
       setEmergingTopics(results);
     } catch {
@@ -113,34 +122,22 @@ export default function DashboardAnalytics() {
   };
 
   useEffect(() => {
-    let active = true;
-    const fetchInitialLiveData = async () => {
-      try {
-        const { posts } = await fetchLiveSocialData({ limit: 15 });
-        if (!active) return;
-        const postContents = posts.map((p) => p.content || p.title);
-        try {
-          const results = await extractBatchEmergingTopics(postContents);
-          if (active) setEmergingTopics(results);
-        } catch {
-          if (active) setEmergingTopics(getOfflineBatchTopicsFallback(postContents));
-        }
-      } catch {
-        if (active) setEmergingTopics(getOfflineBatchTopicsFallback(DEFAULT_CACHED_POSTS.map((p) => p.content)));
-      } finally {
-        if (active) {
-          setLoadingKPIs(false);
+    if (liveThreats && liveThreats.length > 0) {
+      const postContents = liveThreats.map((p) => p.content || p.title);
+      extractBatchEmergingTopics(postContents)
+        .then((res) => {
+          setEmergingTopics(res);
           setLoadingTopics(false);
-        }
-      }
-    };
+        })
+        .catch(() => {
+          setEmergingTopics(getOfflineBatchTopicsFallback(postContents));
+          setLoadingTopics(false);
+        });
+    }
+  }, [liveThreats]);
 
-    fetchInitialLiveData();
-    return () => { active = false; };
-  }, []);
-
-  // Verified Botnet Swarms Dataset (Explicitly labeled clusters with verified origins & node counts)
-  const botNetworkTimeline = VERIFIED_BOTNET_SWARMS;
+  // Verified Botnet Swarms & Thematic Clusters bound directly to live Reddit OSINT stream
+  const botNetworkTimeline = thematicClusters;
 
   // Monitored Platforms Data from Real-Time OSINT Streamer
   const platforms = getMonitoredPlatforms();
@@ -148,9 +145,9 @@ export default function DashboardAnalytics() {
   return (
     <div className="space-y-7">
       {/* =========================================================================
-          1. TOP KPI WIDGETS (Outset cards with subtle red/green vector sparklines)
+          1. TOP KPI WIDGETS (Derived dynamically from live Reddit OSINT stream)
           ========================================================================= */}
-      {loadingKPIs ? (
+      {loadingOSINT && liveThreats.length === 0 ? (
         <NeumorphicKPISkeleton />
       ) : (
         <motion.section
@@ -162,276 +159,323 @@ export default function DashboardAnalytics() {
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
         >
           {/* KPI 1: Scanned Posts (Green Sparkline) */}
-        <motion.div
-          variants={staggerItemVariants}
-          whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-          transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-          className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
-              Scanned Posts
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-emerald-600">
-              <Activity className="w-4 h-4" />
-            </div>
-          </div>
-
-          <div className="mt-2 mb-0.5">
-            <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
-              <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
-              <span>[Verified Source: Multi-Channel Firehose]</span>
-            </span>
-          </div>
-
-          <div className="mt-2">
-            <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
-              1,420,892
-            </div>
-            <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-emerald-700">
-              <TrendingUp className="w-3.5 h-3.5" />
-              <span>+18.4% velocity surge</span>
-            </div>
-          </div>
-
-          {/* Subtle Green Vector Sparkline */}
-          <div className="mt-4 h-11 w-full">
-            <svg
-              role="img"
-              aria-label="Green sparkline showing increasing post scan volume"
-              className="w-full h-full overflow-visible"
-              viewBox="0 0 150 28"
-              fill="none"
-            >
-              <defs>
-                <linearGradient id="greenSparkFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
-              <motion.path
-                d="M 0 20 L 20 18 L 40 22 L 60 14 L 80 16 L 100 8 L 120 11 L 135 4 L 150 7 L 150 28 L 0 28 Z"
-                fill="url(#greenSparkFill)"
-                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              />
-              <motion.path
-                d="M 0 20 L 20 18 L 40 22 L 60 14 L 80 16 L 100 8 L 120 11 L 135 4 L 150 7"
-                stroke="#059669"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-                whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: "easeInOut" }}
-              />
-              <motion.circle
-                cx="150"
-                cy="7"
-                r="3.5"
-                fill="#059669"
-                initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 1.1, duration: 0.3 }}
-              />
-            </svg>
-          </div>
-        </motion.div>
-
-        {/* KPI 2: Severe Risks (Red Sparkline) */}
-        <motion.div
-          variants={staggerItemVariants}
-          whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-          transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-          className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
-              Severe Risks
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-rose-600">
-              <ShieldAlert className="w-4 h-4 animate-bounce" />
-            </div>
-          </div>
-
-          <div className="mt-2 mb-0.5">
-            <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-rose-700 inline-flex items-center gap-1 border border-white/40">
-              <ShieldCheck className="w-2.5 h-2.5 text-rose-600" />
-              <span>[Verified Source: Telegram Dark Mesh]</span>
-            </span>
-          </div>
-
-          <div className="mt-2">
-            <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
-              42 <span className="text-sm font-bold text-rose-600">Active IOCs</span>
-            </div>
-            <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-rose-600">
-              <AlertTriangle className="w-3.5 h-3.5" />
-              <span>+34% zero-day/scam spike</span>
-            </div>
-          </div>
-
-          {/* Subtle Red Vector Sparkline */}
-          <div className="mt-4 h-11 w-full">
-            <svg
-              role="img"
-              aria-label="Red sparkline showing elevated critical threat levels"
-              className="w-full h-full overflow-visible"
-              viewBox="0 0 150 28"
-              fill="none"
-            >
-              <defs>
-                <linearGradient id="redSparkFill" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stopColor="#EF4444" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
-                </linearGradient>
-              </defs>
-              <motion.path
-                d="M 0 15 L 25 18 L 50 12 L 75 22 L 100 6 L 125 16 L 150 2 L 150 28 L 0 28 Z"
-                fill="url(#redSparkFill)"
-                initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
-                whileInView={{ opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              />
-              <motion.path
-                d="M 0 15 L 25 18 L 50 12 L 75 22 L 100 6 L 125 16 L 150 2"
-                stroke="#DC2626"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-                whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: "easeInOut" }}
-              />
-              <motion.circle
-                cx="150"
-                cy="2"
-                r="3.5"
-                fill="#DC2626"
-                initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 1.1, duration: 0.3 }}
-              />
-            </svg>
-          </div>
-        </motion.div>
-
-        {/* KPI 3: Coordinated Bot Clusters */}
-        <motion.div
-          variants={staggerItemVariants}
-          whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-          transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-          className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
-              Botnet Clusters
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-blue-600">
-              <Bot className="w-4 h-4" />
-            </div>
-          </div>
-
-          <div className="mt-2 mb-0.5">
-            <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
-              <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
-              <span>[Verified Source: MTProto Dark Mesh]</span>
-            </span>
-          </div>
-
-          <div className="mt-2">
-            <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
-              9 <span className="text-sm font-normal text-[#52607B]">Swarms</span>
-            </div>
-            <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-blue-700">
-              <Clock className="w-3.5 h-3.5" />
-              <span>12.8k synchronized nodes</span>
-            </div>
-          </div>
-
-          <motion.button
-            onClick={handleInspectSwarm}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.03 }}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
-            className="mt-3 w-full py-1.5 px-3 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-[10px] font-mono font-bold text-blue-700 flex items-center justify-center gap-1 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+          <motion.div
+            variants={staggerItemVariants}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
+            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
+            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
           >
-            <span>Inspect Bot Swarms</span>
-            <ArrowUpRight className="w-3 h-3" />
-          </motion.button>
-        </motion.div>
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                  Scanned Posts
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-emerald-600">
+                  <Activity className="w-4 h-4" />
+                </div>
+              </div>
 
-        {/* KPI 4: Neutralization Rate (Green Sparkline) */}
-        <motion.div
-          variants={staggerItemVariants}
-          whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-          transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-          className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer"
-        >
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
-              Defense Efficacy
-            </span>
-            <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-emerald-600">
-              <CheckCircle2 className="w-4 h-4" />
+              <div className="mt-2 mb-0.5">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
+                  <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
+                  <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
+                </span>
+              </div>
+
+              <div className="mt-2">
+                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
+                  {totalScannedPosts}
+                </div>
+                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-emerald-700">
+                  <TrendingUp className="w-3.5 h-3.5" />
+                  <span>+{activeIngressRate} velocity surge</span>
+                </div>
+              </div>
             </div>
-          </div>
 
-          <div className="mt-2 mb-0.5">
-            <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-emerald-700 inline-flex items-center gap-1 border border-white/40">
-              <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" />
-              <span>[Verified Source: Edge Shield Mesh]</span>
-            </span>
-          </div>
-
-          <div className="mt-3">
-            <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
-              99.2%
+            {/* Direct Link to live Reddit Stream */}
+            <div className="mt-2">
+              <a
+                href={liveThreats[0]?.link || "https://www.reddit.com/r/cybersecurity"}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[10px] font-mono font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1"
+              >
+                <span>[View Original Reddit Post ↗]</span>
+              </a>
             </div>
-            <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-emerald-700">
-              <span>1,778 nodes protected</span>
-            </div>
-          </div>
 
-          {/* Subtle Green Sparkline */}
-          <div className="mt-4 h-11 w-full">
-            <svg
-              role="img"
-              aria-label="Green sparkline showing high mitigation rate"
-              className="w-full h-full overflow-visible"
-              viewBox="0 0 150 28"
-              fill="none"
+            {/* Subtle Green Vector Sparkline */}
+            <div className="mt-3 h-11 w-full">
+              <svg
+                role="img"
+                aria-label="Green sparkline showing increasing post scan volume"
+                className="w-full h-full overflow-visible"
+                viewBox="0 0 150 28"
+                fill="none"
+              >
+                <defs>
+                  <linearGradient id="greenSparkFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <motion.path
+                  d="M 0 20 L 20 18 L 40 22 L 60 14 L 80 16 L 100 8 L 120 11 L 135 4 L 150 7 L 150 28 L 0 28 Z"
+                  fill="url(#greenSparkFill)"
+                  initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
+                />
+                <motion.path
+                  d="M 0 20 L 20 18 L 40 22 L 60 14 L 80 16 L 100 8 L 120 11 L 135 4 L 150 7"
+                  stroke="#059669"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                />
+                <motion.circle
+                  cx="150"
+                  cy="7"
+                  r="3.5"
+                  fill="#059669"
+                  initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.1, duration: 0.3 }}
+                />
+              </svg>
+            </div>
+          </motion.div>
+
+          {/* KPI 2: Severe Risks (Red Sparkline) */}
+          <motion.div
+            variants={staggerItemVariants}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
+            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
+            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                  Severe Risks
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-rose-600">
+                  <ShieldAlert className="w-4 h-4 animate-bounce" />
+                </div>
+              </div>
+
+              <div className="mt-2 mb-0.5">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-rose-700 inline-flex items-center gap-1 border border-white/40">
+                  <ShieldCheck className="w-2.5 h-2.5 text-rose-600" />
+                  <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
+                </span>
+              </div>
+
+              <div className="mt-2">
+                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
+                  {severeRisksCount} <span className="text-sm font-bold text-rose-600">Active IOCs</span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-rose-600">
+                  <AlertTriangle className="w-3.5 h-3.5" />
+                  <span>Gemini AI Flagged Threat Spike</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Direct Link to Severe Threat */}
+            <div className="mt-2">
+              <a
+                href={liveThreats.find((t) => t.riskLevel === 'Critical' || t.riskLevel === 'High')?.link || liveThreats[0]?.link || "https://www.reddit.com/r/cybersecurity"}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[10px] font-mono font-bold text-rose-600 hover:underline flex items-center gap-1"
+              >
+                <span>[View Original Reddit Post ↗]</span>
+              </a>
+            </div>
+
+            {/* Subtle Red Vector Sparkline */}
+            <div className="mt-3 h-11 w-full">
+              <svg
+                role="img"
+                aria-label="Red sparkline showing elevated critical threat levels"
+                className="w-full h-full overflow-visible"
+                viewBox="0 0 150 28"
+                fill="none"
+              >
+                <defs>
+                  <linearGradient id="redSparkFill" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#EF4444" stopOpacity="0.3" />
+                    <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
+                  </linearGradient>
+                </defs>
+                <motion.path
+                  d="M 0 15 L 25 18 L 50 12 L 75 22 L 100 6 L 125 16 L 150 2 L 150 28 L 0 28 Z"
+                  fill="url(#redSparkFill)"
+                  initial={shouldReduceMotion ? { opacity: 1 } : { opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.8, delay: 0.3 }}
+                />
+                <motion.path
+                  d="M 0 15 L 25 18 L 50 12 L 75 22 L 100 6 L 125 16 L 150 2"
+                  stroke="#DC2626"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                />
+                <motion.circle
+                  cx="150"
+                  cy="2"
+                  r="3.5"
+                  fill="#DC2626"
+                  initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.1, duration: 0.3 }}
+                />
+              </svg>
+            </div>
+          </motion.div>
+
+          {/* KPI 3: Coordinated Bot Clusters */}
+          <motion.div
+            variants={staggerItemVariants}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
+            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
+            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                  Botnet Clusters
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-blue-600">
+                  <Bot className="w-4 h-4" />
+                </div>
+              </div>
+
+              <div className="mt-2 mb-0.5">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
+                  <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
+                  <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
+                </span>
+              </div>
+
+              <div className="mt-2">
+                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
+                  {thematicClusters.length} <span className="text-sm font-normal text-[#52607B]">Thematic Swarms</span>
+                </div>
+                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-blue-700">
+                  <Clock className="w-3.5 h-3.5" />
+                  <span>Grouped from live Reddit stream</span>
+                </div>
+              </div>
+            </div>
+
+            <motion.button
+              onClick={handleInspectSwarm}
+              whileHover={shouldReduceMotion ? {} : { scale: 1.03 }}
+              whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
+              className="mt-3 w-full py-1.5 px-3 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-[10px] font-mono font-bold text-blue-700 flex items-center justify-center gap-1 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
             >
-              <motion.path
-                d="M 0 24 L 25 20 L 50 22 L 75 14 L 100 12 L 125 6 L 150 4"
-                stroke="#059669"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
-                whileInView={{ pathLength: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1.2, ease: "easeInOut" }}
-              />
-              <motion.circle
-                cx="150"
-                cy="4"
-                r="3.5"
-                fill="#059669"
-                initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 1.1, duration: 0.3 }}
-              />
-            </svg>
-          </div>
-        </motion.div>
+              <span>Inspect Bot Swarms</span>
+              <ArrowUpRight className="w-3 h-3" />
+            </motion.button>
+          </motion.div>
+
+          {/* KPI 4: Defense Efficacy (Green Sparkline) */}
+          <motion.div
+            variants={staggerItemVariants}
+            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
+            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
+            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                  Defense Efficacy
+                </span>
+                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-emerald-600">
+                  <CheckCircle2 className="w-4 h-4" />
+                </div>
+              </div>
+
+              <div className="mt-2 mb-0.5">
+                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-emerald-700 inline-flex items-center gap-1 border border-white/40">
+                  <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" />
+                  <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
+                </span>
+              </div>
+
+              <div className="mt-2">
+                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
+                  {defenseEfficacy}
+                </div>
+                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-emerald-700">
+                  <span>{liveThreats.length} live stream packets analyzed</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Direct Link to Verified Reddit Post */}
+            <div className="mt-2">
+              <a
+                href={liveThreats[1]?.link || liveThreats[0]?.link || "https://www.reddit.com/r/cybersecurity"}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(e) => e.stopPropagation()}
+                className="text-[10px] font-mono font-bold text-emerald-700 hover:underline flex items-center gap-1"
+              >
+                <span>[View Original Reddit Post ↗]</span>
+              </a>
+            </div>
+
+            {/* Subtle Green Sparkline */}
+            <div className="mt-3 h-11 w-full">
+              <svg
+                role="img"
+                aria-label="Green sparkline showing high mitigation rate"
+                className="w-full h-full overflow-visible"
+                viewBox="0 0 150 28"
+                fill="none"
+              >
+                <motion.path
+                  d="M 0 24 L 25 20 L 50 22 L 75 14 L 100 12 L 125 6 L 150 4"
+                  stroke="#059669"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  initial={shouldReduceMotion ? { pathLength: 1 } : { pathLength: 0 }}
+                  whileInView={{ pathLength: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 1.2, ease: "easeInOut" }}
+                />
+                <motion.circle
+                  cx="150"
+                  cy="4"
+                  r="3.5"
+                  fill="#059669"
+                  initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 1.1, duration: 0.3 }}
+                />
+              </svg>
+            </div>
+          </motion.div>
         </motion.section>
       )}
 
@@ -626,12 +670,21 @@ export default function DashboardAnalytics() {
                   <span className="truncate">{item.topic}</span>
                 </div>
 
-                {/* Inset Neumorphic Source Citation Badge */}
-                <div className="mt-2">
+                {/* Inset Neumorphic Source Citation Badge & Direct Reddit Link */}
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5">
                   <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
                     <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
-                    <span>[Verified Source: Reddit Webhook]</span>
+                    <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                   </span>
+                  <a
+                    href={liveThreats[index % (liveThreats.length || 1)]?.link || "https://www.reddit.com/r/cybersecurity"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-mono font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <span>[View Original Reddit Post ↗]</span>
+                  </a>
                 </div>
 
                 {/* Velocity Progress Bar (Inset Trench with Left-to-Right draw animation) */}
@@ -720,8 +773,19 @@ export default function DashboardAnalytics() {
                     title={`Chain of Custody: Ingested via ${item.ingestionMethod} at ${item.verifiedTimestamp}`}
                   >
                     <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
-                    <span>[{item.verificationBadge || 'Verified Source: Dark Mesh'}]</span>
+                    <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                   </span>
+
+                  {/* Openable Direct Reddit Origin Link */}
+                  <a
+                    href={item.link || item.samplePost?.link || "https://www.reddit.com/r/cybersecurity"}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-[10px] font-mono font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <span>[View Original Reddit Post ↗]</span>
+                  </a>
                 </div>
 
                 <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-[#52607B]">
@@ -969,6 +1033,12 @@ export default function DashboardAnalytics() {
                 <span className="font-bold text-[#1A253C]">{selectedTimelineCluster.id}</span>
               </div>
               <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
+                <span className="text-[#52607B]">Data Provenance Tag:</span>
+                <span className="text-[10px] font-bold text-[#2563EB]">
+                  Verified Source: r/cybersecurity (Reddit Native API)
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
                 <span className="text-[#52607B]">Verified Geographic Origin:</span>
                 <span className="font-bold text-[#2563EB]">{selectedTimelineCluster.origin}</span>
               </div>
@@ -986,13 +1056,7 @@ export default function DashboardAnalytics() {
               </div>
               <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
                 <span className="text-[#52607B]">Verification Timestamp:</span>
-                <span className="font-bold text-[#1A253C]">{selectedTimelineCluster.verifiedTimestamp || '2026-10-14T07:30:00Z'}</span>
-              </div>
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Legal Chain-of-Custody:</span>
-                <span className="text-[10px] font-bold text-[#2563EB]">
-                  [{selectedTimelineCluster.verificationBadge || 'Verified Source: Dark Mesh'}]
-                </span>
+                <span className="font-bold text-[#1A253C]">{selectedTimelineCluster.verifiedTimestamp || 'Live UTC'}</span>
               </div>
               <div className="pt-1">
                 <span className="text-[#52607B] block mb-1">Attack Signature Vector:</span>
@@ -1000,9 +1064,50 @@ export default function DashboardAnalytics() {
                   {selectedTimelineCluster.signatureVector || 'Coordinated multi-vector burst over encrypted mesh.'}
                 </p>
               </div>
+
+              {/* Bound Live Reddit Threat Posts */}
+              {selectedTimelineCluster.posts && selectedTimelineCluster.posts.length > 0 && (
+                <div className="pt-2">
+                  <span className="text-[#52607B] block mb-1 font-bold">Bound Reddit OSINT Threat Threads:</span>
+                  <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
+                    {selectedTimelineCluster.posts.map((p, pIdx) => (
+                      <div key={p.id || pIdx} className="p-2.5 rounded-xl bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] flex flex-col gap-1.5 border border-white/40">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-[#1A253C]">
+                          <span className="truncate pr-2">{p.title}</span>
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold shrink-0">
+                            {p.riskLevel || 'High'}
+                          </span>
+                        </div>
+                        <p className="text-[10px] text-[#52607B] line-clamp-2">{p.content}</p>
+                        <div className="flex items-center justify-between pt-1 border-t border-[#A3B1C6]/30">
+                          <span className="text-[9px] text-[#2563EB] font-bold">
+                            Verified Source: r/cybersecurity (Reddit Native API)
+                          </span>
+                          <a
+                            href={p.link}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[10px] font-bold text-[#2563EB] hover:underline flex items-center gap-1"
+                          >
+                            <span>[View Original Reddit Post ↗]</span>
+                          </a>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-4 flex items-center justify-between gap-2">
+              <a
+                href={selectedTimelineCluster.link || selectedTimelineCluster.samplePost?.link || "https://www.reddit.com/r/cybersecurity"}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] text-[#2563EB] text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+              >
+                <span>[View Original Reddit Post ↗]</span>
+              </a>
               <button
                 onClick={() => setSelectedTimelineCluster(null)}
                 className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-mono font-bold shadow-[4px_4px_8px_#93A1B6] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"

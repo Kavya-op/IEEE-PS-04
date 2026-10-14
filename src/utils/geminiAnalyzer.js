@@ -29,7 +29,7 @@ import analyzeThreatPost, {
   generateReviewerTicket,
   synthesizeReviewerTicket,
   getOfflineReviewerTicketFallback
-} from '../geminiAnalyzer.js';
+} from '../geminiAnalyzer';
 
 export {
   analyzeThreatPost,

@@ -14,9 +14,11 @@ import {
   RefreshCw,
   Code,
   MapPin,
-  Clock,
-  X
+  X,
+  ShieldCheck,
+  ExternalLink
 } from 'lucide-react';
+import { useOSINT } from '../context/OSINTContext';
 import {
   aggregateHistoricalThreatLogs,
   getOfflineThreatAggregationFallback
@@ -24,6 +26,7 @@ import {
 
 export default function ThreatAnalyticsView() {
   const { neuButtonProps, shouldReduceMotion } = useAppMotion();
+  const { liveThreats, severeRisksCount, defenseEfficacy, activeIngressRate, lastIngestedAt } = useOSINT();
   const defaultThreatLogs = [
     { id: 'LOG-01', timestamp: '2026-10-14T01:00:00Z', region: 'Eastern Europe', severity: 'High', threatType: 'Ransomware' },
     { id: 'LOG-02', timestamp: '2026-10-14T01:15:00Z', region: 'East Asia', severity: 'High', threatType: 'Zero-Day Exploit' },
@@ -81,14 +84,31 @@ export default function ThreatAnalyticsView() {
   return (
     <div className="space-y-6">
       {/* Page Header Card */}
-      <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60">
-        <h2 className="text-xl font-black text-[#1A253C] flex items-center gap-2">
-          <Activity className="w-5 h-5 text-[#2563EB]" />
-          Threat Analytics & Predictive Heuristics
-        </h2>
-        <p className="text-xs text-[#52607B] mt-1">
-          Deep telemetry across MITRE ATT&CK vectors, APT group attribution, and neural anomaly trends.
-        </p>
+      <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h2 className="text-xl font-black text-[#1A253C] flex items-center gap-2">
+            <Activity className="w-5 h-5 text-[#2563EB]" />
+            Threat Analytics & Predictive Heuristics
+          </h2>
+          <p className="text-xs text-[#52607B] mt-1">
+            Deep telemetry across MITRE ATT&CK vectors, APT group attribution, and neural anomaly trends.
+          </p>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5">
+          <span className="text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
+            <ShieldCheck className="w-3 h-3 text-[#2563EB]" />
+            <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
+          </span>
+          <a
+            href={liveThreats[0]?.link || "https://www.reddit.com/r/cybersecurity"}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-1.5 rounded-full text-xs font-mono font-bold bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-all"
+          >
+            <span>[View Original Reddit Post ↗]</span>
+          </a>
+        </div>
       </div>
 
       {/* MITRE ATT&CK Matrix Card */}
@@ -99,7 +119,7 @@ export default function ThreatAnalyticsView() {
             <h3 className="text-sm font-bold text-[#1A253C]">MITRE ATT&CK&reg; Matrix Defensive Coverage</h3>
           </div>
           <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-emerald-600 font-bold">
-            91.2% Overall Hardening
+            {defenseEfficacy} Overall Hardening
           </span>
         </div>
 

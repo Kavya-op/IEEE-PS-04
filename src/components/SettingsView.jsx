@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { useAppMotion } from '../context/MotionContext';
 import {
@@ -7,7 +7,9 @@ import {
   Cpu,
   Save,
   CheckCircle,
-  Database
+  Database,
+  Moon,
+  Sun
 } from 'lucide-react';
 
 export default function SettingsView() {
@@ -18,6 +20,35 @@ export default function SettingsView() {
   const [neuralSensitivity, setNeuralSensitivity] = useState('aggressive');
   const [confidenceThreshold, setConfidenceThreshold] = useState(92);
   const [savedSuccess, setSavedSuccess] = useState(false);
+  const [isDark, setIsDark] = useState(() => {
+    const saved = localStorage.getItem('theme');
+    if (saved) return saved === 'dark';
+    return document.documentElement.classList.contains('dark');
+  });
+
+  useEffect(() => {
+    const handleThemeEvent = (e) => {
+      if (typeof e.detail?.darkMode === 'boolean') {
+        setIsDark(e.detail.darkMode);
+      }
+    };
+    window.addEventListener('themechange', handleThemeEvent);
+    return () => window.removeEventListener('themechange', handleThemeEvent);
+  }, []);
+
+  const handleToggleTheme = () => {
+    const next = !isDark;
+    setIsDark(next);
+    const root = document.documentElement;
+    if (next) {
+      root.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      root.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+    window.dispatchEvent(new CustomEvent('themechange', { detail: { darkMode: next } }));
+  };
 
   const handleSave = () => {
     setSavedSuccess(true);
@@ -55,6 +86,45 @@ export default function SettingsView() {
             </>
           )}
         </motion.button>
+      </div>
+
+      {/* Interface Appearance & Theme Mode */}
+      <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 space-y-4">
+        <div className="flex items-center space-x-2 pb-3 border-b border-[#A3B1C6]/30">
+          <Moon className="w-4 h-4 text-[#2563EB]" />
+          <h3 className="text-sm font-bold text-[#1A253C]">Interface Appearance & Theme</h3>
+        </div>
+
+        <div className="flex items-center justify-between">
+          <div className="pr-4">
+            <div className="text-xs font-bold text-[#1A253C] flex items-center gap-2">
+              <span>{isDark ? 'Dark Theme (Cyber Neumorphism)' : 'Light Theme (Soft Grey-Blue UI)'}</span>
+              <span className={`text-[10px] font-mono px-2 py-0.5 rounded-full shadow-[inset_1px_1px_2px_#A3B1C6,inset_-1px_-1px_2px_#FFFFFF] ${
+                isDark ? 'text-blue-400 bg-blue-950/40' : 'text-amber-700 bg-amber-100/60'
+              }`}>
+                {isDark ? 'ACTIVE DARK' : 'ACTIVE LIGHT'}
+              </span>
+            </div>
+            <div className="text-[11px] text-[#52607B] mt-0.5">
+              Toggle between deep Cyber Navy (#0F1422) and Soft Grey-Blue (#E0E5EC) Neumorphic aesthetic.
+            </div>
+          </div>
+          <button
+            onClick={handleToggleTheme}
+            aria-label="Toggle Dark Mode Theme"
+            className={`w-14 h-7 rounded-full transition-all relative shrink-0 p-0.5 cursor-pointer shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] focus:outline-none focus:ring-4 focus:ring-blue-400 ${
+              isDark ? 'bg-blue-600' : 'bg-[#E0E5EC]'
+            }`}
+          >
+            <div
+              className={`w-6 h-6 rounded-full flex items-center justify-center bg-[#E0E5EC] shadow-[2px_2px_4px_rgba(0,0,0,0.3)] transition-transform ${
+                isDark ? 'translate-x-7 bg-white text-blue-900' : 'translate-x-0 text-amber-600'
+              }`}
+            >
+              {isDark ? <Moon className="w-3.5 h-3.5" /> : <Sun className="w-3.5 h-3.5" />}
+            </div>
+          </button>
+        </div>
       </div>
 
       {/* Autonomous Containment Policies */}

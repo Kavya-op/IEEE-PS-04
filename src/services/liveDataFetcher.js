@@ -21,7 +21,7 @@ import {
   getOfflineMisinformationFallback,
   extractBatchEmergingTopics,
   getOfflineBatchTopicsFallback
-} from '../geminiAnalyzer.js';
+} from '../geminiAnalyzer';
 import {
   tagDataProvenance,
   generateChainOfCustodyHash
