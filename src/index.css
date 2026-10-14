@@ -1,0 +1,251 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --neu-base: #E0E5EC;
+    --neu-shadow-dark: #A3B1C6;
+    --neu-shadow-light: #FFFFFF;
+    --neu-text: #1A253C;
+    --neu-text-muted: #52607B;
+    --neu-accent: #2563EB;
+  }
+
+  body {
+    background-color: #E0E5EC;
+    color: #1A253C;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+/* ==============================================================================
+   NEUMORPHISM (SOFT UI) ENGINE UTILITIES
+   ============================================================================== */
+
+/* Primary Soft Outset Card & Widget */
+.neu-outset {
+  background-color: #E0E5EC;
+  box-shadow: 9px 9px 16px #A3B1C6, -9px -9px 16px #FFFFFF;
+  border-radius: 24px;
+}
+
+/* Primary Pressed-In Inset Container / Input */
+.neu-inset {
+  background-color: #E0E5EC;
+  box-shadow: inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF;
+  border-radius: 24px;
+}
+
+/* Subtle Small Outset (Badges, Micro-buttons) */
+.neu-outset-sm {
+  background-color: #E0E5EC;
+  box-shadow: 4px 4px 8px #A3B1C6, -4px -4px 8px #FFFFFF;
+  border-radius: 14px;
+}
+
+/* Subtle Small Inset (Chips, Active Toggles) */
+.neu-inset-sm {
+  background-color: #E0E5EC;
+  box-shadow: inset 3px 3px 6px #A3B1C6, inset -3px -3px 6px #FFFFFF;
+  border-radius: 14px;
+}
+
+/* Interactive Neumorphic Button */
+.neu-btn {
+  background-color: #E0E5EC;
+  color: #1A253C;
+  box-shadow: 6px 6px 12px #A3B1C6, -6px -6px 12px #FFFFFF;
+  border-radius: 18px;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.neu-btn:hover {
+  box-shadow: 8px 8px 16px #A3B1C6, -8px -8px 16px #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.neu-btn:active,
+.neu-btn.active {
+  box-shadow: inset 4px 4px 8px #A3B1C6, inset -4px -4px 8px #FFFFFF;
+  transform: translateY(0);
+}
+
+/* Prominent Blue Outset Button */
+.neu-btn-blue {
+  background-color: #2563EB;
+  color: #FFFFFF;
+  box-shadow: 6px 6px 14px #93A1B6, -6px -6px 14px #FFFFFF;
+  border-radius: 18px;
+  font-weight: 700;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.neu-btn-blue:hover {
+  background-color: #1D4ED8;
+  box-shadow: 8px 8px 18px #93A1B6, -8px -8px 18px #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.neu-btn-blue:active {
+  background-color: #1E40AF;
+  box-shadow: inset 4px 4px 8px #172554, inset -4px -4px 8px #3B82F6;
+  transform: translateY(0);
+}
+
+/* Custom Soft Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E0E5EC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #B0BAC8;
+  border-radius: 9999px;
+  box-shadow: inset 1px 1px 2px #A3B1C6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #8F9EB4;
+}
+
+/* ==============================================================================
+   KEYBOARD NAVIGATION & FOCUS INTEGRITY (WCAG 2.4.7 Focus Visible)
+   ============================================================================== */
+
+:focus-visible {
+  outline: none !important;
+  box-shadow: 0 0 0 4px #60A5FA !important;
+}
+
+/* ==============================================================================
+   UNIVERSAL ACCESSIBILITY (a11y) TOGGLE ENGINES
+   ============================================================================== */
+
+/* 1. High Contrast Mode [🌓] (Overrides soft shadows with stark outlines and black text) */
+.high-contrast {
+  --neu-base: #FFFFFF;
+  --neu-text: #000000;
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+.high-contrast body,
+.high-contrast div,
+.high-contrast aside,
+.high-contrast header,
+.high-contrast section,
+.high-contrast article,
+.high-contrast main,
+.high-contrast footer {
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+.high-contrast .neu-outset,
+.high-contrast .neu-inset,
+.high-contrast .neu-outset-sm,
+.high-contrast .neu-inset-sm,
+.high-contrast .neu-btn {
+  box-shadow: none !important;
+  border: 2px solid #000000 !important;
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+}
+
+.high-contrast .neu-btn-blue {
+  background-color: #000000 !important;
+  color: #FFFFFF !important;
+  border: 2px solid #000000 !important;
+  box-shadow: none !important;
+}
+
+.high-contrast input,
+.high-contrast textarea,
+.high-contrast select {
+  border: 2px solid #000000 !important;
+  background-color: #FFFFFF !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+.high-contrast :focus-visible {
+  outline: 4px solid #000000 !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 4px #FFFF00 !important;
+}
+
+/* 2. Dyslexic Font Mode [Abc] */
+.dyslexia-font,
+.dyslexia-font body,
+.dyslexia-font button,
+.dyslexia-font input,
+.dyslexia-font textarea,
+.dyslexia-font p,
+.dyslexia-font span,
+.dyslexia-font h1,
+.dyslexia-font h2,
+.dyslexia-font h3,
+.dyslexia-font h4 {
+  font-family: 'Lexend', 'Comic Sans MS', sans-serif !important;
+  letter-spacing: 0.05em !important;
+  word-spacing: 0.08em !important;
+  line-height: 1.75 !important;
+}
+
+/* 3. A+ Text Size Scalers */
+.text-scale-large {
+  font-size: 114%;
+}
+
+.text-scale-xlarge {
+  font-size: 128%;
+}
+
+/* 4. Screen Reader Enhanced Visualizer [SR] */
+.sr-mode :focus {
+  outline: 4px solid #2563EB !important;
+  outline-offset: 4px !important;
+  box-shadow: 0 0 20px rgba(37, 99, 235, 0.6) !important;
+}
+
+.sr-mode .sr-highlight {
+  animation: srPulse 2s infinite alternate;
+}
+
+@keyframes srPulse {
+  0% { outline: 3px solid #2563EB; }
+  100% { outline: 3px solid #93C5FD; }
+}
+
+/* Skip to Content Shortcut */
+.skip-to-content {
+  position: absolute;
+  top: -120px;
+  left: 1.5rem;
+  z-index: 9999;
+  padding: 0.75rem 1.5rem;
+  background: #2563EB;
+  color: #FFFFFF;
+  font-weight: 700;
+  border-radius: 9999px;
+  text-decoration: none;
+  box-shadow: 6px 6px 14px #93A1B6;
+  transition: top 0.25s ease;
+}
+
+.skip-to-content:focus {
+  top: 1.5rem;
+  outline: 3px solid #1A253C;
+}
