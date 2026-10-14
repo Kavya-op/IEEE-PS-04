@@ -161,32 +161,30 @@ export default function DashboardAnalytics() {
           {/* KPI 1: Scanned Posts (Green Sparkline) */}
           <motion.div
             variants={staggerItemVariants}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
+            className="bg-white rounded-xl p-5 border border-[#E5E7EB] shadow-sm relative overflow-hidden flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                <span className="text-xs font-mono font-medium text-gray-500 uppercase tracking-wider">
                   Scanned Posts
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-emerald-600">
+                <div className="w-8 h-8 rounded-lg bg-[#F3FAEB] border border-[#9FE846]/40 flex items-center justify-center text-[#5C901A]">
                   <Activity className="w-4 h-4" />
                 </div>
               </div>
 
               <div className="mt-2 mb-0.5">
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
-                  <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
+                <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-gray-100 text-[#0B2115] inline-flex items-center gap-1 border border-[#E5E7EB]">
+                  <ShieldCheck className="w-3 h-3 text-[#0B2115]" />
                   <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                 </span>
               </div>
 
               <div className="mt-2">
-                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold font-mono text-[#0B2115] tracking-tight">
                   {totalScannedPosts}
                 </div>
-                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-emerald-700">
+                <div className="flex items-center gap-1.5 mt-1 text-xs font-mono font-semibold text-[#5C901A]">
                   <TrendingUp className="w-3.5 h-3.5" />
                   <span>+{activeIngressRate} velocity surge</span>
                 </div>
@@ -200,13 +198,13 @@ export default function DashboardAnalytics() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-[10px] font-mono font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1"
+                className="text-xs font-mono font-medium text-[#0B2115] hover:text-[#5C901A] flex items-center gap-1"
               >
                 <span>[View Original Reddit Post ↗]</span>
               </a>
             </div>
 
-            {/* Subtle Green Vector Sparkline */}
+            {/* Green Vector Sparkline */}
             <div className="mt-3 h-11 w-full">
               <svg
                 role="img"
@@ -217,8 +215,8 @@ export default function DashboardAnalytics() {
               >
                 <defs>
                   <linearGradient id="greenSparkFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#10B981" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#10B981" stopOpacity="0.0" />
+                    <stop offset="0%" stopColor="#9FE846" stopOpacity="0.25" />
+                    <stop offset="100%" stopColor="#9FE846" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
                 <motion.path
@@ -231,7 +229,7 @@ export default function DashboardAnalytics() {
                 />
                 <motion.path
                   d="M 0 20 L 20 18 L 40 22 L 60 14 L 80 16 L 100 8 L 120 11 L 135 4 L 150 7"
-                  stroke="#059669"
+                  stroke="#5C901A"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -244,7 +242,7 @@ export default function DashboardAnalytics() {
                   cx="150"
                   cy="7"
                   r="3.5"
-                  fill="#059669"
+                  fill="#5C901A"
                   initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
@@ -257,32 +255,30 @@ export default function DashboardAnalytics() {
           {/* KPI 2: Severe Risks (Red Sparkline) */}
           <motion.div
             variants={staggerItemVariants}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
+            className="bg-white rounded-xl p-5 border border-[#E5E7EB] shadow-sm relative overflow-hidden flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                <span className="text-xs font-mono font-medium text-gray-500 uppercase tracking-wider">
                   Severe Risks
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-rose-600">
+                <div className="w-8 h-8 rounded-lg bg-rose-50 border border-rose-100 flex items-center justify-center text-rose-600">
                   <ShieldAlert className="w-4 h-4 animate-bounce" />
                 </div>
               </div>
 
               <div className="mt-2 mb-0.5">
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-rose-700 inline-flex items-center gap-1 border border-white/40">
-                  <ShieldCheck className="w-2.5 h-2.5 text-rose-600" />
+                <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-rose-50 text-rose-700 inline-flex items-center gap-1 border border-rose-200">
+                  <ShieldCheck className="w-3 h-3 text-rose-600" />
                   <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                 </span>
               </div>
 
               <div className="mt-2">
-                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
-                  {severeRisksCount} <span className="text-sm font-bold text-rose-600">Active IOCs</span>
+                <div className="text-2xl sm:text-3xl font-bold font-mono text-[#0B2115] tracking-tight">
+                  {severeRisksCount} <span className="text-sm font-semibold text-rose-600">Active IOCs</span>
                 </div>
-                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-rose-600">
+                <div className="flex items-center gap-1.5 mt-1 text-xs font-mono font-semibold text-rose-600">
                   <AlertTriangle className="w-3.5 h-3.5" />
                   <span>Gemini AI Flagged Threat Spike</span>
                 </div>
@@ -296,13 +292,13 @@ export default function DashboardAnalytics() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-[10px] font-mono font-bold text-rose-600 hover:underline flex items-center gap-1"
+                className="text-xs font-mono font-medium text-rose-600 hover:underline flex items-center gap-1"
               >
                 <span>[View Original Reddit Post ↗]</span>
               </a>
             </div>
 
-            {/* Subtle Red Vector Sparkline */}
+            {/* Red Vector Sparkline */}
             <div className="mt-3 h-11 w-full">
               <svg
                 role="img"
@@ -313,7 +309,7 @@ export default function DashboardAnalytics() {
               >
                 <defs>
                   <linearGradient id="redSparkFill" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#EF4444" stopOpacity="0.3" />
+                    <stop offset="0%" stopColor="#EF4444" stopOpacity="0.2" />
                     <stop offset="100%" stopColor="#EF4444" stopOpacity="0.0" />
                   </linearGradient>
                 </defs>
@@ -353,78 +349,72 @@ export default function DashboardAnalytics() {
           {/* KPI 3: Coordinated Bot Clusters */}
           <motion.div
             variants={staggerItemVariants}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
+            className="bg-white rounded-xl p-5 border border-[#E5E7EB] shadow-sm relative overflow-hidden flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                <span className="text-xs font-mono font-medium text-gray-500 uppercase tracking-wider">
                   Botnet Clusters
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-blue-600">
+                <div className="w-8 h-8 rounded-lg bg-[#0B2115] border border-[#153423] flex items-center justify-center text-[#9FE846]">
                   <Bot className="w-4 h-4" />
                 </div>
               </div>
 
               <div className="mt-2 mb-0.5">
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
-                  <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
+                <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-gray-100 text-[#0B2115] inline-flex items-center gap-1 border border-[#E5E7EB]">
+                  <ShieldCheck className="w-3 h-3 text-[#0B2115]" />
                   <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                 </span>
               </div>
 
               <div className="mt-2">
-                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
-                  {thematicClusters.length} <span className="text-sm font-normal text-[#52607B]">Thematic Swarms</span>
+                <div className="text-2xl sm:text-3xl font-bold font-mono text-[#0B2115] tracking-tight">
+                  {thematicClusters.length} <span className="text-sm font-normal text-gray-500">Thematic Swarms</span>
                 </div>
-                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-blue-700">
+                <div className="flex items-center gap-1.5 mt-1 text-xs font-mono font-medium text-[#0B2115]">
                   <Clock className="w-3.5 h-3.5" />
                   <span>Grouped from live Reddit stream</span>
                 </div>
               </div>
             </div>
 
-            <motion.button
+            <button
               onClick={handleInspectSwarm}
-              whileHover={shouldReduceMotion ? {} : { scale: 1.03 }}
-              whileTap={shouldReduceMotion ? {} : { scale: 0.97 }}
-              className="mt-3 w-full py-1.5 px-3 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-[10px] font-mono font-bold text-blue-700 flex items-center justify-center gap-1 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+              className="mt-3 w-full py-2 px-3 rounded-lg bg-white border border-[#E5E7EB] hover:bg-[#F3FAEB] text-xs font-mono font-semibold text-[#0B2115] hover:text-[#5C901A] flex items-center justify-center gap-1 cursor-pointer transition-colors shadow-sm"
             >
               <span>Inspect Bot Swarms</span>
               <ArrowUpRight className="w-3 h-3" />
-            </motion.button>
+            </button>
           </motion.div>
 
           {/* KPI 4: Defense Efficacy (Green Sparkline) */}
           <motion.div
             variants={staggerItemVariants}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-            className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden cursor-pointer flex flex-col justify-between"
+            className="bg-white rounded-xl p-5 border border-[#E5E7EB] shadow-sm relative overflow-hidden flex flex-col justify-between"
           >
             <div>
               <div className="flex items-center justify-between">
-                <span className="text-xs font-mono font-bold text-[#52607B] uppercase tracking-wider">
+                <span className="text-xs font-mono font-medium text-gray-500 uppercase tracking-wider">
                   Defense Efficacy
                 </span>
-                <div className="w-8 h-8 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-emerald-600">
+                <div className="w-8 h-8 rounded-lg bg-[#F3FAEB] border border-[#9FE846]/40 flex items-center justify-center text-[#5C901A]">
                   <CheckCircle2 className="w-4 h-4" />
                 </div>
               </div>
 
               <div className="mt-2 mb-0.5">
-                <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-emerald-700 inline-flex items-center gap-1 border border-white/40">
-                  <ShieldCheck className="w-2.5 h-2.5 text-emerald-600" />
+                <span className="text-xs font-mono font-medium px-2 py-0.5 rounded bg-[#F3FAEB] text-[#5C901A] inline-flex items-center gap-1 border border-[#9FE846]/40">
+                  <ShieldCheck className="w-3 h-3 text-[#5C901A]" />
                   <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                 </span>
               </div>
 
               <div className="mt-2">
-                <div className="text-2xl sm:text-3xl font-black font-mono text-[#1A253C] tracking-tight">
+                <div className="text-2xl sm:text-3xl font-bold font-mono text-[#0B2115] tracking-tight">
                   {defenseEfficacy}
                 </div>
-                <div className="flex items-center gap-1.5 mt-1 text-[11px] font-mono font-bold text-emerald-700">
+                <div className="flex items-center gap-1.5 mt-1 text-xs font-mono font-semibold text-[#5C901A]">
                   <span>{liveThreats.length} live stream packets analyzed</span>
                 </div>
               </div>
@@ -437,7 +427,7 @@ export default function DashboardAnalytics() {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => e.stopPropagation()}
-                className="text-[10px] font-mono font-bold text-emerald-700 hover:underline flex items-center gap-1"
+                className="text-xs font-mono font-medium text-[#5C901A] hover:underline flex items-center gap-1"
               >
                 <span>[View Original Reddit Post ↗]</span>
               </a>
@@ -454,7 +444,7 @@ export default function DashboardAnalytics() {
               >
                 <motion.path
                   d="M 0 24 L 25 20 L 50 22 L 75 14 L 100 12 L 125 6 L 150 4"
-                  stroke="#059669"
+                  stroke="#5C901A"
                   strokeWidth="2.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -467,7 +457,7 @@ export default function DashboardAnalytics() {
                   cx="150"
                   cy="4"
                   r="3.5"
-                  fill="#059669"
+                  fill="#5C901A"
                   initial={shouldReduceMotion ? { scale: 1 } : { scale: 0 }}
                   whileInView={{ scale: 1 }}
                   viewport={{ once: true }}
@@ -480,29 +470,29 @@ export default function DashboardAnalytics() {
       )}
 
       {/* =========================================================================
-          2. CENTRAL GLOBAL THREAT ACTIVITY MAP (Outset Card with Wireframe Sphere)
+          2. CENTRAL GLOBAL THREAT ACTIVITY MAP (Flat SaaS Panel with Wireframe Sphere)
           ========================================================================= */}
       <section
         aria-label="Global Threat Radar"
-        className="bg-[#E0E5EC] rounded-3xl p-6 sm:p-8 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 relative overflow-hidden"
+        className="bg-white rounded-xl p-5 sm:p-6 border border-[#E5E7EB] shadow-sm relative overflow-hidden"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#A3B1C6]/30 gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E5E7EB] gap-3">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-mono font-bold text-blue-700 bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF]">
-              <span className="w-2 h-2 rounded-full bg-blue-600 animate-ping" />
+            <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-md text-xs font-mono font-semibold text-[#5C901A] bg-[#F3FAEB] border border-[#9FE846]/40">
+              <span className="w-2 h-2 rounded-full bg-[#9FE846] animate-ping" />
               <span>NEURAL RECONNAISSANCE // DEFCON 2</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-black text-[#1A253C] tracking-tight mt-2">
+            <h2 className="text-lg sm:text-xl font-bold text-[#0B2115] tracking-tight mt-2">
               Global Threat Activity Map
             </h2>
-            <p className="text-xs text-[#52607B] font-mono mt-0.5">
+            <p className="text-xs text-gray-500 font-mono mt-0.5">
               Live OSINT telemetry matrix tracking coordinated botnets, disinformation, and zero-day leaks.
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="px-3.5 py-1.5 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] text-xs font-mono font-bold text-[#1A253C] flex items-center gap-2">
-              <Radio className="w-3.5 h-3.5 text-blue-600 animate-pulse" />
+            <span className="px-3 py-1.5 rounded-lg bg-gray-50 border border-[#E5E7EB] text-xs font-mono font-semibold text-[#0B2115] flex items-center gap-2">
+              <Radio className="w-3.5 h-3.5 text-[#5C901A] animate-pulse" />
               <span>RADAR SYNC: 100%</span>
             </span>
           </div>
@@ -510,23 +500,23 @@ export default function DashboardAnalytics() {
 
         {/* Central Wireframe Globe with Outset Floating Tags */}
         <div className="relative py-8 flex items-center justify-center min-h-[340px]">
-          {/* Neumorphic Radar Rings */}
-          <div className="absolute w-[340px] h-[340px] rounded-full border border-blue-400/20 pointer-events-none" />
-          <div className="absolute w-[260px] h-[260px] rounded-full border border-blue-500/25 pointer-events-none" />
-          <div className="absolute w-[180px] h-[180px] rounded-full shadow-[inset_6px_6px_12px_#A3B1C6,inset_-6px_-6px_12px_#FFFFFF] pointer-events-none" />
+          {/* Radar Rings */}
+          <div className="absolute w-[340px] h-[340px] rounded-full border border-[#0B2115]/15 pointer-events-none" />
+          <div className="absolute w-[260px] h-[260px] rounded-full border border-[#9FE846]/30 pointer-events-none" />
+          <div className="absolute w-[180px] h-[180px] rounded-full border border-[#E5E7EB] pointer-events-none" />
 
           {/* 3D Wireframe Globe Graphic */}
           <div className="relative w-64 sm:w-80 h-64 sm:h-80 flex items-center justify-center">
             <svg
               role="img"
               aria-label="3D Global Threat Activity Sphere wireframe map"
-              className="w-full h-full drop-shadow-[6px_6px_12px_#A3B1C6]"
+              className="w-full h-full"
               viewBox="0 0 300 300"
               fill="none"
             >
               <circle cx="150" cy="150" r="110" stroke="#94A3B8" strokeWidth="2" strokeDasharray="3 3" />
-              <ellipse cx="150" cy="150" rx="42" ry="110" stroke="#2563EB" strokeWidth="1.8" />
-              <ellipse cx="150" cy="150" rx="85" ry="110" stroke="#60A5FA" strokeWidth="1.5" />
+              <ellipse cx="150" cy="150" rx="42" ry="110" stroke="#0B2115" strokeWidth="1.8" />
+              <ellipse cx="150" cy="150" rx="85" ry="110" stroke="#9FE846" strokeWidth="1.5" />
               <line x1="150" y1="40" x2="150" y2="260" stroke="#64748B" strokeWidth="1.5" />
               <line x1="40" y1="150" x2="260" y2="150" stroke="#64748B" strokeWidth="1.5" />
               <ellipse cx="150" cy="100" rx="95" ry="32" stroke="#94A3B8" strokeWidth="1.2" strokeDasharray="4 2" />
@@ -534,45 +524,45 @@ export default function DashboardAnalytics() {
 
               {/* Threat Attack Vectors */}
               <path d="M 90 110 Q 150 70 215 105" stroke="#DC2626" strokeWidth="3" strokeDasharray="6 3" />
-              <path d="M 215 105 Q 235 165 200 205" stroke="#2563EB" strokeWidth="2.5" />
+              <path d="M 215 105 Q 235 165 200 205" stroke="#0B2115" strokeWidth="2.5" />
               <circle cx="90" cy="110" r="6" fill="#DC2626" />
-              <circle cx="215" cy="105" r="6" fill="#2563EB" />
-              <circle cx="200" cy="205" r="5" fill="#059669" />
+              <circle cx="215" cy="105" r="6" fill="#0B2115" />
+              <circle cx="200" cy="205" r="5" fill="#5C901A" />
             </svg>
           </div>
 
-          {/* Outset Floating Tag 1: Anomalies Detected */}
-          <div className="absolute top-4 left-4 sm:left-8 bg-[#E0E5EC] rounded-2xl p-3 sm:p-4 shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] border border-white/60 flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-rose-100 text-rose-700 shadow-[inset_2px_2px_4px_#A3B1C6]">
+          {/* Floating Tag 1: Anomalies Detected */}
+          <div className="absolute top-4 left-4 sm:left-8 bg-white rounded-xl p-3 sm:p-4 border border-[#E5E7EB] shadow-sm flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-rose-50 text-rose-700 border border-rose-100">
               <ShieldAlert className="w-5 h-5" />
             </div>
             <div>
               <div className="text-[10px] font-mono font-bold text-rose-700 uppercase">
                 Anomalies Detected
               </div>
-              <div className="text-sm sm:text-base font-black text-[#1A253C] font-mono">
+              <div className="text-sm sm:text-base font-bold text-[#0B2115] font-mono">
                 +42 High Vectors
               </div>
-              <div className="text-[10px] font-mono text-[#52607B]">
+              <div className="text-xs font-mono text-gray-500">
                 SCADA Exfil // DNS Tunnel
               </div>
             </div>
           </div>
 
-          {/* Outset Floating Tag 2: Emerging Spikes */}
-          <div className="absolute bottom-4 right-4 sm:right-8 bg-[#E0E5EC] rounded-2xl p-3 sm:p-4 shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] border border-white/60 flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-blue-100 text-blue-700 shadow-[inset_2px_2px_4px_#A3B1C6]">
+          {/* Floating Tag 2: Emerging Spikes */}
+          <div className="absolute bottom-4 right-4 sm:right-8 bg-white rounded-xl p-3 sm:p-4 border border-[#E5E7EB] shadow-sm flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40">
               <Hash className="w-5 h-5" />
             </div>
             <div>
-              <div className="text-[10px] font-mono font-bold text-blue-700 uppercase">
+              <div className="text-[10px] font-mono font-bold text-[#5C901A] uppercase">
                 Emerging Spikes
               </div>
               <div className="flex flex-wrap gap-1 mt-1">
                 {emergingTopics.slice(0, 2).map((item, idx) => (
                   <span
                     key={idx}
-                    className="px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[10px] font-mono font-bold text-[#1A253C]"
+                    className="px-2 py-0.5 rounded bg-gray-100 text-xs font-mono font-medium text-[#0B2115] border border-[#E5E7EB]"
                   >
                     {item.topic.startsWith('#') ? item.topic : `#${item.topic}`}
                   </span>
@@ -588,17 +578,17 @@ export default function DashboardAnalytics() {
           ========================================================================= */}
       <section
         aria-label="Emerging Topics"
-        className="bg-[#E0E5EC] rounded-3xl p-6 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60"
+        className="bg-white rounded-xl p-5 sm:p-6 border border-[#E5E7EB] shadow-sm"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#A3B1C6]/30 gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E5E7EB] gap-3">
           <div>
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-600" />
-              <h3 className="text-base sm:text-lg font-black text-[#1A253C] tracking-tight">
+              <TrendingUp className="w-4 h-4 text-[#0B2115]" />
+              <h3 className="text-base sm:text-lg font-bold text-[#0B2115] tracking-tight">
                 Top 8 Emerging Topics & Viral Velocity
               </h3>
             </div>
-            <p className="text-xs font-mono text-[#52607B] mt-0.5">
+            <p className="text-xs font-mono text-gray-500 mt-0.5">
               AI batch synthesis assessing frequency surge & threat relevance
             </p>
           </div>
@@ -606,16 +596,16 @@ export default function DashboardAnalytics() {
           <div className="flex items-center gap-2">
             <button
               onClick={() => setShowJsonModal(true)}
-              className="px-3.5 py-1.5 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-xs font-mono font-bold text-[#1A253C] flex items-center gap-1.5 transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+              className="px-3.5 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-[#0B2115] hover:bg-[#F3FAEB] hover:text-[#5C901A] hover:border-[#9FE846]/40 text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
             >
-              <Code className="w-3.5 h-3.5 text-blue-600" />
+              <Code className="w-3.5 h-3.5 text-[#0B2115]" />
               <span>Inspect JSON</span>
             </button>
 
             <button
               onClick={handleRefreshTopics}
               disabled={loadingTopics}
-              className="px-3.5 py-1.5 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold flex items-center gap-1.5 shadow-[4px_4px_8px_#93A1B6,-4px_-4px_8px_#FFFFFF] transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 disabled:opacity-50"
+              className="px-3.5 py-1.5 rounded-lg bg-[#9FE846] hover:bg-[#8fd838] text-[#0B2115] text-xs font-mono font-semibold flex items-center gap-1.5 shadow-sm transition-colors cursor-pointer disabled:opacity-50"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loadingTopics ? 'animate-spin' : ''}`} />
               <span>{loadingTopics ? 'Synthesizing...' : 'Re-analyze'}</span>
@@ -644,56 +634,54 @@ export default function DashboardAnalytics() {
               <motion.div
                 key={index}
                 variants={staggerItemVariants}
-                whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-                transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-                className="p-4 rounded-2xl bg-[#E0E5EC] shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] border border-white/60 cursor-pointer"
+                className="p-4 rounded-xl bg-gray-50 border border-[#E5E7EB] shadow-sm cursor-pointer hover:border-[#0B2115]/30 transition-colors"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-[10px] font-mono font-bold text-[#52607B]">
+                  <span className="text-[10px] font-mono font-bold text-gray-400">
                     #{index + 1}
                   </span>
                   <span
-                    className={`text-[9px] font-mono font-bold px-2 py-0.5 rounded-full shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] ${
+                    className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
                       isHigh
-                        ? 'text-rose-700 bg-rose-100/60'
+                        ? 'text-rose-700 bg-rose-50 border-rose-200'
                         : isMed
-                        ? 'text-amber-700 bg-amber-100/60'
-                        : 'text-emerald-700 bg-emerald-100/60'
+                        ? 'text-amber-700 bg-amber-50 border-amber-200'
+                        : 'text-[#5C901A] bg-[#F3FAEB] border-[#9FE846]/40'
                     }`}
                   >
                     {item.threatRelevance} Threat
                   </span>
                 </div>
 
-                <div className="text-sm font-bold font-mono text-[#1A253C] truncate flex items-center gap-1.5">
-                  <Tag className="w-3.5 h-3.5 text-blue-600 shrink-0" />
+                <div className="text-sm font-bold font-mono text-[#0B2115] truncate flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5 text-[#0B2115] shrink-0" />
                   <span className="truncate">{item.topic}</span>
                 </div>
 
-                {/* Inset Neumorphic Source Citation Badge & Direct Reddit Link */}
+                {/* Source Citation Badge & Direct Reddit Link */}
                 <div className="mt-2 flex flex-wrap items-center justify-between gap-1.5">
-                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
-                    <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-white text-gray-600 inline-flex items-center gap-1 border border-[#E5E7EB]">
+                    <ShieldCheck className="w-3 h-3 text-[#0B2115]" />
                     <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                   </span>
                   <a
                     href={liveThreats[index % (liveThreats.length || 1)]?.link || "https://www.reddit.com/r/cybersecurity"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[10px] font-mono font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1"
+                    className="text-[10px] font-mono font-semibold text-[#0B2115] hover:text-[#5C901A] hover:underline flex items-center gap-1"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <span>[View Original Reddit Post ↗]</span>
                   </a>
                 </div>
 
-                {/* Velocity Progress Bar (Inset Trench with Left-to-Right draw animation) */}
-                <div className="mt-3 pt-2 border-t border-[#A3B1C6]/20">
-                  <div className="flex items-center justify-between text-[10px] font-mono mb-1 text-[#52607B]">
+                {/* Velocity Progress Bar */}
+                <div className="mt-3 pt-2 border-t border-[#E5E7EB]">
+                  <div className="flex items-center justify-between text-xs font-mono mb-1 text-gray-500">
                     <span>Velocity:</span>
-                    <span className="font-bold text-[#1A253C]">{item.volumeVelocity} / 100</span>
+                    <span className="font-bold text-[#0B2115]">{item.volumeVelocity} / 100</span>
                   </div>
-                  <div className="h-2 w-full bg-[#E0E5EC] rounded-full shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] overflow-hidden p-0.5">
+                  <div className="h-2 w-full bg-gray-200 rounded-full overflow-hidden">
                     <motion.div
                       initial={shouldReduceMotion ? { width: `${item.volumeVelocity}%` } : { width: '0%' }}
                       whileInView={{ width: `${item.volumeVelocity}%` }}
@@ -702,7 +690,7 @@ export default function DashboardAnalytics() {
                       className={`h-full rounded-full ${
                         item.volumeVelocity >= 80
                           ? 'bg-gradient-to-r from-rose-500 to-amber-500'
-                          : 'bg-gradient-to-r from-blue-500 to-emerald-500'
+                          : 'bg-gradient-to-r from-[#0B2115] to-[#9FE846]'
                       }`}
                     />
                   </div>
@@ -716,38 +704,37 @@ export default function DashboardAnalytics() {
 
       {/* =========================================================================
           4. TIMELINE CHART: GANTT-STYLE COORDINATED BOT NETWORK TIMELINE
-             (Wide, soft-inset container at the bottom with raised outset bars)
           ========================================================================= */}
       <section
         aria-label="Bot Network Activity Gantt Timeline"
-        className="bg-[#E0E5EC] rounded-3xl p-6 sm:p-7 shadow-[inset_6px_6px_12px_#A3B1C6,inset_-6px_-6px_12px_#FFFFFF] border border-white/60 space-y-4"
+        className="bg-white rounded-xl p-5 sm:p-6 border border-[#E5E7EB] shadow-sm space-y-4"
       >
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#A3B1C6]/30 gap-2">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E5E7EB] gap-2">
           <div>
             <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-blue-600" />
-              <h3 className="text-base sm:text-lg font-black text-[#1A253C] tracking-tight">
+              <Clock className="w-4 h-4 text-[#0B2115]" />
+              <h3 className="text-base sm:text-lg font-bold text-[#0B2115] tracking-tight">
                 Coordinated Bot Network Activity Timeline (Gantt Analysis)
               </h3>
             </div>
-            <p className="text-xs font-mono text-[#52607B] mt-0.5">
+            <p className="text-xs font-mono text-gray-500 mt-0.5">
               Spatio-temporal mapping of automated swarms, synchronized bursts, and payload repetition windows
             </p>
           </div>
 
-          <div className="flex items-center gap-3 text-[11px] font-mono text-[#52607B]">
+          <div className="flex items-center gap-3 text-[11px] font-mono text-gray-500">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded bg-[#B0BAC8]/80 shadow-[2px_2px_4px_#A3B1C6]" />
-              <span>Raised Outset Windows</span>
+              <span className="w-3 h-3 rounded bg-[#0B2115]" />
+              <span>Active Burst Windows</span>
             </span>
-            <span className="px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] font-bold text-blue-700">
+            <span className="px-2.5 py-1 rounded-lg border border-[#E5E7EB] text-[#0B2115] bg-[#F3FAEB] shadow-sm font-bold text-xs">
               5 Active Clusters
             </span>
           </div>
         </div>
 
         {/* Time Progression Horizontal Grid Header */}
-        <div className="grid grid-cols-6 text-[10px] sm:text-xs font-mono font-bold text-[#52607B] px-2 py-1 border-b border-[#A3B1C6]/30">
+        <div className="grid grid-cols-6 text-[10px] sm:text-xs font-mono font-bold text-gray-500 px-2 py-1 border-b border-gray-100">
           <div>00:00 UTC</div>
           <div>04:00 UTC</div>
           <div>08:00 UTC</div>
@@ -756,23 +743,23 @@ export default function DashboardAnalytics() {
           <div className="text-right">20:00 - Live</div>
         </div>
 
-        {/* Gantt Rows with Left-to-Right Raised Outset Bar Animations */}
+        {/* Gantt Rows with Left-to-Right Flat Bar Animations */}
         <div className="space-y-4 pt-2">
           {botNetworkTimeline.map((item, idx) => (
             <div key={item.id} className="space-y-1.5">
               <div className="flex flex-wrap items-center justify-between text-xs font-mono px-1 gap-2 pb-0.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="font-bold text-[#1A253C] flex items-center gap-1.5">
-                    <Bot className="w-3.5 h-3.5 text-blue-600" />
+                  <span className="font-bold text-[#0B2115] flex items-center gap-1.5">
+                    <Bot className="w-3.5 h-3.5 text-[#0B2115]" />
                     <span>{item.clusterName}</span>
                   </span>
 
-                  {/* Small Inset Neumorphic Source Citation Badge for Chain-of-Custody Compliance */}
+                  {/* Clean Source Citation Badge for Chain-of-Custody Compliance */}
                   <span
-                    className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] flex items-center gap-1 border border-white/40"
+                    className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-gray-100 text-[#0B2115] border border-[#E5E7EB] flex items-center gap-1"
                     title={`Chain of Custody: Ingested via ${item.ingestionMethod} at ${item.verifiedTimestamp}`}
                   >
-                    <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
+                    <ShieldCheck className="w-2.5 h-2.5 text-[#0B2115]" />
                     <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                   </span>
 
@@ -781,27 +768,27 @@ export default function DashboardAnalytics() {
                     href={item.link || item.samplePost?.link || "https://www.reddit.com/r/cybersecurity"}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[10px] font-mono font-bold text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1"
+                    className="text-[10px] font-mono font-bold text-[#0B2115] hover:text-[#5C901A] flex items-center gap-1"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <span>[View Original Reddit Post ↗]</span>
                   </a>
                 </div>
 
-                <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-[#52607B]">
-                  <span>Origin: <strong className="text-[#1A253C]">{item.origin}</strong></span>
+                <div className="flex flex-wrap items-center gap-2 text-[10px] font-mono text-gray-500">
+                  <span>Origin: <strong className="text-[#0B2115]">{item.origin}</strong></span>
                   <span>&bull;</span>
-                  <span>Nodes: <strong className="text-[#1A253C]">{item.botCount}</strong></span>
+                  <span>Nodes: <strong className="text-[#0B2115]">{item.botCount}</strong></span>
                   <span>&bull;</span>
                   <span
-                    className={`px-2 py-0.5 rounded-full font-bold shadow-[inset_1px_1px_2px_#A3B1C6,inset_-1px_-1px_2px_#FFFFFF] ${
+                    className={`px-2 py-0.5 rounded font-bold border ${
                       item.status === 'Quarantined'
-                        ? 'bg-emerald-100 text-emerald-800'
+                        ? 'bg-[#F3FAEB] text-[#5C901A] border-[#9FE846]/40'
                         : item.status === 'Active Mitigating'
-                        ? 'bg-amber-100 text-amber-800 animate-pulse'
+                        ? 'bg-amber-50 text-amber-800 border-amber-200 animate-pulse'
                         : item.status === 'Active Spike'
-                        ? 'bg-rose-100 text-rose-700 animate-pulse'
-                        : 'bg-blue-100 text-blue-800'
+                        ? 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
+                        : 'bg-blue-50 text-blue-800 border-blue-200'
                     }`}
                   >
                     {item.status}
@@ -809,21 +796,21 @@ export default function DashboardAnalytics() {
                 </div>
               </div>
 
-              {/* Gantt Bar Trench with Raised Outset Bar Animating from Left to Right */}
-              <div className="relative h-9 w-full bg-[#E0E5EC] rounded-xl shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] overflow-hidden p-1">
+              {/* Gantt Bar Trench with Flat Outset Bar Animating from Left to Right */}
+              <div className="relative h-9 w-full bg-gray-100 rounded-lg border border-[#E5E7EB] overflow-hidden p-1">
                 <motion.button
                   onClick={() => setSelectedTimelineCluster(item)}
                   initial={shouldReduceMotion ? { width: `${item.widthPct}%`, left: `${item.startPct}%` } : { width: '0%', left: `${item.startPct}%` }}
                   whileInView={{ width: `${item.widthPct}%` }}
                   viewport={{ once: true }}
                   transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.9, delay: 0.2 + idx * 0.12, ease: "easeOut" }}
-                  whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '6px 6px 14px #A3B1C6, -6px -6px 14px #FFFFFF' }}
-                  whileTap={shouldReduceMotion ? {} : { scale: 0.98, boxShadow: 'inset 3px 3px 6px #A3B1C6, inset -3px -3px 6px #FFFFFF' }}
+                  whileHover={shouldReduceMotion ? {} : { scale: 1.01 }}
+                  whileTap={shouldReduceMotion ? {} : { scale: 0.99 }}
                   title={`${item.clusterName} (${item.origin}) - ${item.botCount} - Click to inspect chain of custody`}
-                  className="absolute top-1 bottom-1 bg-[#B0BAC8]/60 hover:bg-[#B0BAC8]/90 text-[#1A253C] rounded-lg shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] px-2.5 flex items-center justify-between text-[11px] font-mono font-bold transition-colors cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 overflow-hidden"
+                  className="absolute top-1 bottom-1 bg-[#0B2115] hover:bg-[#153423] text-white rounded-md shadow-sm px-2.5 flex items-center justify-between text-[11px] font-mono font-bold transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#9FE846] overflow-hidden"
                 >
-                  <span className="truncate">{item.timeLabel}</span>
-                  <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/60 text-[#1A253C] shrink-0 ml-1">
+                  <span className="truncate text-[#9FE846]">{item.timeLabel}</span>
+                  <span className="text-[9px] px-1.5 py-0.5 rounded bg-[#153423] text-[#9FE846] shrink-0 ml-1">
                     {item.intensity} Intensity
                   </span>
                 </motion.button>
@@ -834,17 +821,17 @@ export default function DashboardAnalytics() {
       </section>
 
       {/* =========================================================================
-          5. MONITORED PLATFORMS (Outset Cards with Inset Live Status)
+          5. MONITORED PLATFORMS (Flat SaaS Cards)
           ========================================================================= */}
       <section aria-label="Monitored Social Media Platforms">
         <div className="flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-blue-600 animate-pulse" />
-            <h3 className="text-base font-black text-[#1A253C] tracking-tight">
+            <Radio className="w-4 h-4 text-[#5C901A] animate-pulse" />
+            <h3 className="text-base font-bold text-[#0B2115] tracking-tight">
               Monitored Social Media Platforms
             </h3>
           </div>
-          <span className="text-xs font-mono text-[#52607B]">
+          <span className="text-xs font-mono text-gray-500">
             4 / 4 Telemetry Feeds Active
           </span>
         </div>
@@ -860,45 +847,45 @@ export default function DashboardAnalytics() {
             <motion.div
               key={idx}
               variants={staggerItemVariants}
-              whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
+              whileHover={shouldReduceMotion ? {} : { y: -2 }}
               transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-              className="bg-[#E0E5EC] rounded-3xl p-5 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 cursor-pointer flex flex-col justify-between"
+              className="bg-white rounded-xl p-5 border border-[#E5E7EB] shadow-sm cursor-pointer flex flex-col justify-between hover:border-[#0B2115]/30 transition-colors"
             >
               <div>
                 <div className="flex items-center justify-between">
-                  <div className="w-10 h-10 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] flex items-center justify-center font-bold text-sm text-[#1A253C]">
+                  <div className="w-10 h-10 rounded-lg bg-[#0B2115] border border-[#153423] flex items-center justify-center font-bold text-sm text-[#9FE846]">
                     {platform.name[0]}
                   </div>
                   {/* Live Online Status Dot */}
-                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[10px] font-mono font-bold text-emerald-700">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#F3FAEB] border border-[#9FE846]/40 text-[10px] font-mono font-bold text-[#5C901A]">
+                    <span className="w-2 h-2 rounded-full bg-[#9FE846] animate-pulse" />
                     <span>{platform.status}</span>
                   </div>
                 </div>
 
-                {/* Small Inset Neumorphic Source Citation Badge */}
+                {/* Clean Flat Source Citation Badge */}
                 <div className="mt-3 mb-1">
-                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
-                    <ShieldCheck className="w-2.5 h-2.5 text-[#2563EB]" />
+                  <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded bg-gray-100 text-[#0B2115] border border-[#E5E7EB] inline-flex items-center gap-1">
+                    <ShieldCheck className="w-2.5 h-2.5 text-[#0B2115]" />
                     <span>[{platform.badge || `Verified Source: ${platform.name}`}]</span>
                   </span>
                 </div>
 
                 <div className="mt-1">
-                  <h4 className="text-sm font-bold text-[#1A253C]">{platform.name}</h4>
-                  <p className="text-[11px] font-mono text-[#52607B]">{platform.stream}</p>
+                  <h4 className="text-sm font-bold text-[#0B2115]">{platform.name}</h4>
+                  <p className="text-[11px] font-mono text-gray-500">{platform.stream}</p>
                 </div>
               </div>
 
               {/* Telemetry Metrics: Ingestion Method, Event Volume, Network Latency in ms */}
-              <div className="mt-3 pt-2.5 border-t border-[#A3B1C6]/30 flex items-center justify-between text-xs font-mono font-bold">
+              <div className="mt-3 pt-2.5 border-t border-[#E5E7EB] flex items-center justify-between text-xs font-mono font-bold">
                 <div className="flex flex-col">
-                  <span className="text-[9px] font-mono text-[#52607B] uppercase">Event Volume</span>
-                  <span className="text-[#1A253C]">{platform.volume}</span>
+                  <span className="text-[9px] font-mono text-gray-400 uppercase">Event Volume</span>
+                  <span className="text-[#0B2115]">{platform.volume}</span>
                 </div>
                 <div className="flex flex-col items-end">
-                  <span className="text-[9px] font-mono text-[#52607B] uppercase">Network Latency</span>
-                  <span className="text-[#2563EB]">{platform.latency}</span>
+                  <span className="text-[9px] font-mono text-gray-400 uppercase">Network Latency</span>
+                  <span className="text-[#5C901A]">{platform.latency}</span>
                 </div>
               </div>
             </motion.div>
@@ -913,25 +900,25 @@ export default function DashboardAnalytics() {
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
         >
-          <div className="bg-[#E0E5EC] rounded-3xl p-6 shadow-[12px_12px_24px_#A3B1C6,-12px_-12px_24px_#FFFFFF] border border-white/80 max-w-lg w-full flex flex-col max-h-[85vh]">
-            <div className="flex items-center justify-between pb-3 border-b border-[#A3B1C6]/30">
-              <h4 className="text-sm font-mono font-bold text-[#1A253C]">
+          <div className="bg-white rounded-2xl p-6 shadow-xl border border-[#E5E7EB] max-w-lg w-full flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
+              <h4 className="text-sm font-mono font-bold text-[#0B2115]">
                 Strict JSON: Top 8 Emerging Topics
               </h4>
               <button
                 onClick={() => setShowJsonModal(false)}
-                className="p-1.5 rounded-xl bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-[#1A253C] focus:outline-none focus:ring-4 focus:ring-blue-400"
+                className="p-1.5 rounded-lg border border-[#E5E7EB] text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0B2115]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
-            <pre className="mt-3 p-3.5 rounded-2xl bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-xs font-mono text-[#1A253C] overflow-y-auto flex-1">
+            <pre className="mt-3 p-3.5 rounded-xl bg-gray-50 border border-[#E5E7EB] text-xs font-mono text-gray-800 overflow-y-auto flex-1">
               {JSON.stringify(emergingTopics, null, 2)}
             </pre>
             <div className="mt-4 flex justify-end">
               <button
                 onClick={() => setShowJsonModal(false)}
-                className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-mono font-bold shadow-[4px_4px_8px_#93A1B6] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-[#0B2115] hover:bg-[#153423] text-white text-xs font-mono font-bold shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0B2115] cursor-pointer transition-colors"
               >
                 Close
               </button>
@@ -947,43 +934,43 @@ export default function DashboardAnalytics() {
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
         >
-          <div className="bg-[#E0E5EC] rounded-3xl p-6 shadow-[12px_12px_24px_#A3B1C6,-12px_-12px_24px_#FFFFFF] border border-white/80 max-w-lg w-full flex flex-col max-h-[85vh]">
-            <div className="flex items-center justify-between pb-3 border-b border-[#A3B1C6]/30">
+          <div className="bg-white rounded-2xl p-6 shadow-xl border border-[#E5E7EB] max-w-lg w-full flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-blue-600" />
-                <h4 className="text-sm font-mono font-bold text-[#1A253C]">
+                <Bot className="w-5 h-5 text-[#0B2115]" />
+                <h4 className="text-sm font-mono font-bold text-[#0B2115]">
                   Bot-Swarm Coordination Analysis
                 </h4>
               </div>
               <button
                 onClick={() => setShowBotnetModal(false)}
-                className="p-1.5 rounded-xl bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] text-[#1A253C] focus:outline-none focus:ring-4 focus:ring-blue-400"
+                className="p-1.5 rounded-lg border border-[#E5E7EB] text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0B2115]"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="mt-4 p-4 rounded-2xl bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-xs font-mono space-y-2.5">
+            <div className="mt-4 p-4 rounded-xl bg-gray-50 border border-[#E5E7EB] text-xs font-mono space-y-2.5">
               {loadingBotnet ? (
-                <div className="py-6 text-center text-[#52607B] flex items-center justify-center gap-2">
-                  <RefreshCw className="w-4 h-4 animate-spin text-blue-600" />
+                <div className="py-6 text-center text-gray-500 flex items-center justify-center gap-2">
+                  <RefreshCw className="w-4 h-4 animate-spin text-[#0B2115]" />
                   <span>Evaluating synchronized patterns...</span>
                 </div>
               ) : botnetResult ? (
                 <>
-                  <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                    <span className="text-[#52607B]">Coordination Verdict:</span>
+                  <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                    <span className="text-gray-500">Coordination Verdict:</span>
                     <span className="font-bold text-rose-700">
                       {botnetResult.coordinationDetected ? '🚨 COORDINATION CONFIRMED' : 'ORGANIC'}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                    <span className="text-[#52607B]">Similarity Score:</span>
+                  <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                    <span className="text-gray-500">Similarity Score:</span>
                     <span className="font-bold text-amber-700">{botnetResult.similarityScore}%</span>
                   </div>
                   <div className="pt-1">
-                    <span className="text-[#52607B] block mb-1">Network Pattern:</span>
-                    <p className="text-[#1A253C] leading-relaxed bg-[#E0E5EC] p-2.5 rounded-xl shadow-[inset_2px_2px_4px_#A3B1C6]">
+                    <span className="text-gray-500 block mb-1">Network Pattern:</span>
+                    <p className="text-gray-800 leading-relaxed bg-white border border-[#E5E7EB] p-2.5 rounded-lg shadow-sm">
                       {botnetResult.networkPattern}
                     </p>
                   </div>
@@ -994,7 +981,7 @@ export default function DashboardAnalytics() {
             <div className="mt-4 flex justify-end">
               <button
                 onClick={() => setShowBotnetModal(false)}
-                className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-mono font-bold shadow-[4px_4px_8px_#93A1B6] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-[#0B2115] hover:bg-[#153423] text-white text-xs font-mono font-bold shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0B2115] cursor-pointer transition-colors"
               >
                 Close
               </button>
@@ -1010,57 +997,57 @@ export default function DashboardAnalytics() {
           aria-modal="true"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm"
         >
-          <div className="bg-[#E0E5EC] rounded-3xl p-6 shadow-[16px_16px_32px_#A3B1C6,-16px_-16px_32px_#FFFFFF] border border-white/80 max-w-lg w-full flex flex-col max-h-[85vh]">
-            <div className="flex items-center justify-between pb-3 border-b border-[#A3B1C6]/30">
+          <div className="bg-white rounded-2xl p-6 shadow-xl border border-[#E5E7EB] max-w-lg w-full flex flex-col max-h-[85vh]">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
               <div className="flex items-center gap-2">
-                <Bot className="w-5 h-5 text-blue-600" />
-                <h4 className="text-sm font-mono font-bold text-[#1A253C]">
+                <Bot className="w-5 h-5 text-[#0B2115]" />
+                <h4 className="text-sm font-mono font-bold text-[#0B2115]">
                   {selectedTimelineCluster.clusterName}
                 </h4>
               </div>
               <button
                 onClick={() => setSelectedTimelineCluster(null)}
-                className="p-1.5 rounded-xl bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] text-[#1A253C] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
+                className="p-1.5 rounded-lg border border-[#E5E7EB] text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0B2115] cursor-pointer"
                 aria-label="Close swarm inspection"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="mt-4 p-4 rounded-2xl bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-xs font-mono space-y-3">
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Cluster ID:</span>
-                <span className="font-bold text-[#1A253C]">{selectedTimelineCluster.id}</span>
+            <div className="mt-4 p-4 rounded-xl bg-gray-50 border border-[#E5E7EB] text-xs font-mono space-y-3">
+              <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Cluster ID:</span>
+                <span className="font-bold text-[#0B2115]">{selectedTimelineCluster.id}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Data Provenance Tag:</span>
-                <span className="text-[10px] font-bold text-[#2563EB]">
+              <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Data Provenance Tag:</span>
+                <span className="text-[10px] font-bold text-[#0B2115]">
                   Verified Source: r/cybersecurity (Reddit Native API)
                 </span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Verified Geographic Origin:</span>
-                <span className="font-bold text-[#2563EB]">{selectedTimelineCluster.origin}</span>
+              <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Verified Geographic Origin:</span>
+                <span className="font-bold text-[#0B2115]">{selectedTimelineCluster.origin}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Nodes / Accounts Involved:</span>
+              <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Nodes / Accounts Involved:</span>
                 <span className="font-bold text-amber-700">{selectedTimelineCluster.botCount}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Current Mitigation Status:</span>
+              <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Current Mitigation Status:</span>
                 <span className="font-bold text-rose-700">{selectedTimelineCluster.status}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Ingestion Channel:</span>
-                <span className="font-bold text-[#1A253C]">{selectedTimelineCluster.ingestionMethod}</span>
+              <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Ingestion Channel:</span>
+                <span className="font-bold text-[#0B2115]">{selectedTimelineCluster.ingestionMethod}</span>
               </div>
-              <div className="flex justify-between items-center py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Verification Timestamp:</span>
-                <span className="font-bold text-[#1A253C]">{selectedTimelineCluster.verifiedTimestamp || 'Live UTC'}</span>
+              <div className="flex justify-between items-center py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Verification Timestamp:</span>
+                <span className="font-bold text-[#0B2115]">{selectedTimelineCluster.verifiedTimestamp || 'Live UTC'}</span>
               </div>
               <div className="pt-1">
-                <span className="text-[#52607B] block mb-1">Attack Signature Vector:</span>
-                <p className="text-[#1A253C] leading-relaxed bg-[#E0E5EC] p-2.5 rounded-xl shadow-[inset_2px_2px_4px_#A3B1C6]">
+                <span className="text-gray-500 block mb-1">Attack Signature Vector:</span>
+                <p className="text-gray-800 leading-relaxed bg-white border border-[#E5E7EB] p-2.5 rounded-lg shadow-sm">
                   {selectedTimelineCluster.signatureVector || 'Coordinated multi-vector burst over encrypted mesh.'}
                 </p>
               </div>
@@ -1068,26 +1055,26 @@ export default function DashboardAnalytics() {
               {/* Bound Live Reddit Threat Posts */}
               {selectedTimelineCluster.posts && selectedTimelineCluster.posts.length > 0 && (
                 <div className="pt-2">
-                  <span className="text-[#52607B] block mb-1 font-bold">Bound Reddit OSINT Threat Threads:</span>
+                  <span className="text-gray-600 block mb-1 font-bold">Bound Reddit OSINT Threat Threads:</span>
                   <div className="space-y-2 max-h-40 overflow-y-auto pr-1">
                     {selectedTimelineCluster.posts.map((p, pIdx) => (
-                      <div key={p.id || pIdx} className="p-2.5 rounded-xl bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] flex flex-col gap-1.5 border border-white/40">
-                        <div className="flex items-center justify-between text-[11px] font-bold text-[#1A253C]">
+                      <div key={p.id || pIdx} className="p-2.5 rounded-lg bg-white border border-[#E5E7EB] shadow-sm flex flex-col gap-1.5">
+                        <div className="flex items-center justify-between text-[11px] font-bold text-[#0B2115]">
                           <span className="truncate pr-2">{p.title}</span>
-                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-100 text-rose-700 font-bold shrink-0">
+                          <span className="text-[9px] px-1.5 py-0.5 rounded bg-rose-50 border border-rose-200 text-rose-700 font-bold shrink-0">
                             {p.riskLevel || 'High'}
                           </span>
                         </div>
-                        <p className="text-[10px] text-[#52607B] line-clamp-2">{p.content}</p>
-                        <div className="flex items-center justify-between pt-1 border-t border-[#A3B1C6]/30">
-                          <span className="text-[9px] text-[#2563EB] font-bold">
+                        <p className="text-[10px] text-gray-500 line-clamp-2">{p.content}</p>
+                        <div className="flex items-center justify-between pt-1 border-t border-gray-100">
+                          <span className="text-[9px] text-[#0B2115] font-bold">
                             Verified Source: r/cybersecurity (Reddit Native API)
                           </span>
                           <a
                             href={p.link}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-[10px] font-bold text-[#2563EB] hover:underline flex items-center gap-1"
+                            className="text-[10px] font-bold text-[#0B2115] hover:text-[#5C901A] hover:underline flex items-center gap-1"
                           >
                             <span>[View Original Reddit Post ↗]</span>
                           </a>
@@ -1104,13 +1091,13 @@ export default function DashboardAnalytics() {
                 href={selectedTimelineCluster.link || selectedTimelineCluster.samplePost?.link || "https://www.reddit.com/r/cybersecurity"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] text-[#2563EB] text-xs font-mono font-bold flex items-center gap-1.5 cursor-pointer transition-all"
+                className="px-4 py-2 rounded-lg border border-[#E5E7EB] text-[#0B2115] bg-white hover:bg-[#F3FAEB] text-xs font-mono font-bold shadow-sm transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <span>[View Original Reddit Post ↗]</span>
               </a>
               <button
                 onClick={() => setSelectedTimelineCluster(null)}
-                className="px-4 py-2 rounded-xl bg-[#2563EB] text-white text-xs font-mono font-bold shadow-[4px_4px_8px_#93A1B6] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
+                className="px-4 py-2 rounded-lg bg-[#0B2115] hover:bg-[#153423] text-white text-xs font-mono font-bold shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0B2115] cursor-pointer transition-colors"
               >
                 Close Investigation
               </button>

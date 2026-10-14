@@ -557,17 +557,17 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
   const redditPosts = filteredPosts;
 
   return (
-    <div className="bg-[#E0E5EC] rounded-3xl p-5 sm:p-6 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 text-[#1A253C] flex flex-col h-full relative overflow-hidden">
+    <div className="bg-white flex flex-col w-full h-full text-gray-900 relative">
       {/* Header */}
-      <div className="pb-4 border-b border-[#A3B1C6]/30 flex items-center justify-between gap-3">
+      <div className="pb-4 border-b border-[#E5E7EB] flex items-center justify-between gap-3">
         <div>
           <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-blue-600 animate-pulse" />
-            <h3 className="text-base sm:text-lg font-black text-[#1A253C] tracking-tight">
+            <Radio className="w-4 h-4 text-[#0B2115] animate-pulse" />
+            <h3 className="text-base sm:text-lg font-bold text-[#0B2115] tracking-tight">
               Live Threat Alert Feed
             </h3>
           </div>
-          <p className="text-[11px] font-mono text-[#52607B] mt-0.5">
+          <p className="text-xs text-gray-500 mt-0.5">
             Real-time cyber threat inspection, phishing/malware detection & claim verification
           </p>
         </div>
@@ -576,18 +576,18 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           {/* Live Stream Telemetry Indicator */}
           {isLiveStream ? (
             <span
-              className="px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800 shadow-[inset_1px_1px_2px_#A3B1C6,inset_-1px_-1px_2px_#FFFFFF] text-[10px] font-mono font-bold flex items-center gap-1.5"
+              className="border border-[#9FE846]/40 text-[#5C901A] bg-[#F3FAEB] shadow-sm px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5"
               title="Streaming real-time posts from live public Reddit JSON endpoints"
             >
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-ping" />
+              <span className="w-2 h-2 rounded-full bg-[#9FE846] animate-ping" />
               <span>LIVE REDDIT</span>
             </span>
           ) : (
             <span
-              className="px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 shadow-[inset_1px_1px_2px_#A3B1C6,inset_-1px_-1px_2px_#FFFFFF] text-[10px] font-mono font-bold flex items-center gap-1.5"
+              className="border border-[#E5E7EB] text-gray-700 bg-white shadow-sm px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5"
               title="Resilient cached OSINT telemetry active"
             >
-              <span className="w-2 h-2 rounded-full bg-blue-600" />
+              <span className="w-2 h-2 rounded-full bg-[#0B2115]" />
               <span>LIVE OSINT</span>
             </span>
           )}
@@ -595,10 +595,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           {/* Firestore Database Sync Telemetry Indicator */}
           {firestoreSynced && (
             <span
-              className="px-2.5 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-blue-700 text-[10px] font-mono font-bold hidden sm:flex items-center gap-1.5 border border-blue-400/30"
+              className="border border-[#E5E7EB] text-gray-700 bg-white shadow-sm px-2.5 py-1 rounded-lg text-xs font-medium hidden sm:flex items-center gap-1.5"
               title="Synchronized into Firebase Firestore database collection 'threats'"
             >
-              <Database className="w-3 h-3 text-blue-600" />
+              <Database className="w-3.5 h-3.5 text-[#0B2115]" />
               <span>FIRESTORE SYNCED</span>
             </span>
           )}
@@ -606,46 +606,43 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           {/* Custom Analyzer Toggle Button */}
           <button
             onClick={() => setShowCustomTester(!showCustomTester)}
-            className={`px-3 py-1.5 rounded-2xl text-[11px] font-mono font-bold transition-all flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
-              showCustomTester
-                ? 'bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] text-blue-600'
-                : 'bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-[#1A253C]'
+            className={`border border-[#E5E7EB] text-gray-700 bg-white shadow-sm px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-[#F3FAEB] hover:text-[#0B2115] transition-colors flex items-center gap-1.5 cursor-pointer ${
+              showCustomTester ? 'bg-[#F3FAEB] text-[#0B2115] border-[#9FE846]/40' : ''
             }`}
             title="Inspect Custom Threat Item"
           >
-            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+            <Sparkles className="w-3.5 h-3.5 text-[#5C901A]" />
             <span className="hidden sm:inline">Inspect Threat</span>
           </button>
 
-          <span className="px-2.5 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-blue-700 text-[10px] font-mono font-bold">
+          <span className="border border-[#E5E7EB] text-gray-700 bg-white shadow-sm px-2.5 py-1 rounded-lg text-xs font-medium">
             {filteredPosts.length} Active
           </span>
-          <motion.button
-            {...neuButtonProps}
+          <button
             onClick={runInitialAnalysis}
-            className="p-2 rounded-xl bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] text-[#52607B] hover:text-[#1A253C] transition-colors focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
+            className="p-2 rounded-lg border border-[#E5E7EB] text-gray-700 bg-white shadow-sm hover:bg-[#F3FAEB] hover:text-[#0B2115] transition-colors cursor-pointer"
             title="Fetch and re-analyze real-time live social data"
             aria-label="Refresh stream"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-blue-600' : ''}`} />
-          </motion.button>
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin text-[#0B2115]' : ''}`} />
+          </button>
         </div>
       </div>
 
       {/* Interactive Custom Analyzer Drawer */}
       {showCustomTester && (
-        <div className="my-3 p-4 rounded-2xl bg-cyan-950/30 border border-cyan-500/30 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="my-3 p-4 rounded-2xl bg-[#0B2115] text-white border border-[#153423] space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-cyan-400" />
-              <h4 className="text-xs font-mono font-bold text-cyan-200 uppercase tracking-wider">
+              <ShieldAlert className="w-4 h-4 text-[#9FE846]" />
+              <h4 className="text-xs font-mono font-bold text-[#9FE846] uppercase tracking-wider">
                 AI Cyber Threat & Fraud Inspector
               </h4>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowRawJson(!showRawJson)}
-                className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/40 text-slate-300 border border-white/10 hover:text-cyan-300 flex items-center gap-1 cursor-pointer"
+                className="text-[10px] font-mono px-2 py-0.5 rounded bg-black/40 text-slate-300 border border-white/10 hover:text-[#9FE846] flex items-center gap-1 cursor-pointer"
               >
                 <Code className="w-3 h-3" />
                 <span>{showRawJson ? 'Pretty View' : 'JSON Schema'}</span>
@@ -661,16 +658,16 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           </div>
 
           {/* Mode Switcher Tabs */}
-          <div className="flex gap-2 border-b border-white/10 pb-2">
+          <div className="flex gap-2 border-b border-white/10 pb-2 overflow-x-auto">
             <button
               onClick={() => {
                 setActiveTab('cybercrime');
                 setCustomResult(null);
               }}
-              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === 'cybercrime'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#9FE846] text-[#0B2115] font-semibold'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               1. Cyber Threat & Fraud Detector
@@ -680,10 +677,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                 setActiveTab('misinformation');
                 setCustomResult(null);
               }}
-              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === 'misinformation'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#9FE846] text-[#0B2115] font-semibold'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               2. Misinformation & Claims
@@ -696,10 +693,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                 );
                 setCustomResult(null);
               }}
-              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === 'batchTopics'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#9FE846] text-[#0B2115] font-semibold'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               3. Top 8 Emerging Topics
@@ -741,10 +738,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                 );
                 setCustomResult(null);
               }}
-              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === 'coordination'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#9FE846] text-[#0B2115] font-semibold'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               4. Bot-Swarm & Copypasta
@@ -768,10 +765,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                 );
                 setCustomResult(null);
               }}
-              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === 'logsAggregation'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#9FE846] text-[#0B2115] font-semibold'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               5. Threat Logs Aggregator
@@ -794,10 +791,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                 );
                 setCustomResult(null);
               }}
-              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer ${
+              className={`text-xs font-mono px-3 py-1 rounded-lg transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === 'reviewerTicket'
-                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-400/40 font-bold'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-[#9FE846] text-[#0B2115] font-semibold'
+                  : 'text-slate-300 hover:text-white'
               }`}
             >
               6. Urgent Reviewer Ticket
@@ -815,7 +812,7 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                   setCustomInputText(p.text);
                   setCustomResult(null);
                 }}
-                className="px-2 py-0.5 rounded-full bg-white/5 hover:bg-cyan-500/20 border border-white/10 text-[10px] font-mono text-slate-300 hover:text-cyan-300 transition-colors cursor-pointer"
+                className="px-2 py-0.5 rounded-full bg-white/10 hover:bg-[#9FE846]/20 border border-white/10 text-[10px] font-mono text-slate-200 hover:text-[#9FE846] transition-colors cursor-pointer"
               >
                 {p.label}
               </button>
@@ -828,13 +825,13 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
               value={customInputText}
               onChange={(e) => setCustomInputText(e.target.value)}
               placeholder="Paste social media or message content to inspect..."
-              className="w-full p-2.5 rounded-xl bg-black/60 border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-400/50 font-sans"
+              className="w-full p-2.5 rounded-xl bg-[#06150D] border border-[#153423] text-xs text-white placeholder-slate-400 focus:outline-none focus:border-[#9FE846] font-sans"
             />
             <div className="flex justify-end gap-2">
               <button
                 onClick={handleEvaluateCustomPost}
                 disabled={customEvaluating || !customInputText.trim()}
-                className="px-4 py-1.5 rounded-xl text-xs font-mono font-bold bg-cyan-500 hover:bg-cyan-400 disabled:opacity-50 text-slate-950 flex items-center gap-1.5 transition-all cursor-pointer shadow-[0_0_12px_rgba(6,182,212,0.4)]"
+                className="px-4 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#9FE846] hover:bg-[#8fd838] disabled:opacity-50 text-[#0B2115] flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
               >
                 <Send className="w-3.5 h-3.5" />
                 <span>
@@ -1177,33 +1174,31 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
       )}
 
       {/* Filter & Search Bar */}
-      <div className="py-3 flex flex-wrap items-center justify-between gap-2 border-b border-[#A3B1C6]/30">
-        <div className="flex items-center gap-1.5 text-xs font-mono overflow-x-auto pb-1 max-w-full">
+      <div className="py-3 flex flex-wrap items-center justify-between gap-2 border-b border-[#E5E7EB]">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
           {['All', 'Critical', 'Cybercrime', 'Phishing', 'Malware', 'Credential Harvesting', 'Scam/Fraud', 'Misinformation'].map((cat) => (
-            <motion.button
+            <button
               key={cat}
               onClick={() => setFilter(cat)}
-              whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-              whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-              className={`px-3 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold whitespace-nowrap transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
+              className={`px-3 py-1.5 rounded-lg text-sm transition-colors whitespace-nowrap cursor-pointer ${
                 filter === cat
-                  ? 'bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] text-blue-700'
-                  : 'bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] hover:shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-[#52607B] hover:text-[#1A253C]'
+                  ? 'bg-[#0B2115] text-white border border-[#0B2115] font-medium'
+                  : 'bg-white border border-[#E5E7EB] text-gray-600 hover:bg-[#F3FAEB] hover:text-[#0B2115]'
               }`}
             >
               {cat}
-            </motion.button>
+            </button>
           ))}
         </div>
 
-        <div className="relative flex-1 sm:max-w-[170px]">
-          <Search className="w-3.5 h-3.5 text-[#52607B] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+        <div className="relative flex-1 sm:max-w-[200px]">
+          <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search threats..."
-            className="w-full pl-8 pr-3 py-1.5 rounded-full bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] text-xs font-mono text-[#1A253C] placeholder-[#52607B] border-none focus:outline-none focus:ring-4 focus:ring-blue-400"
+            className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-white border border-[#E5E7EB] text-sm text-[#0B2115] placeholder-gray-400 focus:outline-none focus:border-[#0B2115] focus:ring-1 focus:ring-[#0B2115]"
           />
         </div>
       </div>
@@ -1245,38 +1240,38 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
               <motion.article
                 key={post.id}
                 variants={staggerItemVariants}
-                whileHover={shouldReduceMotion ? {} : { scale: 1.015, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
+                whileHover={shouldReduceMotion ? {} : { scale: 1.01 }}
                 transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
-                className={`bg-[#E0E5EC] rounded-2xl p-4 shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] border border-white/60 transition-colors cursor-pointer ${
-                  isMitigated ? 'border-emerald-400/50' : ''
+                className={`flex flex-col h-full bg-white border rounded-xl p-5 overflow-hidden transition-all cursor-pointer ${
+                  isMitigated ? 'border-emerald-300' : 'border-[#E5E7EB] hover:border-gray-400'
                 }`}
               >
                 {/* Top Row: Dynamic Risk Badges & Provenance Attribution */}
                 <div className="flex items-center justify-between mb-2 gap-2 flex-wrap">
                   <div className="flex items-center gap-2 flex-wrap">
-                    {/* Dynamic Risk Badge with soft inset styling */}
+                    {/* Dynamic Risk Badge with flat styling */}
                     {isMitigated ? (
-                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-300 flex items-center gap-1">
-                        <Check className="w-2.5 h-2.5 text-emerald-600" />
+                      <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40 flex items-center gap-1">
+                        <Check className="w-3 h-3 text-[#5C901A]" />
                         <span>Mitigated</span>
                       </span>
                     ) : isCritical ? (
-                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] flex items-center gap-1 border border-rose-300/40">
+                      <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-rose-600 animate-ping" />
                         <span>Critical Threat</span>
                       </span>
                     ) : isHigh ? (
-                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-rose-100 text-rose-700 shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] flex items-center gap-1 border border-rose-300/40">
+                      <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md bg-rose-50 text-rose-700 border border-rose-200 flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-rose-500" />
                         <span>High Threat</span>
                       </span>
                     ) : isLow ? (
-                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] flex items-center gap-1 border border-emerald-300/40">
-                        <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40 flex items-center gap-1">
+                        <span className="w-2 h-2 rounded-full bg-[#9FE846]" />
                         <span>Low Threat</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] flex items-center gap-1 border border-amber-300/40">
+                      <span className="text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 flex items-center gap-1">
                         <span className="w-2 h-2 rounded-full bg-amber-500" />
                         <span>Medium Threat</span>
                       </span>
@@ -1284,28 +1279,28 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
 
                     {/* Threat Subcategory */}
                     {cyber?.threatSubcategory && cyber.threatSubcategory !== 'None' && (
-                      <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] text-[#1A253C] flex items-center gap-1">
-                        {cyber.threatSubcategory === 'Phishing' && <KeyRound className="w-2.5 h-2.5 text-blue-600" />}
-                        {cyber.threatSubcategory === 'Malware' && <Bug className="w-2.5 h-2.5 text-rose-600" />}
-                        {cyber.threatSubcategory === 'Scam/Fraud' && <DollarSign className="w-2.5 h-2.5 text-amber-600" />}
+                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-[#E5E7EB]">
+                        {cyber.threatSubcategory === 'Phishing' && <KeyRound className="w-3 h-3 text-[#0B2115]" />}
+                        {cyber.threatSubcategory === 'Malware' && <Bug className="w-3 h-3 text-rose-600" />}
+                        {cyber.threatSubcategory === 'Scam/Fraud' && <DollarSign className="w-3 h-3 text-amber-600" />}
                         <span>{cyber.threatSubcategory}</span>
                       </span>
                     )}
 
                     {/* Misinformation Indicator */}
                     {misinfo?.isMisleading && (
-                      <span className="text-[9px] font-mono font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 shadow-[inset_2px_2px_4px_#A3B1C6] flex items-center gap-1">
-                        <AlertTriangle className="w-2.5 h-2.5 text-amber-600" />
+                      <span className="bg-amber-50 text-amber-700 border border-amber-200 px-2 py-1 rounded text-xs font-medium flex items-center gap-1">
+                        <AlertTriangle className="w-3 h-3 text-amber-600" />
                         <span>Fake News / Hoax</span>
                       </span>
                     )}
 
-                    {/* Legal Compliance Chain-of-Custody Inset Neumorphic Source Attribution Badge */}
+                    {/* Legal Compliance Chain-of-Custody Attribution Badge */}
                     <span
-                      className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] flex items-center gap-1 border border-white/50"
+                      className="bg-gray-100 text-gray-600 border border-[#E5E7EB] px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1"
                       title={`Chain of Custody: ${post.chainOfCustodyHash || 'COC-SHA256:VERIFIED'} | Ingested via: ${post.telemetryMethod || post.ingestionMethod || 'Reddit Native API'}`}
                     >
-                      <ShieldCheck className="w-3 h-3 text-[#2563EB]" />
+                      <ShieldCheck className="w-3.5 h-3.5 text-[#0B2115]" />
                       <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
                     </span>
 
@@ -1314,33 +1309,33 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                       href={post.link || "https://www.reddit.com/r/cybersecurity"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-[#E0E5EC] shadow-[2px_2px_5px_#A3B1C6,-2px_-2px_5px_#FFFFFF] hover:shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] text-[#2563EB] hover:text-[#1D4ED8] inline-flex items-center gap-1 transition-all"
+                      className="bg-white border border-[#E5E7EB] text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] px-2.5 py-1 rounded text-xs font-medium inline-flex items-center gap-1 transition-colors"
                       onClick={(e) => e.stopPropagation()}
                     >
                       <span>[View Original Reddit Post ↗]</span>
                     </a>
                   </div>
 
-                  <span className="text-[10px] font-mono text-[#52607B]">
+                  <span className="text-xs text-gray-400 font-mono">
                     {post.timestamp || 'Live'}
                   </span>
                 </div>
 
                 {/* Post Title with optional Reddit link */}
                 {post.title && (
-                  <h4 className={`text-xs font-bold font-mono mb-1.5 flex items-center gap-1.5 transition-all ${
-                    isMitigated ? 'text-slate-400 opacity-50 line-through' : 'text-[#1A253C]'
+                  <h4 className={`text-sm font-bold font-mono mb-1.5 flex items-center gap-1.5 transition-all ${
+                    isMitigated ? 'text-gray-400 opacity-50 line-through' : 'text-[#0B2115]'
                   }`}>
                     {post.link ? (
                       <a
                         href={post.link}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:text-blue-600 hover:underline flex items-center gap-1 transition-colors"
+                        className="hover:text-[#5C901A] hover:underline flex items-center gap-1 transition-colors"
                         onClick={(e) => e.stopPropagation()}
                       >
                         <span>{post.title}</span>
-                        <ExternalLink className="w-3 h-3 shrink-0 text-[#52607B]" />
+                        <ExternalLink className="w-3.5 h-3.5 shrink-0 text-gray-400" />
                       </a>
                     ) : (
                       <span>{post.title}</span>
@@ -1349,19 +1344,19 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                 )}
 
                 {/* Content Snippet (Dimmed and struck-through when mitigated) */}
-                <p className={`text-xs font-sans mb-2.5 leading-relaxed font-medium transition-all ${
-                  isMitigated ? 'text-slate-400 opacity-50 line-through' : 'text-[#1A253C]'
+                <p className={`text-xs font-sans mb-3 leading-relaxed font-medium transition-all ${
+                  isMitigated ? 'text-gray-400 opacity-50 line-through' : 'text-gray-700'
                 }`}>
                   "{post.content}"
                 </p>
 
                 {/* Flagged Phrases Micro-Pills */}
                 {cyber?.flaggedPhrases?.length > 0 && (
-                  <div className="mb-2.5 flex flex-wrap gap-1">
+                  <div className="mb-3 flex flex-wrap gap-1">
                     {cyber.flaggedPhrases.slice(0, 3).map((term, idx) => (
                       <span
                         key={idx}
-                        className="text-[9px] font-mono px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 shadow-[inset_1px_1px_2px_#A3B1C6]"
+                        className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-mono"
                       >
                         ⚡ "{term}"
                       </span>
@@ -1369,42 +1364,48 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                   </div>
                 )}
 
-                {/* Dynamic Explainable AI (XAI) Reasoning & Explanation */}
-                <div className="p-2.5 rounded-xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] border border-white/40 mb-3">
-                  <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-blue-700 mb-0.5">
-                    <Sparkles className="w-3 h-3 text-blue-600" />
+                {/* Flattened Gemini AI Reasoning Box */}
+                <div className="bg-[#F3FAEB] border border-[#9FE846]/30 p-3 rounded-lg text-[#0B2115] mb-3">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-[#0B2115] mb-1">
+                    <Sparkles className="w-3.5 h-3.5 text-[#5C901A]" />
                     <span>Gemini AI Threat Reasoning & Explanation:</span>
                   </div>
-                  <p className="text-[11px] font-mono text-[#1A253C] leading-snug">
+                  <p className="text-xs text-[#0B2115] leading-relaxed font-sans">
                     {post.aiExplanation || post.aiSummary || (cyber?.flaggedPhrases?.length > 0
                       ? `Heuristic detection identified high-risk terms [${cyber.flaggedPhrases.slice(0, 2).map((p) => `"${p}"`).join(', ')}]. Recommended containment: isolate vector origin.`
                       : 'Standard informational payload. No malicious zero-day or phishing indicators matched.')}
                   </p>
                 </div>
 
-                {/* Bottom Row: Extracted Keywords & Action Buttons */}
-                <div className="flex items-center justify-between gap-2 pt-2 border-t border-[#A3B1C6]/20 flex-wrap">
-                  <div className="flex flex-wrap items-center gap-1.5 overflow-hidden">
-                    {post.keywords &&
-                      post.keywords.slice(0, 2).map((kw, i) => (
-                        <span
-                          key={i}
-                          className="px-2 py-0.5 rounded-md bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[10px] font-mono font-bold text-blue-700 truncate max-w-[120px]"
-                        >
-                          {kw.startsWith('#') ? kw : `#${kw}`}
-                        </span>
-                      ))}
+                {/* Fix 2: Push Footer to Bottom (Alignment) */}
+                <div className="mt-auto flex flex-col gap-3 pt-4 border-t border-[#E5E7EB]">
+                  <div className="flex items-center justify-between text-[11px] font-mono">
+                    <div className="flex flex-wrap items-center gap-1.5 overflow-hidden">
+                      {post.keywords &&
+                        post.keywords.slice(0, 2).map((kw, i) => (
+                          <span
+                            key={i}
+                            className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-mono"
+                          >
+                            {kw.startsWith('#') ? kw : `#${kw}`}
+                          </span>
+                        ))}
+                    </div>
+                    <span className="text-[10px] text-gray-400 font-mono">
+                      {post.id}
+                    </span>
                   </div>
 
-                  <div className="flex items-center gap-2 flex-wrap">
+                  {/* Fix 3 & 4: Button Row Wrapping and whitespace-nowrap */}
+                  <div className="flex flex-row flex-wrap items-center gap-2">
                     <a
                       href={post.link || "https://www.reddit.com/r/cybersecurity"}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="shrink-0 px-3 py-1.5 rounded-full text-[11px] font-mono font-bold bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] hover:shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-all"
+                      className="px-2.5 py-1 rounded-lg border border-[#E5E7EB] text-xs font-semibold text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] transition-colors flex items-center gap-1 whitespace-nowrap shrink-0"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <span>[View Original Reddit Post ↗]</span>
+                      <span>[View Source ↗]</span>
                     </a>
 
                     {/* Interactive Simulated Takedown Button */}
@@ -1416,22 +1417,20 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                         e.stopPropagation();
                         setSelectedDossierThreat(post);
                       }}
-                      className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                      className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#E5E7EB] text-gray-700 hover:bg-[#F3FAEB] hover:text-[#0B2115] hover:border-[#0B2115] transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
                       title="Correlate threat actor identity across platforms"
                     >
-                      <User className="w-3.5 h-3.5" />
-                      <span>Correlate Actor</span>
+                      <User className="w-3.5 h-3.5 text-gray-500" />
+                      <span>Correlate</span>
                     </button>
 
-                    <motion.button
+                    <button
                       onClick={() => handleInvestigateClick(post)}
-                      whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-                      whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-                      className="shrink-0 px-3.5 py-1.5 rounded-full text-[11px] font-mono font-bold bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-blue-700 hover:text-blue-800 transition-all flex items-center gap-1 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+                      className="px-2.5 py-1 text-xs font-semibold rounded-lg bg-[#0B2115] text-white hover:bg-[#153423] transition-colors flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
                     >
                       <span>Investigate</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
-                    </motion.button>
+                    </button>
                   </div>
                 </div>
               </motion.article>
@@ -1448,65 +1447,65 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           aria-labelledby="investigate-modal-title"
           className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-sm overflow-y-auto"
         >
-          <div className="bg-[#E0E5EC] rounded-3xl p-6 shadow-[16px_16px_32px_#A3B1C6,-16px_-16px_32px_#FFFFFF] border border-white/80 max-w-lg w-full text-[#1A253C] relative my-8 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl p-6 shadow-xl border border-[#E5E7EB] max-w-lg w-full text-gray-900 relative my-8 max-h-[90vh] overflow-y-auto">
             <button
               onClick={() => setInvestigatingPost(null)}
-              className="absolute top-4 right-4 p-2 rounded-xl bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-[#1A253C] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
+              className="absolute top-4 right-4 p-2 rounded-lg bg-gray-100 hover:bg-[#F3FAEB] text-[#0B2115] transition-colors cursor-pointer"
               aria-label="Close investigation modal"
             >
               <X className="w-4 h-4" />
             </button>
 
             <div className="flex items-center gap-2 mb-3">
-              <span className="w-2.5 h-2.5 rounded-full bg-blue-600 animate-ping" aria-hidden="true" />
-              <span className="text-xs font-mono font-bold text-blue-700 uppercase tracking-wider">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#9FE846] animate-ping" aria-hidden="true" />
+              <span className="text-xs font-mono font-bold text-[#0B2115] uppercase tracking-wider">
                 Active IOC Forensic Deep Dive
               </span>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-              <h4 id="investigate-modal-title" className="text-base font-extrabold text-[#1A253C]">
+              <h4 id="investigate-modal-title" className="text-base font-bold text-[#0B2115]">
                 Platform Source: Reddit (r/cybersecurity)
               </h4>
-              <span className="text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] flex items-center gap-1 border border-white/50">
-                <ShieldCheck className="w-3 h-3 text-[#2563EB]" />
+              <span className="text-xs font-mono font-medium px-2.5 py-1 rounded-md bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40 flex items-center gap-1">
+                <ShieldCheck className="w-3.5 h-3.5 text-[#5C901A]" />
                 <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
               </span>
             </div>
 
-            {/* Legal Chain-of-Custody Inset Provenance Strip */}
-            <div className="p-2.5 rounded-xl bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[10px] font-mono text-[#52607B] mb-3 flex flex-wrap justify-between gap-2 border border-white/40">
+            {/* Legal Chain-of-Custody Attribution Strip */}
+            <div className="p-3 rounded-lg bg-gray-50 border border-[#E5E7EB] text-xs font-mono text-gray-600 mb-3 flex flex-wrap justify-between gap-2">
               <div>
-                <span className="font-bold text-[#1A253C]">Chain of Custody: </span>
-                <span className="text-[#2563EB] font-bold">{investigatingPost.chainOfCustodyHash || 'COC-SHA256:VERIFIED'}</span>
+                <span className="font-bold text-[#0B2115]">Chain of Custody: </span>
+                <span className="text-[#5C901A] font-bold">{investigatingPost.chainOfCustodyHash || 'COC-SHA256:VERIFIED'}</span>
               </div>
               <div>
-                <span className="font-bold text-[#1A253C]">Verified Timestamp: </span>
+                <span className="font-bold text-[#0B2115]">Verified Timestamp: </span>
                 <span>{investigatingPost.verificationTimestamp || investigatingPost.isoTimestamp || 'Current UTC'}</span>
               </div>
               <div>
-                <span className="font-bold text-[#1A253C]">Ingestion Protocol: </span>
+                <span className="font-bold text-[#0B2115]">Ingestion Protocol: </span>
                 <span>{investigatingPost.ingestionMethod || 'Subreddit Webhook'}</span>
               </div>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] text-xs font-sans text-[#1A253C] mb-4 leading-relaxed font-medium">
+            <div className="p-3.5 rounded-xl bg-gray-50 border border-[#E5E7EB] text-xs font-sans text-gray-800 mb-4 leading-relaxed font-medium">
               "{investigatingPost.content}"
             </div>
 
             {/* Cybercrime Threat Breakdown */}
             {investigatingPost.cybercrime && (
-              <div className="p-4 rounded-2xl bg-[#E0E5EC] shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] border border-white/60 mb-4 space-y-2">
+              <div className="p-4 rounded-xl bg-white border border-[#E5E7EB] mb-4 space-y-2 shadow-sm">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-mono font-bold text-blue-700 flex items-center gap-1.5">
-                    <ShieldAlert className="w-3.5 h-3.5 text-blue-600" />
+                  <span className="text-xs font-mono font-bold text-[#0B2115] flex items-center gap-1.5">
+                    <ShieldAlert className="w-3.5 h-3.5 text-[#5C901A]" />
                     Cybercrime Threat Classification
                   </span>
                   <span
-                    className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] ${
+                    className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md border ${
                       investigatingPost.cybercrime.isCybercrimeThreat
-                        ? 'bg-rose-100 text-rose-700'
-                        : 'bg-emerald-100 text-emerald-700'
+                        ? 'bg-rose-50 text-rose-700 border-rose-200'
+                        : 'bg-[#F3FAEB] text-[#5C901A] border-[#9FE846]/40'
                     }`}
                   >
                     {investigatingPost.cybercrime.threatSubcategory}
@@ -1515,14 +1514,14 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
 
                 <div className="grid grid-cols-2 gap-2 text-xs font-mono py-1">
                   <div>
-                    <span className="text-[#52607B] text-[10px] block">Threat Level:</span>
-                    <span className="font-bold text-amber-800">
+                    <span className="text-gray-500 text-[10px] block">Threat Level:</span>
+                    <span className="font-bold text-amber-700">
                       {investigatingPost.cybercrime.threatLevel}
                     </span>
                   </div>
                   <div>
-                    <span className="text-[#52607B] text-[10px] block">Is Cyber Threat:</span>
-                    <span className="font-bold text-[#1A253C]">
+                    <span className="text-gray-500 text-[10px] block">Is Cyber Threat:</span>
+                    <span className="font-bold text-[#0B2115]">
                       {investigatingPost.cybercrime.isCybercrimeThreat ? 'YES (Confirmed)' : 'NO'}
                     </span>
                   </div>
@@ -1530,14 +1529,14 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
 
                 {investigatingPost.cybercrime.flaggedPhrases?.length > 0 && (
                   <div>
-                    <span className="text-[10px] font-mono text-[#52607B] block mb-1">
+                    <span className="text-[10px] font-mono text-gray-500 block mb-1">
                       Flagged Suspicious Phrases:
                     </span>
                     <div className="flex flex-wrap gap-1.5">
                       {investigatingPost.cybercrime.flaggedPhrases.map((phrase, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-0.5 rounded-md bg-rose-50 text-rose-700 font-mono text-[10px] shadow-[inset_1px_1px_2px_#A3B1C6]"
+                          className="px-2 py-0.5 rounded bg-rose-50 text-rose-700 font-mono text-xs border border-rose-100"
                         >
                           "{phrase}"
                         </span>
@@ -1549,29 +1548,29 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
             )}
 
             {/* General Threat Info */}
-            <div className="p-3.5 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] space-y-2 font-mono text-xs mb-4">
-              <div className="flex justify-between py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">Extracted Keywords:</span>
-                <span className="text-blue-700 font-bold">{investigatingPost.keywords?.join(', ')}</span>
+            <div className="p-3.5 rounded-xl bg-gray-50 border border-[#E5E7EB] space-y-2 font-mono text-xs mb-4">
+              <div className="flex justify-between py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">Extracted Keywords:</span>
+                <span className="text-[#0B2115] font-bold">{investigatingPost.keywords?.join(', ')}</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-[#A3B1C6]/20">
-                <span className="text-[#52607B]">AI Confidence:</span>
-                <span className="text-emerald-700 font-bold">{investigatingPost.aiConfidence || 95}%</span>
+              <div className="flex justify-between py-1 border-b border-[#E5E7EB]">
+                <span className="text-gray-500">AI Confidence:</span>
+                <span className="text-[#5C901A] font-bold">{investigatingPost.aiConfidence || 95}%</span>
               </div>
               <div className="pt-1">
-                <span className="text-[#52607B] block mb-1">Recommended Response:</span>
-                <p className="text-[#1A253C] font-sans text-xs bg-[#E0E5EC] p-2.5 rounded-xl shadow-[inset_2px_2px_4px_#A3B1C6]">
+                <span className="text-gray-500 block mb-1">Recommended Response:</span>
+                <p className="text-gray-800 font-sans text-xs bg-white p-2.5 rounded-lg border border-[#E5E7EB]">
                   {investigatingPost.recommendedAction || 'Isolate vector origin and log IOC hash.'}
                 </p>
               </div>
             </div>
 
             {/* Urgent Reviewer Alert Ticket Section */}
-            <div className="mt-4 pt-4 border-t border-[#A3B1C6]/30 space-y-3">
+            <div className="mt-4 pt-4 border-t border-[#E5E7EB] space-y-3">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
-                  <Ticket className="w-3.5 h-3.5 text-blue-600" />
-                  <span className="text-xs font-mono font-bold text-blue-700 uppercase tracking-wider">
+                  <Ticket className="w-3.5 h-3.5 text-[#0B2115]" />
+                  <span className="text-xs font-mono font-bold text-[#0B2115] uppercase tracking-wider">
                     SOC Reviewer Alert Ticket
                   </span>
                 </div>
@@ -1579,32 +1578,32 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                   <button
                     onClick={() => handleGenerateReviewerTicket(investigatingPost)}
                     disabled={loadingTicket}
-                    className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#2563EB] text-white disabled:opacity-50 transition-all flex items-center gap-1.5 cursor-pointer shadow-[4px_4px_8px_#93A1B6,-4px_-4px_8px_#FFFFFF] focus:outline-none focus:ring-4 focus:ring-blue-400"
+                    className="px-3 py-1.5 rounded-lg text-xs font-mono font-semibold bg-[#9FE846] hover:bg-[#8fd838] text-[#0B2115] disabled:opacity-50 transition-colors flex items-center gap-1.5 cursor-pointer shadow-sm"
                   >
-                    <Sparkles className="w-3 h-3" />
+                    <Sparkles className="w-3 h-3 text-[#0B2115]" />
                     <span>{loadingTicket ? 'Synthesizing...' : 'Synthesize Urgent Ticket'}</span>
                   </button>
                 )}
               </div>
 
               {reviewerTicket && (
-                <div className="p-4 rounded-2xl bg-[#E0E5EC] shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] border border-white/60 space-y-3">
+                <div className="p-4 rounded-xl bg-white border border-[#E5E7EB] space-y-3 shadow-sm">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono font-bold text-[#1A253C] bg-[#E0E5EC] px-2.5 py-0.5 rounded-lg shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF]">
+                      <span className="text-xs font-mono font-bold text-[#0B2115] bg-[#F3FAEB] px-2 py-0.5 rounded border border-[#9FE846]/40">
                         {reviewerTicket.alertId}
                       </span>
-                      <span className="text-[10px] font-mono text-[#52607B]">
+                      <span className="text-xs font-mono text-gray-500">
                         {reviewerTicket.timestamp}
                       </span>
                     </div>
                     <span
-                      className={`text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] ${
+                      className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md border ${
                         reviewerTicket.urgencyTier === 'Immediate Review'
-                          ? 'bg-rose-100 text-rose-700 animate-pulse'
+                          ? 'bg-rose-50 text-rose-700 border-rose-200 animate-pulse'
                           : reviewerTicket.urgencyTier === 'Elevated Watch'
-                          ? 'bg-amber-100 text-amber-800'
-                          : 'bg-blue-100 text-blue-700'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-[#F3FAEB] text-[#5C901A] border-[#9FE846]/40'
                       }`}
                     >
                       {reviewerTicket.urgencyTier}
@@ -1612,10 +1611,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                   </div>
 
                   <div>
-                    <span className="text-[11px] font-mono font-bold text-[#52607B] block mb-1">
+                    <span className="text-xs font-mono font-bold text-gray-600 block mb-1">
                       Supporting Evidence (Human Intervention Required):
                     </span>
-                    <ul className="list-disc pl-4 space-y-1 text-xs text-[#1A253C] font-sans font-medium">
+                    <ul className="list-disc pl-4 space-y-1 text-xs text-gray-800 font-sans font-medium">
                       {reviewerTicket.supportingEvidence?.map((item, idx) => (
                         <li key={idx}>{item}</li>
                       ))}
@@ -1623,30 +1622,30 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                   </div>
 
                   <div>
-                    <span className="text-[11px] font-mono font-bold text-[#52607B] block mb-1">
+                    <span className="text-xs font-mono font-bold text-gray-600 block mb-1">
                       Recommended Escalation Path:
                     </span>
-                    <p className="text-xs text-blue-900 font-sans bg-[#E0E5EC] p-2.5 rounded-xl shadow-[inset_2px_2px_4px_#A3B1C6] leading-relaxed">
+                    <p className="text-xs text-[#0B2115] font-sans bg-[#F3FAEB] border border-[#9FE846]/30 p-2.5 rounded-lg leading-relaxed">
                       {reviewerTicket.recommendedAction}
                     </p>
                   </div>
 
-                  <div className="flex justify-end gap-2 pt-1 border-t border-[#A3B1C6]/20">
+                  <div className="flex justify-end gap-2 pt-1 border-t border-[#E5E7EB]">
                     <button
                       onClick={() => {
                         navigator.clipboard.writeText(JSON.stringify(reviewerTicket, null, 2));
                         setCopiedTicket(true);
                         setTimeout(() => setCopiedTicket(false), 2000);
                       }}
-                      className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-[#1A253C] flex items-center gap-1 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+                      className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-white border border-[#E5E7EB] hover:bg-[#F3FAEB] text-[#0B2115] flex items-center gap-1 cursor-pointer transition-colors"
                     >
-                      {copiedTicket ? <Check className="w-3 h-3 text-emerald-600" /> : <Copy className="w-3 h-3" />}
+                      {copiedTicket ? <Check className="w-3 h-3 text-[#5C901A]" /> : <Copy className="w-3 h-3" />}
                       <span>{copiedTicket ? 'Copied' : 'Copy Ticket JSON'}</span>
                     </button>
                     <button
                       onClick={() => handleGenerateReviewerTicket(investigatingPost)}
                       disabled={loadingTicket}
-                      className="px-3 py-1.5 rounded-xl text-xs font-mono font-bold bg-[#2563EB] text-white shadow-[3px_3px_6px_#93A1B6] flex items-center gap-1 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+                      className="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-[#0B2115] text-white hover:bg-[#153423] flex items-center gap-1 cursor-pointer transition-colors"
                     >
                       <RefreshCw className={`w-3 h-3 ${loadingTicket ? 'animate-spin' : ''}`} />
                       <span>Re-synthesize</span>
@@ -1661,13 +1660,13 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                 href={investigatingPost.link || "https://www.reddit.com/r/cybersecurity"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-xs font-mono font-bold text-[#2563EB] flex items-center gap-1.5 transition-all"
+                className="px-4 py-2 rounded-lg bg-white border border-[#E5E7EB] text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] text-xs font-mono font-bold flex items-center gap-1.5 transition-colors"
               >
                 <span>[View Original Reddit Post ↗]</span>
               </a>
               <button
                 onClick={() => setInvestigatingPost(null)}
-                className="px-5 py-2 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-xs font-mono font-bold text-[#1A253C] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer transition-colors"
+                className="px-5 py-2 rounded-lg bg-[#0B2115] hover:bg-[#153423] text-white text-xs font-mono font-bold cursor-pointer transition-colors"
                 aria-label="Close investigation modal and return to feed"
               >
                 Close

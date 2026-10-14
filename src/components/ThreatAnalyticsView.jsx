@@ -19,6 +19,7 @@ import {
   ExternalLink
 } from 'lucide-react';
 import { useOSINT } from '../context/OSINTContext';
+import GeographicThreatMap from './GeographicThreatMap';
 import {
   aggregateHistoricalThreatLogs,
   getOfflineThreatAggregationFallback
@@ -84,41 +85,44 @@ export default function ThreatAnalyticsView() {
   return (
     <div className="space-y-6">
       {/* Page Header Card */}
-      <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="p-5 sm:p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h2 className="text-xl font-black text-[#1A253C] flex items-center gap-2">
-            <Activity className="w-5 h-5 text-[#2563EB]" />
+          <h2 className="text-lg font-bold text-[#0B2115] flex items-center gap-2">
+            <Activity className="w-5 h-5 text-[#0B2115]" />
             Threat Analytics & Predictive Heuristics
           </h2>
-          <p className="text-xs text-[#52607B] mt-1">
+          <p className="text-xs text-gray-500 mt-1">
             Deep telemetry across MITRE ATT&CK vectors, APT group attribution, and neural anomaly trends.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">
-          <span className="text-[10px] font-mono font-bold px-3 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB] inline-flex items-center gap-1 border border-white/40">
-            <ShieldCheck className="w-3 h-3 text-[#2563EB]" />
+          <span className="text-xs font-mono font-medium px-3 py-1 rounded-md bg-gray-100 text-[#0B2115] inline-flex items-center gap-1 border border-[#E5E7EB]">
+            <ShieldCheck className="w-3.5 h-3.5 text-[#0B2115]" />
             <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
           </span>
           <a
             href={liveThreats[0]?.link || "https://www.reddit.com/r/cybersecurity"}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-1.5 rounded-full text-xs font-mono font-bold bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] hover:shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] text-[#2563EB] hover:text-[#1D4ED8] flex items-center gap-1 transition-all"
+            className="px-3.5 py-1.5 rounded-lg text-xs font-mono font-semibold bg-white border border-[#E5E7EB] text-[#0B2115] hover:bg-[#F3FAEB] hover:text-[#5C901A] hover:border-[#9FE846]/40 flex items-center gap-1 transition-colors shadow-sm"
           >
             <span>[View Original Reddit Post ↗]</span>
           </a>
         </div>
       </div>
 
+      {/* Real-Time Geographic Threat Mapping Engine */}
+      <GeographicThreatMap threats={liveThreats} />
+
       {/* MITRE ATT&CK Matrix Card */}
-      <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60">
-        <div className="flex items-center justify-between pb-3 border-b border-[#A3B1C6]/30">
+      <div className="p-5 sm:p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-sm">
+        <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
           <div className="flex items-center space-x-2">
-            <Layers className="w-4 h-4 text-[#2563EB]" />
-            <h3 className="text-sm font-bold text-[#1A253C]">MITRE ATT&CK&reg; Matrix Defensive Coverage</h3>
+            <Layers className="w-4 h-4 text-[#0B2115]" />
+            <h3 className="text-sm font-bold text-[#0B2115]">MITRE ATT&CK&reg; Matrix Defensive Coverage</h3>
           </div>
-          <span className="text-[10px] font-mono px-3 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-emerald-600 font-bold">
+          <span className="text-xs font-mono px-3 py-1 rounded-md bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40 font-bold">
             {defenseEfficacy} Overall Hardening
           </span>
         </div>
@@ -127,26 +131,26 @@ export default function ThreatAnalyticsView() {
           {mitreTactics.map((tactic) => (
             <div
               key={tactic.id}
-              className="p-4 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] transition-all"
+              className="p-4 rounded-xl bg-gray-50 border border-[#E5E7EB] transition-all"
             >
               <div className="flex justify-between items-start">
-                <span className="text-[10px] font-mono text-[#2563EB] font-bold">{tactic.id}</span>
+                <span className="text-xs font-mono text-[#0B2115] font-bold">{tactic.id}</span>
                 <span
-                  className={`text-[9px] font-mono px-2 py-0.5 rounded-full font-bold shadow-[1px_1px_3px_#A3B1C6,-1px_-1px_3px_#FFFFFF] ${
+                  className={`text-[10px] font-mono px-2 py-0.5 rounded font-bold border ${
                     tactic.coverage >= 90
-                      ? 'text-emerald-600 bg-[#E0E5EC]'
-                      : 'text-amber-600 bg-[#E0E5EC]'
+                      ? 'text-[#5C901A] bg-[#F3FAEB] border-[#9FE846]/40'
+                      : 'text-amber-700 bg-amber-50 border-amber-200'
                   }`}
                 >
                   {tactic.status}
                 </span>
               </div>
-              <div className="text-xs font-bold text-[#1A253C] mt-2">{tactic.name}</div>
-              <div className="text-[11px] text-[#52607B] font-mono mt-0.5">{tactic.techniques}</div>
-              <div className="w-full bg-[#A3B1C6]/30 rounded-full h-2 mt-3 overflow-hidden shadow-[inset_1px_1px_2px_#A3B1C6]">
+              <div className="text-xs font-bold text-[#0B2115] mt-2">{tactic.name}</div>
+              <div className="text-xs text-gray-500 font-mono mt-0.5">{tactic.techniques}</div>
+              <div className="w-full bg-gray-200 rounded-full h-2 mt-3 overflow-hidden">
                 <div
                   className={`h-2 rounded-full ${
-                    tactic.coverage >= 90 ? 'bg-[#2563EB]' : 'bg-amber-500'
+                    tactic.coverage >= 90 ? 'bg-[#0B2115]' : 'bg-[#9FE846]'
                   }`}
                   style={{ width: `${tactic.coverage}%` }}
                 />
@@ -159,11 +163,11 @@ export default function ThreatAnalyticsView() {
       {/* Grid: APT Attribution & High-Risk Assets */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* APT Attribution */}
-        <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60">
-          <div className="flex items-center justify-between pb-3 border-b border-[#A3B1C6]/30">
+        <div className="p-5 sm:p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-sm">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
             <div className="flex items-center space-x-2">
               <Crosshair className="w-4 h-4 text-rose-500" />
-              <h3 className="text-sm font-bold text-[#1A253C]">Known Threat Groups (APT) Tracking</h3>
+              <h3 className="text-sm font-bold text-[#0B2115]">Known Threat Groups (APT) Tracking</h3>
             </div>
             <span className="text-xs text-rose-600 font-mono font-bold">3 Active Campaigns</span>
           </div>
@@ -172,20 +176,20 @@ export default function ThreatAnalyticsView() {
             {activeAPTs.map((apt) => (
               <div
                 key={apt.name}
-                className="p-4 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF]"
+                className="p-4 rounded-xl bg-gray-50 border border-[#E5E7EB]"
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-sm text-[#1A253C]">{apt.name}</span>
-                  <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full text-rose-600 font-bold bg-[#E0E5EC] shadow-[1px_1px_3px_#A3B1C6,-1px_-1px_3px_#FFFFFF]">
+                  <span className="font-bold text-sm text-[#0B2115]">{apt.name}</span>
+                  <span className="text-xs font-mono px-2.5 py-0.5 rounded font-semibold text-rose-700 bg-rose-50 border border-rose-200">
                     {apt.activity} Threat
                   </span>
                 </div>
-                <div className="text-xs text-[#52607B] mt-1.5">
-                  <span className="font-semibold text-[#1A253C]">Signature Vector: </span>
+                <div className="text-xs text-gray-600 mt-1.5">
+                  <span className="font-semibold text-[#0B2115]">Signature Vector: </span>
                   {apt.vector}
                 </div>
-                <div className="flex justify-between items-center text-[11px] font-mono text-[#2563EB] mt-2.5 pt-2 border-t border-[#A3B1C6]/20">
-                  <span className="text-[#52607B]">Attribution Precision</span>
+                <div className="flex justify-between items-center text-xs font-mono text-[#0B2115] mt-2.5 pt-2 border-t border-[#E5E7EB]">
+                  <span className="text-gray-500">Attribution Precision</span>
                   <span className="font-bold">{apt.confidence}</span>
                 </div>
               </div>
@@ -194,33 +198,33 @@ export default function ThreatAnalyticsView() {
         </div>
 
         {/* High-Risk Monitored Assets */}
-        <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60">
-          <div className="flex items-center justify-between pb-3 border-b border-[#A3B1C6]/30">
+        <div className="p-5 sm:p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-sm">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
             <div className="flex items-center space-x-2">
               <Shield className="w-4 h-4 text-amber-500" />
-              <h3 className="text-sm font-bold text-[#1A253C]">High-Risk Assets & Exposure Scores</h3>
+              <h3 className="text-sm font-bold text-[#0B2115]">High-Risk Assets & Exposure Scores</h3>
             </div>
-            <span className="text-xs text-[#52607B] font-mono font-semibold">CVSS v4.0</span>
+            <span className="text-xs text-gray-500 font-mono font-medium">CVSS v4.0</span>
           </div>
 
           <div className="space-y-3.5 mt-4">
             {vulnerableAssets.map((asset) => (
               <div
                 key={asset.asset}
-                className="p-4 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF]"
+                className="p-4 rounded-xl bg-gray-50 border border-[#E5E7EB]"
               >
                 <div className="flex justify-between items-center">
-                  <span className="font-mono text-xs font-bold text-[#1A253C]">{asset.asset}</span>
-                  <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded-full bg-[#E0E5EC] text-rose-600 shadow-[1px_1px_3px_#A3B1C6,-1px_-1px_3px_#FFFFFF]">
+                  <span className="font-mono text-xs font-bold text-[#0B2115]">{asset.asset}</span>
+                  <span className="text-xs font-mono font-bold px-2.5 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-200">
                     CVSS {asset.riskScore}
                   </span>
                 </div>
-                <div className="text-xs text-[#52607B] mt-1.5 flex justify-between font-mono">
+                <div className="text-xs text-gray-500 mt-1.5 flex justify-between font-mono">
                   <span>IP: {asset.ip}</span>
                   <span className="text-amber-600 font-bold">{asset.cve}</span>
                 </div>
-                <div className="flex justify-between items-center text-[11px] font-mono text-emerald-600 mt-2.5 pt-2 border-t border-[#A3B1C6]/20">
-                  <span className="text-[#52607B]">Defense Response</span>
+                <div className="flex justify-between items-center text-xs font-mono text-[#5C901A] mt-2.5 pt-2 border-t border-[#E5E7EB]">
+                  <span className="text-gray-500">Defense Response</span>
                   <span className="font-bold">{asset.patchStatus}</span>
                 </div>
               </div>
@@ -230,74 +234,72 @@ export default function ThreatAnalyticsView() {
       </div>
 
       {/* Historical Threat Logs: Spatio-Temporal Aggregation Panel */}
-      <div className="p-6 rounded-[24px] bg-[#E0E5EC] shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] border border-white/60 space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#A3B1C6]/30 gap-3">
+      <div className="p-5 sm:p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-sm space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#E5E7EB] gap-3">
           <div>
             <div className="flex items-center space-x-2">
-              <Globe2 className="w-5 h-5 text-[#2563EB]" />
-              <h3 className="text-base font-bold text-[#1A253C] tracking-tight">
+              <Globe2 className="w-5 h-5 text-[#0B2115]" />
+              <h3 className="text-base font-bold text-[#0B2115] tracking-tight">
                 Historical Threat Logs: Spatio-Temporal Aggregation
               </h3>
             </div>
-            <p className="text-xs text-[#52607B] font-mono mt-0.5">
+            <p className="text-xs text-gray-500 font-mono mt-0.5">
               Simulated time-window telemetry synthesized across temporal progression & geographical origins
             </p>
           </div>
 
           <div className="flex items-center gap-2">
-            <motion.button
-              {...neuButtonProps}
+            <button
               onClick={() => setShowJsonModal(true)}
-              className="px-3.5 py-2 rounded-full bg-[#E0E5EC] text-[#1A253C] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+              className="px-3.5 py-2 rounded-lg bg-white border border-[#E5E7EB] text-[#0B2115] hover:bg-[#F3FAEB] hover:text-[#5C901A] hover:border-[#9FE846]/40 text-xs font-mono font-medium flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
             >
-              <Code className="w-3.5 h-3.5 text-[#2563EB]" />
+              <Code className="w-3.5 h-3.5 text-[#0B2115]" />
               <span>Inspect Strict JSON</span>
-            </motion.button>
+            </button>
 
-            <motion.button
-              {...neuButtonProps}
+            <button
               onClick={handleRefreshAggregation}
               disabled={loadingAggregation}
-              className="px-4 py-2 rounded-full bg-[#E0E5EC] text-[#2563EB] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-xs font-mono font-bold flex items-center gap-1.5 transition-colors cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 disabled:opacity-50"
+              className="px-4 py-2 rounded-lg bg-[#9FE846] hover:bg-[#8fd838] text-[#0B2115] text-xs font-mono font-semibold flex items-center gap-1.5 transition-colors cursor-pointer disabled:opacity-50 shadow-sm"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${loadingAggregation ? 'animate-spin' : ''}`} />
               <span>{loadingAggregation ? 'Synthesizing...' : 'Re-aggregate with Gemini AI'}</span>
-            </motion.button>
+            </button>
           </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Dimension 1: Timeline Progression Buckets */}
-          <div className="p-5 rounded-[20px] bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] space-y-3">
+          <div className="p-5 rounded-xl bg-gray-50 border border-[#E5E7EB] space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-[#2563EB] flex items-center gap-1.5 uppercase">
-                <Clock className="w-3.5 h-3.5 text-[#2563EB]" />
+              <span className="text-xs font-mono font-bold text-[#0B2115] flex items-center gap-1.5 uppercase">
+                <Clock className="w-3.5 h-3.5 text-[#0B2115]" />
                 1. Timeline Progression Buckets ({aggregationData.timelineBuckets?.length || 0})
               </span>
-              <span className="text-[10px] font-mono text-[#52607B]">Chronological Telemetry</span>
+              <span className="text-[10px] font-mono text-gray-500">Chronological Telemetry</span>
             </div>
 
             <div className="space-y-2.5">
               {aggregationData.timelineBuckets?.map((bucket, i) => (
                 <div
                   key={i}
-                  className="p-3.5 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] border border-white/60 flex flex-col gap-1.5"
+                  className="p-3.5 rounded-lg bg-white border border-[#E5E7EB] shadow-sm flex flex-col gap-1.5"
                 >
                   <div className="flex items-center justify-between text-xs font-mono">
-                    <span className="text-[#1A253C] font-bold flex items-center gap-1.5">
-                      <Clock className="w-3 h-3 text-[#2563EB]" />
+                    <span className="text-[#0B2115] font-bold flex items-center gap-1.5">
+                      <Clock className="w-3 h-3 text-[#0B2115]" />
                       {bucket.timestamp}
                     </span>
-                    <span className="text-[#52607B] text-[11px]">
-                      Total Scanned: <strong className="text-[#1A253C]">{bucket.totalScanned}</strong>
+                    <span className="text-gray-500 text-[11px]">
+                      Total Scanned: <strong className="text-[#0B2115]">{bucket.totalScanned}</strong>
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2 text-xs font-mono mt-1">
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_1px_1px_3px_#A3B1C6,inset_-1px_-1px_3px_#FFFFFF] text-rose-600 font-bold text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-rose-50 text-rose-700 border border-rose-100 font-bold text-[10px]">
                       High Threat: {bucket.highThreatCount}
                     </span>
-                    <span className="px-2.5 py-0.5 rounded-full bg-[#E0E5EC] shadow-[inset_1px_1px_3px_#A3B1C6,inset_-1px_-1px_3px_#FFFFFF] text-amber-600 font-bold text-[10px]">
+                    <span className="px-2 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-100 font-bold text-[10px]">
                       Medium Threat: {bucket.mediumThreatCount}
                     </span>
                   </div>
@@ -307,33 +309,33 @@ export default function ThreatAnalyticsView() {
           </div>
 
           {/* Dimension 2: Regional Origin Distribution */}
-          <div className="p-5 rounded-[20px] bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] space-y-3">
+          <div className="p-5 rounded-xl bg-gray-50 border border-[#E5E7EB] space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-mono font-bold text-[#2563EB] flex items-center gap-1.5 uppercase">
-                <MapPin className="w-3.5 h-3.5 text-[#2563EB]" />
+              <span className="text-xs font-mono font-bold text-[#0B2115] flex items-center gap-1.5 uppercase">
+                <MapPin className="w-3.5 h-3.5 text-[#0B2115]" />
                 2. Regional Distribution ({aggregationData.regionalDistribution?.length || 0})
               </span>
-              <span className="text-[10px] font-mono text-[#52607B]">Origin Clustering</span>
+              <span className="text-[10px] font-mono text-gray-500">Origin Clustering</span>
             </div>
 
             <div className="space-y-2.5">
               {aggregationData.regionalDistribution?.map((region, i) => (
                 <div
                   key={i}
-                  className="p-3.5 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] border border-white/60 flex items-center justify-between"
+                  className="p-3.5 rounded-lg bg-white border border-[#E5E7EB] shadow-sm flex items-center justify-between"
                 >
                   <div>
-                    <div className="text-xs font-bold text-[#1A253C] flex items-center gap-1.5 font-mono">
+                    <div className="text-xs font-bold text-[#0B2115] flex items-center gap-1.5 font-mono">
                       <MapPin className="w-3 h-3 text-rose-500" />
                       <span>{region.regionName}</span>
                     </div>
-                    <div className="text-[11px] font-mono text-[#52607B] mt-1">
-                      Primary Threat: <span className="text-[#2563EB] font-bold">{region.primaryThreatType}</span>
+                    <div className="text-xs font-mono text-gray-500 mt-1">
+                      Primary Threat: <span className="text-[#0B2115] font-bold">{region.primaryThreatType}</span>
                     </div>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-xs font-mono font-bold px-3 py-1 rounded-full bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] text-[#2563EB]">
+                    <span className="text-xs font-mono font-bold px-3 py-1 rounded-md bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40">
                       {region.incidentCount} attacks
                     </span>
                   </div>
@@ -344,7 +346,7 @@ export default function ThreatAnalyticsView() {
         </div>
       </div>
 
-      {/* Neumorphic JSON Schema Inspection Modal */}
+      {/* JSON Schema Inspection Modal */}
       <AnimatePresence>
         {showJsonModal && (
           <motion.div
@@ -360,37 +362,35 @@ export default function ThreatAnalyticsView() {
               animate={shouldReduceMotion ? {} : { scale: 1, y: 0 }}
               exit={shouldReduceMotion ? {} : { scale: 0.95, y: 15 }}
               transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-              className="bg-[#E0E5EC] border border-white/80 rounded-[28px] max-w-xl w-full p-6 text-[#1A253C] shadow-[16px_16px_32px_#A3B1C6,-16px_-16px_32px_#FFFFFF] relative max-h-[85vh] flex flex-col"
+              className="bg-white border border-[#E5E7EB] rounded-2xl max-w-xl w-full p-6 text-gray-900 shadow-xl relative max-h-[85vh] flex flex-col"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-[#A3B1C6]/30">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB]">
                 <div className="flex items-center gap-2">
-                  <Code className="w-5 h-5 text-[#2563EB]" />
-                  <h4 className="text-sm font-mono font-bold text-[#1A253C] uppercase tracking-wider">
+                  <Code className="w-5 h-5 text-[#0B2115]" />
+                  <h4 className="text-sm font-mono font-bold text-[#0B2115] uppercase tracking-wider">
                     Strict JSON: Threat Logs Aggregation
                   </h4>
                 </div>
-                <motion.button
-                  {...neuButtonProps}
+                <button
                   onClick={() => setShowJsonModal(false)}
-                  className="w-8 h-8 rounded-full bg-[#E0E5EC] shadow-[3px_3px_6px_#A3B1C6,-3px_-3px_6px_#FFFFFF] flex items-center justify-center text-[#52607B] hover:text-[#1A253C] cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+                  className="w-8 h-8 rounded-lg bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-900 cursor-pointer transition-colors"
                   aria-label="Close modal"
                 >
                   <X className="w-4 h-4" />
-                </motion.button>
+                </button>
               </div>
 
-              <pre className="p-4 mt-4 rounded-2xl bg-[#E0E5EC] shadow-[inset_4px_4px_8px_#A3B1C6,inset_-4px_-4px_8px_#FFFFFF] text-xs font-mono text-[#1A253C] overflow-y-auto flex-1 border border-white/40">
+              <pre className="p-4 mt-4 rounded-xl bg-gray-50 border border-[#E5E7EB] text-xs font-mono text-gray-800 overflow-y-auto flex-1">
                 {JSON.stringify(aggregationData, null, 2)}
               </pre>
 
               <div className="mt-4 flex justify-end">
-                <motion.button
-                  {...neuButtonProps}
+                <button
                   onClick={() => setShowJsonModal(false)}
-                  className="px-5 py-2 rounded-full bg-[#E0E5EC] text-[#1A253C] shadow-[5px_5px_10px_#A3B1C6,-5px_-5px_10px_#FFFFFF] text-xs font-mono font-bold cursor-pointer transition-colors focus:outline-none focus:ring-4 focus:ring-blue-400"
+                  className="px-5 py-2 rounded-lg bg-[#0B2115] hover:bg-[#153423] text-white text-xs font-mono font-bold cursor-pointer transition-colors shadow-sm"
                 >
                   Close
-                </motion.button>
+                </button>
               </div>
             </motion.div>
           </motion.div>

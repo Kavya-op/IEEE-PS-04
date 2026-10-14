@@ -90,19 +90,15 @@ export function MotionProvider({ children }) {
         }
       };
 
-  // Interactive Neumorphic Hover/Tap States:
-  // whileHover: shadow-[12px_12px_20px_#A3B1C6,-12px_-12px_20px_#FFFFFF], scale: 1.02
-  // whileTap: shadow-[inset_6px_6px_12px_#A3B1C6,inset_-6px_-6px_12px_#FFFFFF], scale: 0.98
+  // Interactive SaaS Hover/Tap States:
   const neuButtonProps = shouldReduceMotion
     ? {}
     : {
         whileHover: {
-          scale: 1.02,
-          boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF'
+          scale: 1.01
         },
         whileTap: {
-          scale: 0.98,
-          boxShadow: 'inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF'
+          scale: 0.98
         },
         transition: { type: 'spring', stiffness: 450, damping: 25 }
       };
@@ -111,8 +107,7 @@ export function MotionProvider({ children }) {
     ? {}
     : {
         whileHover: {
-          scale: 1.015,
-          boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF'
+          y: -2
         },
         transition: { type: 'spring', stiffness: 350, damping: 25 }
       };
@@ -151,11 +146,11 @@ export function useAppMotion() {
       getStaggerContainer: () => ({ hidden: { opacity: 0 }, visible: { opacity: 1 } }),
       staggerItemVariants: { hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } },
       neuButtonProps: {
-        whileHover: { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' },
-        whileTap: { scale: 0.98, boxShadow: 'inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF' }
+        whileHover: { scale: 1.01 },
+        whileTap: { scale: 0.98 }
       },
       neuCardProps: {
-        whileHover: { scale: 1.015, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }
+        whileHover: { y: -2 }
       }
     };
   }

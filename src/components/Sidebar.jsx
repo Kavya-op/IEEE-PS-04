@@ -77,69 +77,65 @@ export default function Sidebar({
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full justify-between p-4 sm:p-5 select-none">
+    <div className="flex flex-col h-full justify-between p-4 sm:p-5 select-none bg-white">
       {/* Top: Logo & System Identity */}
       <div>
         <div className="flex items-center gap-3 px-2 py-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-[#E0E5EC] shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] flex items-center justify-center text-blue-600 shrink-0">
-            <Shield className="w-6 h-6 stroke-[2.2]" />
+          <div className="w-10 h-10 rounded-xl bg-gray-900 text-white flex items-center justify-center shrink-0 shadow-sm">
+            <Shield className="w-5 h-5 stroke-[2.2]" />
           </div>
           <div className="min-w-0">
             <div className="text-xs font-mono font-bold tracking-wider text-blue-600 uppercase">
               SKIT004
             </div>
-            <div className="text-sm font-extrabold text-[#1A253C] tracking-tight truncate">
+            <div className="text-sm font-extrabold text-gray-900 tracking-tight truncate">
               Threat Monitor
             </div>
           </div>
         </div>
 
-        {/* Center: Navigation with Inset Active States */}
-        <nav className="space-y-3" aria-label="Main System Navigation">
+        {/* Center: Navigation */}
+        <nav className="space-y-1.5" aria-label="Main System Navigation">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isItemActive(item);
 
             return (
-              <motion.button
+              <button
                 key={item.id}
                 onClick={() => handleNavClick(item)}
                 aria-current={active ? 'page' : undefined}
-                whileHover={active || shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-                whileTap={shouldReduceMotion ? {} : { scale: 0.98, boxShadow: 'inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF' }}
-                transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 450, damping: 25 }}
-                className={`w-full px-4 py-3.5 rounded-2xl flex items-center justify-between text-xs font-mono font-bold cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 ${
+                className={`w-full px-3.5 py-2.5 rounded-lg flex items-center justify-between text-xs font-mono font-bold cursor-pointer transition-colors ${
                   active
-                    ? 'bg-[#E0E5EC] shadow-[inset_6px_6px_12px_#A3B1C6,inset_-6px_-6px_12px_#FFFFFF] text-blue-600'
-                    : 'bg-[#E0E5EC] shadow-[6px_6px_12px_#A3B1C6,-6px_-6px_12px_#FFFFFF] text-[#52607B] hover:text-[#1A253C]'
+                    ? 'bg-gray-900 text-white shadow-sm'
+                    : 'bg-white border border-transparent text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
                 <div className="flex items-center gap-3">
-                  <Icon className={`w-4 h-4 ${active ? 'text-blue-600 stroke-[2.5]' : 'text-[#52607B]'}`} />
+                  <Icon className={`w-4 h-4 ${active ? 'text-white' : 'text-gray-500'}`} />
                   <span className="truncate">{item.label}</span>
                 </div>
 
                 {item.badge && (
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF] ${
+                    className={`px-2 py-0.5 rounded text-[10px] font-mono font-bold border ${
                       item.badge === 'Live'
-                        ? 'text-emerald-700 bg-emerald-100/60'
-                        : 'text-rose-700 bg-rose-100/60'
+                        ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
+                        : 'text-rose-700 bg-rose-50 border-rose-200'
                     }`}
                   >
                     {item.badge}
                   </span>
                 )}
-              </motion.button>
+              </button>
             );
           })}
         </nav>
       </div>
 
-      {/* Bottom Actions: Prominent Blue Outset Button & Lock Terminal */}
-      <div className="space-y-4 pt-6 border-t border-[#A3B1C6]/30">
-        {/* Prominent Blue Outset Button with whileHover/whileTap */}
-        <motion.button
+      {/* Bottom Actions */}
+      <div className="space-y-3 pt-4 border-t border-gray-200">
+        <button
           onClick={() => {
             if (onRunManualAnalysis) {
               onRunManualAnalysis();
@@ -147,33 +143,28 @@ export default function Sidebar({
               setActiveTab('Alerts');
             }
           }}
-          whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '10px 10px 22px rgba(37,99,235,0.45), -8px -8px 18px #FFFFFF' }}
-          whileTap={shouldReduceMotion ? {} : { scale: 0.98, boxShadow: 'inset 4px 4px 10px #1E3A8A' }}
-          transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 450, damping: 25 }}
           aria-label="Run Manual Threat Analysis"
-          className="w-full py-3.5 px-4 rounded-2xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white font-bold text-xs tracking-wider flex items-center justify-center gap-2 shadow-[6px_6px_14px_#93A1B6,-6px_-6px_14px_#FFFFFF] cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+          className="w-full py-2.5 px-4 rounded-lg bg-gray-900 hover:bg-gray-800 text-white font-semibold text-xs tracking-wider flex items-center justify-center gap-2 shadow-sm transition-colors cursor-pointer"
         >
-          <Plus className="w-4 h-4 stroke-[3]" />
+          <Plus className="w-4 h-4" />
           <span>+ Run Manual Analysis</span>
-        </motion.button>
+        </button>
 
         {/* Lock Terminal / Security Status Indicator */}
-        <div className="flex items-center justify-between px-2 pt-1 text-[11px] font-mono text-[#52607B]">
+        <div className="flex items-center justify-between px-1 pt-1 text-[11px] font-mono text-gray-500">
           <div className="flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 shadow-[0_0_8px_#10b981]" />
-            <span className="font-semibold text-[#1A253C]">Grid Nominal</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+            <span className="font-semibold text-gray-800">Grid Nominal</span>
           </div>
           {onLockTerminal && (
-            <motion.button
+            <button
               onClick={onLockTerminal}
-              whileHover={shouldReduceMotion ? {} : { scale: 1.08 }}
-              whileTap={shouldReduceMotion ? {} : { scale: 0.94 }}
               aria-label="Lock terminal and secure session"
               title="Lock Terminal"
-              className="p-2 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] active:shadow-[inset_2px_2px_4px_#A3B1C6] text-[#52607B] hover:text-rose-600 transition-colors cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+              className="p-1.5 rounded-lg border border-gray-200 text-gray-600 hover:text-rose-600 hover:bg-gray-50 transition-colors cursor-pointer"
             >
               <Lock className="w-3.5 h-3.5" />
-            </motion.button>
+            </button>
           )}
         </div>
       </div>
@@ -182,10 +173,10 @@ export default function Sidebar({
 
   return (
     <>
-      {/* Desktop Persistent Left Neumorphic Sidebar */}
+      {/* Desktop Persistent Left Sidebar */}
       <aside
         aria-label="Sidebar Navigation"
-        className="hidden lg:block fixed left-5 top-5 bottom-5 w-64 bg-[#E0E5EC] rounded-3xl shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] z-40 overflow-hidden"
+        className="hidden lg:block fixed left-5 top-5 bottom-5 w-64 bg-white rounded-2xl border border-gray-200 shadow-sm z-40 overflow-hidden"
       >
         {sidebarContent}
       </aside>
@@ -197,10 +188,10 @@ export default function Sidebar({
             className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="relative m-4 w-72 bg-[#E0E5EC] rounded-3xl shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] z-50 flex flex-col overflow-hidden">
+          <div className="relative m-4 w-72 bg-white rounded-2xl border border-gray-200 shadow-xl z-50 flex flex-col overflow-hidden">
             <button
               onClick={() => setMobileOpen(false)}
-              className="absolute top-4 right-4 p-2 rounded-xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-[#1A253C] focus:outline-none focus:ring-4 focus:ring-blue-400"
+              className="absolute top-4 right-4 p-1.5 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 cursor-pointer"
               aria-label="Close navigation menu"
             >
               <X className="w-4 h-4" />

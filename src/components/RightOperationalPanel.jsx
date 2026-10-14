@@ -28,44 +28,44 @@ export function OfficerClearanceCard() {
   return (
     <section
       aria-label="Officer Clearance and Session Status"
-      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E9F2] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
+      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
     >
       <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
-        <div className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-wider truncate">
+        <div className="text-[10px] font-mono font-bold text-gray-500 uppercase tracking-wider truncate">
           Account / Session Identity
         </div>
-        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 flex items-center gap-1 shrink-0">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40 flex items-center gap-1 shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-[#9FE846] animate-pulse" />
           <span>SESSION ACTIVE</span>
         </span>
       </div>
 
       <div className="flex items-center gap-3 min-w-0">
-        <div className="w-12 h-12 rounded-2xl bg-blue-50 dark:bg-blue-950/60 border-2 border-[#2563EB] flex items-center justify-center text-[#2563EB] dark:text-blue-400 font-mono font-black text-sm shrink-0 shadow-sm">
+        <div className="w-12 h-12 rounded-2xl bg-[#0B2115] border-2 border-[#153423] flex items-center justify-center text-[#9FE846] font-mono font-black text-sm shrink-0 shadow-sm">
           IV
         </div>
         <div className="min-w-0 flex-1">
-          <div className="text-sm font-extrabold text-[#1A253C] dark:text-white truncate">
+          <div className="text-sm font-extrabold text-[#0B2115] dark:text-white truncate">
             Investigator Vance
           </div>
           <div className="text-[10px] font-mono font-bold text-rose-600 dark:text-rose-400 flex items-center gap-1 truncate">
             <ShieldAlert className="w-3 h-3 shrink-0" />
             <span className="truncate">TOP SECRET // SCI // HOMELAND</span>
           </div>
-          <div className="text-[11px] font-mono text-slate-500 dark:text-slate-400 mt-0.5 truncate">
+          <div className="text-[11px] font-mono text-gray-500 dark:text-slate-400 mt-0.5 truncate">
             Node Region: <strong className="text-slate-700 dark:text-slate-200">US-EAST-1 (NODE 04)</strong>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-2 gap-2 pt-2 border-t border-slate-100 dark:border-slate-800 font-mono text-[11px]">
-        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 min-w-0">
-          <span className="text-slate-400 text-[10px] block truncate">Defense Efficacy</span>
-          <span className="font-extrabold text-emerald-600 truncate block">{defenseEfficacy}</span>
+        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-[#E5E7EB] dark:border-slate-800 min-w-0">
+          <span className="text-gray-500 text-[10px] block truncate">Defense Efficacy</span>
+          <span className="font-extrabold text-[#5C901A] truncate block">{defenseEfficacy}</span>
         </div>
-        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-100 dark:border-slate-800 min-w-0">
-          <span className="text-slate-400 text-[10px] block truncate">Ingress Stream</span>
-          <span className="font-extrabold text-[#2563EB] truncate block">{activeIngressRate}</span>
+        <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-[#E5E7EB] dark:border-slate-800 min-w-0">
+          <span className="text-gray-500 text-[10px] block truncate">Ingress Stream</span>
+          <span className="font-extrabold text-[#0B2115] dark:text-white truncate block">{activeIngressRate}</span>
         </div>
       </div>
     </section>
@@ -150,31 +150,31 @@ Investigator Signature: INV. VANCE (Clearance: TOP SECRET // SCI)`;
   return (
     <section
       aria-label="Incident Dispatch & FIR Generator"
-      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E9F2] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
+      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
     >
       <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-1.5 min-w-0">
-          <FileText className="w-4 h-4 text-[#2563EB] shrink-0" />
-          <h4 className="text-xs font-mono font-extrabold text-[#1A253C] dark:text-white uppercase tracking-wider truncate">
+          <FileText className="w-4 h-4 text-[#0B2115] shrink-0" />
+          <h4 className="text-xs font-mono font-extrabold text-[#0B2115] dark:text-white uppercase tracking-wider truncate">
             Incident Dispatch & FIR Generator
           </h4>
         </div>
-        <span className="text-[10px] font-mono text-[#2563EB] dark:text-blue-400 font-bold shrink-0">LAW ENFORCEMENT FIR</span>
+        <span className="text-[10px] font-mono text-[#0B2115] dark:text-[#9FE846] font-bold shrink-0">LAW ENFORCEMENT FIR</span>
       </div>
 
-      <p className="text-[11px] text-slate-500 dark:text-slate-400 font-mono leading-relaxed">
+      <p className="text-[11px] text-gray-500 dark:text-slate-400 font-mono leading-relaxed">
         Route actionable legal notices and incident dispatches directly to government cyber cells.
       </p>
 
       {/* Target Threat Selector */}
       <div className="space-y-1 w-full">
-        <label className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-300 block uppercase">
+        <label className="text-[10px] font-mono font-bold text-gray-600 dark:text-slate-300 block uppercase">
           Target Threat Stream:
         </label>
         <select
           value={selectedThreatId}
           onChange={(e) => setSelectedThreatId(e.target.value)}
-          className="w-full text-xs font-mono p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1A253C] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 truncate"
+          className="w-full text-xs font-mono p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-[#0B2115] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0B2115] truncate"
         >
           {liveThreats.map((t) => (
             <option key={t.id} value={t.id}>
@@ -186,13 +186,13 @@ Investigator Signature: INV. VANCE (Clearance: TOP SECRET // SCI)`;
 
       {/* Agency Routing Dropdown */}
       <div className="space-y-1 w-full">
-        <label className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-300 block uppercase">
+        <label className="text-[10px] font-mono font-bold text-gray-600 dark:text-slate-300 block uppercase">
           Recipient Agency:
         </label>
         <select
           value={targetAgency}
           onChange={(e) => setTargetAgency(e.target.value)}
-          className="w-full text-xs font-mono p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1A253C] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 truncate"
+          className="w-full text-xs font-mono p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-[#0B2115] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0B2115] truncate"
         >
           <option value="CERT-In">CERT-In (Computer Emergency Response Team)</option>
           <option value="Cyber Crime Cell">National Cyber Crime Reporting Portal (NCRP)</option>
@@ -203,13 +203,13 @@ Investigator Signature: INV. VANCE (Clearance: TOP SECRET // SCI)`;
 
       {/* Legal Action Tier */}
       <div className="space-y-1 w-full">
-        <label className="text-[10px] font-mono font-bold text-slate-600 dark:text-slate-300 block uppercase">
+        <label className="text-[10px] font-mono font-bold text-gray-600 dark:text-slate-300 block uppercase">
           Action Priority:
         </label>
         <select
           value={legalTier}
           onChange={(e) => setLegalTier(e.target.value)}
-          className="w-full text-xs font-mono p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-[#1A253C] dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 truncate"
+          className="w-full text-xs font-mono p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-[#E5E7EB] dark:border-slate-700 text-[#0B2115] dark:text-white focus:outline-none focus:ring-2 focus:ring-[#0B2115] truncate"
         >
           <option value="Emergency Subpoena (18 U.S. Code § 1030)">Emergency Subpoena (18 U.S. Code § 1030 / IT Act 66F)</option>
           <option value="Critical Infrastructure Advisory">Critical Infrastructure Advisory Warning</option>
@@ -220,7 +220,7 @@ Investigator Signature: INV. VANCE (Clearance: TOP SECRET // SCI)`;
       {/* Action Button */}
       <button
         onClick={() => setShowLegalModal(true)}
-        className="w-full py-2.5 px-4 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold flex items-center justify-center gap-2 shadow-sm shadow-blue-500/25 transition-all cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+        className="w-full py-2.5 px-4 rounded-xl bg-[#9FE846] hover:bg-[#8fd838] text-[#0B2115] text-xs font-mono font-semibold flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#0B2115]"
       >
         <Send className="w-3.5 h-3.5 shrink-0" />
         <span className="truncate whitespace-normal">[Generate Formal FIR / Legal Dispatch ↗]</span>
@@ -238,12 +238,12 @@ Investigator Signature: INV. VANCE (Clearance: TOP SECRET // SCI)`;
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.95 }}
-              className="bg-white dark:bg-[#151E32] rounded-2xl p-6 border border-[#E5E9F2] dark:border-slate-800 shadow-2xl max-w-xl w-full flex flex-col max-h-[90vh] overflow-hidden"
+              className="bg-white dark:bg-[#151E32] rounded-2xl p-6 border border-[#E5E7EB] dark:border-slate-800 shadow-2xl max-w-xl w-full flex flex-col max-h-[90vh] overflow-hidden"
             >
-              <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
+              <div className="flex items-center justify-between pb-3 border-b border-[#E5E7EB] dark:border-slate-800">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-[#2563EB]" />
-                  <h3 className="text-sm font-mono font-bold text-slate-900 dark:text-white">
+                  <FileText className="w-5 h-5 text-[#0B2115]" />
+                  <h3 className="text-sm font-mono font-bold text-[#0B2115] dark:text-white">
                     Formal Legal Dispatch & Cyber FIR Draft
                   </h3>
                 </div>
@@ -256,17 +256,17 @@ Investigator Signature: INV. VANCE (Clearance: TOP SECRET // SCI)`;
               </div>
 
               <div className="my-4 flex-1 overflow-y-auto">
-                <pre className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-[11px] font-mono text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
+                <pre className="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 text-[11px] font-mono text-slate-800 dark:text-slate-200 whitespace-pre-wrap leading-relaxed">
                   {generatedFIRContent}
                 </pre>
               </div>
 
-              <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3">
+              <div className="pt-3 border-t border-[#E5E7EB] dark:border-slate-800 flex items-center justify-between gap-3">
                 <button
                   onClick={handleCopy}
-                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-mono font-bold flex items-center gap-1.5 text-slate-700 dark:text-slate-200"
+                  className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-mono font-bold flex items-center gap-1.5 text-[#0B2115] dark:text-slate-200"
                 >
-                  {copiedDispatch ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedDispatch ? <Check className="w-3.5 h-3.5 text-[#5C901A]" /> : <Copy className="w-3.5 h-3.5" />}
                   <span>{copiedDispatch ? 'Copied to Clipboard' : 'Copy Dispatch'}</span>
                 </button>
 
@@ -281,7 +281,7 @@ Investigator Signature: INV. VANCE (Clearance: TOP SECRET // SCI)`;
                       element.click();
                       document.body.removeChild(element);
                     }}
-                    className="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-[#1D4ED8] text-white text-xs font-mono font-bold flex items-center gap-1.5"
+                    className="px-4 py-2 rounded-xl bg-[#9FE846] hover:bg-[#8fd838] text-[#0B2115] text-xs font-mono font-semibold flex items-center gap-1.5 cursor-pointer shadow-sm"
                   >
                     <FileDown className="w-3.5 h-3.5" />
                     <span>Export Document</span>
@@ -303,16 +303,16 @@ export function LiveStreamTickerCard({ onSelectThreat }) {
   return (
     <section
       aria-label="Live OSINT Ingress Stream"
-      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E9F2] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
+      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
     >
       <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-ping shrink-0" />
-          <h4 className="text-xs font-mono font-extrabold text-[#1A253C] dark:text-white uppercase tracking-wider truncate">
+          <span className="w-2 h-2 rounded-full bg-[#9FE846] animate-ping shrink-0" />
+          <h4 className="text-xs font-mono font-extrabold text-[#0B2115] dark:text-white uppercase tracking-wider truncate">
             Live OSINT Ingress Stream
           </h4>
         </div>
-        <span className="text-[10px] font-mono text-emerald-600 font-bold shrink-0">MULTI-PLATFORM LIVE</span>
+        <span className="text-[10px] font-mono text-[#5C901A] font-bold shrink-0">MULTI-PLATFORM LIVE</span>
       </div>
 
       <div className="space-y-2.5 max-h-72 overflow-y-auto pr-1">
@@ -326,8 +326,8 @@ export function LiveStreamTickerCard({ onSelectThreat }) {
               key={threat.id || idx}
               className={`p-2.5 rounded-xl border transition-all flex flex-col gap-1.5 text-xs font-mono min-w-0 ${
                 isMitigated
-                  ? 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200 dark:border-emerald-800/40'
-                  : 'bg-slate-50 dark:bg-slate-800/50 border-slate-100 dark:border-slate-800 hover:border-blue-200'
+                  ? 'bg-[#F3FAEB]/50 dark:bg-emerald-950/20 border-[#9FE846]/40'
+                  : 'bg-slate-50 dark:bg-slate-800/50 border-[#E5E7EB] dark:border-slate-800 hover:border-[#9FE846]/50'
               }`}
             >
               <div className="flex items-center justify-between gap-1 min-w-0">
@@ -335,35 +335,35 @@ export function LiveStreamTickerCard({ onSelectThreat }) {
                   <span
                     className={`w-2 h-2 rounded-full shrink-0 ${
                       isMitigated
-                        ? 'bg-emerald-500'
+                        ? 'bg-[#5C901A]'
                         : isCritical
                         ? 'bg-rose-600 animate-ping'
                         : isHigh
                         ? 'bg-amber-500'
-                        : 'bg-blue-500'
+                        : 'bg-[#0B2115]'
                     }`}
                   />
                   <span
                     className={`text-[10px] font-bold truncate transition-all ${
                       isMitigated
-                        ? 'text-slate-400 line-through opacity-60'
+                        ? 'text-gray-400 line-through opacity-60'
                         : 'text-slate-700 dark:text-slate-200'
                     }`}
                   >
                     {threat.title || 'Inbound OSINT Telemetry'}
                   </span>
                 </div>
-                <span className="text-[9px] text-slate-400 shrink-0">{threat.timestamp || 'Live'}</span>
+                <span className="text-[9px] text-gray-500 shrink-0">{threat.timestamp || 'Live'}</span>
               </div>
 
               {/* Action Row: Link + Correlate Actor + Simulated Takedown Button */}
-              <div className="flex items-center justify-between pt-1 border-t border-slate-200/60 dark:border-slate-700/60 text-[10px] min-w-0 gap-1.5 flex-wrap">
+              <div className="flex items-center justify-between pt-1 border-t border-[#E5E7EB] dark:border-slate-700/60 text-[10px] min-w-0 gap-1.5 flex-wrap">
                 <div className="flex items-center gap-1.5 shrink-0 flex-wrap">
                   <a
                     href={threat.link || 'https://www.reddit.com/r/cybersecurity'}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#2563EB] hover:text-[#1D4ED8] font-bold inline-flex items-center gap-0.5 underline shrink-0"
+                    className="text-[#0B2115] hover:text-[#153423] font-bold inline-flex items-center gap-0.5 underline shrink-0"
                   >
                     <span>Inspect Threat ↗</span>
                   </a>
@@ -371,7 +371,7 @@ export function LiveStreamTickerCard({ onSelectThreat }) {
                   {/* Correlate Actor Action Button */}
                   <button
                     onClick={() => setSelectedDossierThreat(threat)}
-                    className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-blue-200 text-blue-600 hover:bg-blue-50 dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/40 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
+                    className="px-2.5 py-1 text-xs font-semibold rounded-lg border border-[#E5E7EB] text-[#0B2115] hover:bg-[#F3FAEB] hover:text-[#5C901A] dark:border-blue-800 dark:text-blue-400 dark:hover:bg-blue-950/40 transition-colors flex items-center gap-1 cursor-pointer shrink-0"
                     title="Correlate threat actor identity across platforms"
                   >
                     <User className="w-3 h-3" />
@@ -418,23 +418,23 @@ export function SystemSopChecklistCard() {
   return (
     <section
       aria-label="Active Defense SOPs"
-      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E9F2] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
+      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
     >
       <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-1.5 min-w-0">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <h4 className="text-xs font-mono font-extrabold text-[#1A253C] dark:text-white uppercase tracking-wider truncate">
+          <CheckCircle2 className="w-4 h-4 text-[#5C901A] shrink-0" />
+          <h4 className="text-xs font-mono font-extrabold text-[#0B2115] dark:text-white uppercase tracking-wider truncate">
             Active Defense SOPs
           </h4>
         </div>
-        <span className="text-[10px] font-mono font-bold text-emerald-600 shrink-0">
+        <span className="text-[10px] font-mono font-bold text-[#5C901A] shrink-0">
           {progressPct}% DONE
         </span>
       </div>
 
       <div className="w-full h-2 rounded-full bg-slate-100 dark:bg-slate-800 overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-blue-600 to-emerald-500 rounded-full"
+          className="h-full bg-gradient-to-r from-[#0B2115] to-[#9FE846] rounded-full"
           animate={{ width: `${progressPct}%` }}
           transition={{ duration: 0.3 }}
         />
@@ -445,20 +445,20 @@ export function SystemSopChecklistCard() {
           <div
             key={task.id}
             onClick={() => toggleSopTask(task.id)}
-            className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors cursor-pointer text-xs font-mono text-slate-700 dark:text-slate-300 min-w-0"
+            className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-[#F3FAEB]/60 dark:hover:bg-slate-800/40 transition-colors cursor-pointer text-xs font-mono text-slate-700 dark:text-slate-300 min-w-0"
           >
             <button
               type="button"
-              className="text-blue-600 dark:text-blue-400 focus:outline-none shrink-0"
+              className="text-[#0B2115] dark:text-blue-400 focus:outline-none shrink-0"
               aria-label={`Toggle ${task.text}`}
             >
               {task.completed ? (
-                <CheckSquare className="w-4 h-4 text-emerald-600 fill-emerald-100 dark:fill-emerald-950" />
+                <CheckSquare className="w-4 h-4 text-[#5C901A] fill-[#F3FAEB] dark:fill-emerald-950" />
               ) : (
                 <Square className="w-4 h-4 text-slate-400" />
               )}
             </button>
-            <span className={`text-[11px] truncate ${task.completed ? 'line-through text-slate-400' : ''}`}>
+            <span className={`text-[11px] truncate ${task.completed ? 'line-through text-gray-400' : ''}`}>
               {task.text}
             </span>
           </div>
@@ -474,16 +474,16 @@ export function SystemAuditLogCard() {
   return (
     <section
       aria-label="Security Audit Log Stream"
-      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E9F2] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
+      className="w-full overflow-hidden bg-white dark:bg-[#151E32] rounded-2xl p-4.5 sm:p-5 border border-[#E5E7EB] dark:border-slate-800 shadow-[0_4px_20px_rgba(0,0,0,0.04)] space-y-3"
     >
       <div className="flex items-center justify-between pb-2 border-b border-slate-100 dark:border-slate-800">
         <div className="flex items-center gap-1.5 min-w-0">
-          <Terminal className="w-4 h-4 text-[#2563EB] shrink-0" />
-          <h4 className="text-xs font-mono font-extrabold text-[#1A253C] dark:text-white uppercase tracking-wider truncate">
+          <Terminal className="w-4 h-4 text-[#0B2115] shrink-0" />
+          <h4 className="text-xs font-mono font-extrabold text-[#0B2115] dark:text-white uppercase tracking-wider truncate">
             Firewall & Mitigation Audit Log
           </h4>
         </div>
-        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 shrink-0">
+        <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-gray-500 dark:text-slate-300 shrink-0">
           {auditLogs?.length || 0} Events
         </span>
       </div>
@@ -492,10 +492,10 @@ export function SystemAuditLogCard() {
         {auditLogs?.map((log) => (
           <div
             key={log.id}
-            className="p-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-slate-100 dark:border-slate-800 font-mono text-[10px] space-y-1"
+            className="p-2 rounded-lg bg-slate-50 dark:bg-slate-900 border border-[#E5E7EB] dark:border-slate-800 font-mono text-[10px] space-y-1"
           >
-            <div className="flex items-center justify-between text-slate-400">
-              <span className="font-bold text-[#2563EB] dark:text-blue-400">{log.action || 'AUDIT'}</span>
+            <div className="flex items-center justify-between text-gray-500">
+              <span className="font-bold text-[#0B2115] dark:text-blue-400">{log.action || 'AUDIT'}</span>
               <span>{log.timestamp}</span>
             </div>
             <p className="text-slate-700 dark:text-slate-300 leading-snug">

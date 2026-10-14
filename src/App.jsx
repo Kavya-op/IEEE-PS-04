@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import FintechHeader from './components/FintechHeader';
-import SlimIconRail from './components/SlimIconRail';
-import FintechThreatSearch from './components/FintechThreatSearch';
-import { SystemSopChecklistCard, LiveStreamTickerCard, SystemAuditLogCard } from './components/RightOperationalPanel';
+import SaaSSidebar from './components/SaaSSidebar';
+import SaaSHeader from './components/SaaSHeader';
+import SaaSChartsSection from './components/SaaSChartsSection';
+import { OfficerClearanceCard, IncidentDispatchCard, SystemSopChecklistCard, SystemAuditLogCard } from './components/RightOperationalPanel';
 import OverviewView from './components/OverviewView';
 import LiveAlertsView from './components/LiveAlertsView';
 import ThreatAnalyticsView from './components/ThreatAnalyticsView';
 import SettingsView from './components/SettingsView';
 import TargetedSweepPanel from './components/TargetedSweepPanel';
+import MediaInterrogationView from './components/MediaInterrogationView';
+import DashboardAnalytics from './components/DashboardAnalytics';
 import Login from './components/Login';
-import AccessibilityControls from './components/AccessibilityControls';
 import { useAppMotion } from './context/MotionContext';
 import { useOSINT } from './context/OSINTContext';
 import { ShieldAlert, CheckCircle2, X, Info } from 'lucide-react';
@@ -25,7 +26,7 @@ export default function App() {
     mitigateThreat
   } = useOSINT();
 
-  const [isAuthenticated, setIsAuthenticated] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState('Overview');
   const [simulatedAlerts, setSimulatedAlerts] = useState([]);
   const [toast, setToast] = useState(null);
@@ -141,11 +142,11 @@ export default function App() {
   const activeAlertCount = alerts.filter((a) => a.status === 'active').length || severeRisksCount || 4;
 
   return (
-    <div className="min-h-screen bg-[#F0F3F8] dark:bg-[#0B1120] text-[#1E293B] dark:text-slate-100 relative flex flex-col font-sans overflow-x-hidden selection:bg-[#2563EB]/20 selection:text-[#2563EB]">
-      {/* Skip to Main Content Link for Keyboard Users (WCAG 2.4.1) */}
+    <div className="min-h-screen w-full bg-[#F3F5F6] flex items-center justify-center p-2 sm:p-4 text-gray-900 font-sans antialiased overflow-hidden selection:bg-[#0B2115] selection:text-[#9FE846]">
+      {/* Skip to Main Content Link for Keyboard Accessibility (WCAG 2.4.1) */}
       <a
         href="#main-content"
-        className="skip-to-content focus:outline-none focus:ring-4 focus:ring-blue-400"
+        className="skip-to-content focus:outline-none focus:ring-2 focus:ring-[#0B2115]"
       >
         Skip to Main Threat Intelligence Content
       </a>
@@ -155,7 +156,7 @@ export default function App() {
         {toast ? `${toast.title}: ${toast.message}` : ''}
       </div>
 
-      {/* Crisp Toast Notification Alert */}
+      {/* Clean Toast Notification Alert */}
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -167,29 +168,27 @@ export default function App() {
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
             className="fixed bottom-6 right-6 z-50 max-w-sm pointer-events-auto"
           >
-            <div
-              className="p-4 rounded-2xl bg-white dark:bg-[#151E32] shadow-xl border border-[#E5E9F2] dark:border-slate-800 flex items-start space-x-3"
-            >
+            <div className="p-4 rounded-xl bg-white shadow-xl border border-[#E5E7EB] flex items-start space-x-3">
               {toast.type === 'danger' ? (
-                <div className="w-8 h-8 rounded-xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <ShieldAlert className="w-4 h-4 animate-bounce" />
+                <div className="w-8 h-8 rounded-lg bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 mt-0.5">
+                  <ShieldAlert className="w-4 h-4" />
                 </div>
               ) : toast.type === 'success' ? (
-                <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
-                  <CheckCircle2 className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/30 flex items-center justify-center shrink-0 mt-0.5">
+                  <CheckCircle2 className="w-4 h-4 text-[#5C901A]" />
                 </div>
               ) : (
-                <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/40 text-[#2563EB] flex items-center justify-center shrink-0 mt-0.5">
+                <div className="w-8 h-8 rounded-lg bg-gray-100 text-[#0B2115] flex items-center justify-center shrink-0 mt-0.5">
                   <Info className="w-4 h-4" />
                 </div>
               )}
               <div className="text-xs flex-1">
-                <div className="font-bold uppercase tracking-wider text-slate-900 dark:text-white">{toast.title}</div>
-                <div className="text-slate-500 dark:text-slate-400 mt-0.5">{toast.message}</div>
+                <div className="font-bold uppercase tracking-wider text-[#0B2115]">{toast.title}</div>
+                <div className="text-gray-500 mt-0.5">{toast.message}</div>
               </div>
               <button
                 onClick={() => setToast(null)}
-                className="w-6 h-6 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors cursor-pointer"
+                className="w-6 h-6 rounded-lg hover:bg-gray-100 flex items-center justify-center text-gray-400 hover:text-gray-700 transition-colors cursor-pointer"
                 aria-label="Dismiss toast"
               >
                 <X className="w-3.5 h-3.5" />
@@ -202,166 +201,119 @@ export default function App() {
       {/* If Not Authenticated: Render Login Gateway */}
       <AnimatePresence mode="wait">
         {!isAuthenticated ? (
-          <motion.div
-            key="login"
-            initial={pageVariants.initial}
-            animate={pageVariants.animate}
-            exit={pageVariants.exit}
-            transition={pageVariants.transition}
-            className="w-full min-h-screen"
-          >
-            <Login
-              onLoginSuccess={() => {
-                setIsAuthenticated(true);
-                showToast('Clearance Verified', 'Welcome back, Investigator Vance', 'success');
-              }}
-            />
-          </motion.div>
+          <Login
+            onLoginSuccess={() => {
+              setIsAuthenticated(true);
+              showToast('Clearance Verified', 'Welcome back, Investigator Vance', 'success');
+            }}
+          />
         ) : (
-          <div className="flex flex-col flex-1 min-w-0">
-            {/* Top Dual Header System (Sub-Header Live Ticker + Solid Cobalt Blue Main Navbar) */}
-            <FintechHeader
+          /* =========================================================================
+              THE 'FLOATING' MASTER CONTAINER:
+              Solid light gray background outside: bg-[#F3F5F6]
+              Single massive white container: bg-white rounded-[2rem] shadow-xl overflow-hidden flex h-[95vh] w-[98vw] max-w-[1600px] border border-[#E5E7EB]
+             ========================================================================= */
+          <div className="bg-white rounded-[2rem] shadow-xl overflow-hidden flex flex-col md:flex-row h-[95vh] w-[98vw] max-w-[1600px] border border-[#E5E7EB] relative">
+            {/* The Left Sidebar (Deep Forest Green) */}
+            <SaaSSidebar
               activeTab={activeTab}
               setActiveTab={setActiveTab}
               alertCount={activeAlertCount}
-              onSimulateAlert={handleSimulateAlert}
-              onRefresh={() => {
-                refreshNow();
-                showToast('Telemetry Synced', 'Live Reddit OSINT stream refreshed', 'info');
-              }}
               onLockTerminal={() => {
                 setIsAuthenticated(false);
                 showToast('Terminal Locked', 'Investigator session secured', 'info');
               }}
             />
 
-            {/* Layout Wrapper with Slim Nav Icon Rail */}
-            <div className="flex flex-1 min-w-0 w-full relative">
-              <SlimIconRail
+            {/* Right Main Content Column */}
+            <div className="flex-1 flex flex-col min-w-0 bg-white h-full overflow-hidden">
+              {/* The Top Header (Flat & Functional, Pure White) */}
+              <SaaSHeader
                 activeTab={activeTab}
                 setActiveTab={setActiveTab}
                 alertCount={activeAlertCount}
-                onLockTerminal={() => {
-                  setIsAuthenticated(false);
-                  showToast('Terminal Locked', 'Investigator session secured', 'info');
+                onSimulateAlert={handleSimulateAlert}
+                onRefresh={() => {
+                  refreshNow();
+                  showToast('Telemetry Synced', 'Live multi-platform OSINT stream refreshed', 'info');
+                }}
+                onExportReport={() => {
+                  showToast('Exporting Report', 'Synthesizing SKIT004 Government Evidence Dossier...', 'success');
                 }}
               />
 
-              {/* Master Content Area below Navbar */}
+              {/* Main Content Grid & Panels (Flat Design, Pure White Background) */}
               <main
                 id="main-content"
                 role="main"
                 tabIndex="-1"
                 aria-label="Main Threat Intelligence Dashboard"
-                className="flex-1 min-w-0 overflow-x-hidden focus:outline-none"
+                className="flex-1 min-w-0 overflow-y-auto p-5 sm:p-6 bg-white focus:outline-none"
               >
-                {/* Master Container: Responsive Flex Layout */}
-                <div className="flex flex-col lg:flex-row gap-6 p-4 sm:p-6 w-full max-w-[1600px] mx-auto">
-                  {/* Left Column (Threat Surveillance/Interrogate): w-full lg:w-1/3 xl:w-1/4 flex-shrink-0 space-y-6 */}
-                  <div className="w-full lg:w-1/3 xl:w-1/4 flex-shrink-0 space-y-6">
-                    {/* Accessibility & Display Controls Bar */}
-                    <AccessibilityControls />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={pageVariants.initial}
+                    animate={pageVariants.animate}
+                    exit={pageVariants.exit}
+                    transition={pageVariants.transition}
+                    className="w-full"
+                  >
+                    {(activeTab === 'Overview' || activeTab === 'Radar') && (
+                      <OverviewView
+                        alerts={alerts}
+                        onIsolateThreat={handleIsolateThreat}
+                        onNavigateToAlerts={() => setActiveTab('Alerts')}
+                      />
+                    )}
 
-                    {/* Threat Surveillance Query Banner */}
-                    <FintechThreatSearch
-                      onInitiateDeepSweep={(query) => {
-                        setActiveTab('TargetedSweep');
-                        showToast('Deep Sweep Launched', `Investigating query: "${query}"`, 'info');
-                      }}
-                      onNavigateToSweep={(query) => {
-                        setActiveTab('TargetedSweep');
-                        showToast('Targeted Interrogate', `Targeting query: "${query}"`, 'info');
-                      }}
-                    />
+                    {activeTab === 'ThreatVelocity' && (
+                      <div className="space-y-6">
+                        <SaaSChartsSection />
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                          <OfficerClearanceCard />
+                          <IncidentDispatchCard />
+                        </div>
+                      </div>
+                    )}
 
-                    {/* Operational SOP Defense Checklist */}
-                    <SystemSopChecklistCard />
+                    {(activeTab === 'Alerts' || activeTab === 'Live Alerts' || activeTab === 'Threat Feed') && (
+                      <LiveAlertsView
+                        alerts={alerts}
+                        onIsolateThreat={handleIsolateThreat}
+                        onMitigateThreat={handleMitigateThreat}
+                        onSimulateAlert={handleSimulateAlert}
+                      />
+                    )}
 
-                    {/* Live Stream Ingress Ticker with Simulated Takedowns */}
-                    <LiveStreamTickerCard
-                      onSelectThreat={(threat) => {
-                        setActiveTab('TargetedSweep');
-                        showToast('Threat Loaded', `Loaded ${threat.id} into Investigation Sandbox`, 'info');
-                      }}
-                    />
+                    {(activeTab === 'MediaInterrogation' || activeTab === 'Media Interrogation') && (
+                      <MediaInterrogationView />
+                    )}
 
-                    {/* Live Firewall & Mitigation Audit Log */}
-                    <SystemAuditLogCard />
-                  </div>
+                    {(activeTab === 'BotSwarms' || activeTab === 'Bot Swarms') && (
+                      <DashboardAnalytics />
+                    )}
 
-                  {/* Right Column (Investigator Profile & Dispatch): w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6 */}
-                  <div className="w-full lg:w-2/3 xl:w-3/4 flex flex-col gap-6 min-w-0">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeTab}
-                        initial={pageVariants.initial}
-                        animate={pageVariants.animate}
-                        exit={pageVariants.exit}
-                        transition={pageVariants.transition}
-                        className="w-full"
-                      >
-                        {(activeTab === 'Overview' || activeTab === 'Radar') && (
-                          <OverviewView
-                            alerts={alerts}
-                            onIsolateThreat={handleIsolateThreat}
-                            onNavigateToAlerts={() => setActiveTab('Alerts')}
-                          />
-                        )}
+                    {(activeTab === 'TargetedSweep' || activeTab === 'Targeted Sweep' || activeTab === 'Investigations') && (
+                      <TargetedSweepPanel />
+                    )}
 
-                        {(activeTab === 'Alerts' || activeTab === 'Live Alerts' || activeTab === 'Threat Feed') && (
-                          <LiveAlertsView
-                            alerts={alerts}
-                            onIsolateThreat={handleIsolateThreat}
-                            onMitigateThreat={handleMitigateThreat}
-                            onSimulateAlert={handleSimulateAlert}
-                          />
-                        )}
+                    {(activeTab === 'Misinformation' || activeTab === 'Threat Analytics' || activeTab === 'Analytics') && (
+                      <ThreatAnalyticsView />
+                    )}
 
-                        {(activeTab === 'BotSwarms' || activeTab === 'Bot Swarms') && (
-                          <OverviewView
-                            alerts={alerts}
-                            onIsolateThreat={handleIsolateThreat}
-                            onNavigateToAlerts={() => setActiveTab('Alerts')}
-                          />
-                        )}
+                    {activeTab === 'Settings' && <SettingsView />}
 
-                        {(activeTab === 'TargetedSweep' || activeTab === 'Targeted Sweep' || activeTab === 'Investigations') && (
-                          <TargetedSweepPanel />
-                        )}
-
-                        {(activeTab === 'Misinformation' || activeTab === 'Threat Analytics' || activeTab === 'Analytics') && (
-                          <ThreatAnalyticsView />
-                        )}
-
-                        {activeTab === 'Settings' && <SettingsView />}
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
-                </div>
+                    {activeTab === 'AuditLog' && (
+                      <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                        <SystemSopChecklistCard />
+                        <SystemAuditLogCard />
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
               </main>
             </div>
-
-            {/* Clean Footer Bar */}
-            <footer className="px-6 py-4 bg-white dark:bg-[#151E32] border-t border-[#E5E9F2] dark:border-slate-800 text-xs text-slate-500 dark:text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <div className="flex items-center space-x-2 font-mono text-[11px]">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]" />
-                <span className="font-semibold text-slate-800 dark:text-slate-200">
-                  ThreatRadar // SKIT004 &bull; DEFCON 2 Surveillance Mesh Online
-                </span>
-              </div>
-              <div className="font-mono text-[11px] text-[#2563EB] dark:text-blue-400 font-semibold flex items-center gap-2">
-                <span>Real-Time OSINT Data Stream</span>
-                <span>&bull;</span>
-                <a
-                  href="https://www.reddit.com/r/cybersecurity"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:underline flex items-center gap-1"
-                >
-                  <span>r/cybersecurity</span>
-                </a>
-              </div>
-            </footer>
           </div>
         )}
       </AnimatePresence>

@@ -141,42 +141,46 @@ export function getMockTelegramThreats() {
     {
       id: 'TELEGRAM-LEA-01',
       title: 'Leaked Aadhaar database sample uploaded to open channel',
-      content: "Threat actor 'SpectreSec' uploaded a 500MB sample of citizen Aadhaar records containing full demographic profiles, biometric enrollment IDs, and mobile links. Offering full 40M records database for 3.5 XMR.",
+      content: "Threat actor 'SpectreSec' uploaded a 500MB sample of Delhi & NCR citizen Aadhaar records containing full demographic profiles, biometric enrollment IDs, and mobile links. Offering full 40M records database for 3.5 XMR.",
       link: 'https://t.me/dark_mesh_intel/aadhaar_dump_99',
       timestamp: '5m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
-      riskLevel: 'Critical'
+      riskLevel: 'Critical',
+      mentioned_locations: ['Delhi']
     },
     {
       id: 'TELEGRAM-LEA-02',
-      title: 'New DDoS botnet script being shared among threat actors',
-      content: 'Mirai-variant DDoS botnet script with automated telnet scanner targeting IoT routers, municipal surveillance cameras, and police emergency dispatch infrastructure circulating in underground channels.',
+      title: 'New DDoS botnet script being shared targeting Mumbai infrastructure',
+      content: 'Mirai-variant DDoS botnet script with automated telnet scanner targeting IoT routers, Mumbai municipal surveillance cameras, and police emergency dispatch infrastructure circulating in underground channels.',
       link: 'https://t.me/dark_mesh_intel/botnet_mirai_v3',
       timestamp: '14m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
-      riskLevel: 'High'
+      riskLevel: 'High',
+      mentioned_locations: ['Mumbai']
     },
     {
       id: 'TELEGRAM-LEA-03',
-      title: 'Coordinated protest organizing in restricted regional channels',
-      content: 'Encrypted channel with 42,000 members broadcasting coordinated plans for critical public transit hub blockades and law enforcement radio jamming in capital zone.',
+      title: 'Coordinated transit blockades organizing in Jaipur capital zone',
+      content: 'Encrypted channel with 42,000 members broadcasting coordinated plans for Jaipur transit hub blockades and law enforcement radio jamming in capital zone.',
       link: 'https://t.me/dark_mesh_intel/dispatch_organize_cell',
       timestamp: '22m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
-      riskLevel: 'High'
+      riskLevel: 'High',
+      mentioned_locations: ['Jaipur']
     },
     {
       id: 'TELEGRAM-LEA-04',
-      title: 'Weaponized SCADA command injection script targeting municipal power grid',
-      content: 'Dark forum relay shared Modbus/DNP3 industrial controller command injection payload designed to trip circuit breakers at regional electrical substations.',
+      title: 'Weaponized SCADA command injection script targeting Bangalore power grid',
+      content: 'Dark forum relay shared Modbus/DNP3 industrial controller command injection payload designed to trip circuit breakers at Bangalore 400kV regional electrical substations.',
       link: 'https://t.me/dark_mesh_intel/scada_substation_ioc',
       timestamp: '35m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
-      riskLevel: 'Critical'
+      riskLevel: 'Critical',
+      mentioned_locations: ['Bangalore']
     }
   ];
 }
@@ -189,50 +193,54 @@ export function getMockFacebookThreats() {
   return [
     {
       id: 'FACEBOOK-OSINT-01',
-      title: 'Deepfake video of political official gaining viral traction in regional groups',
-      content: 'Synthesized AI deepfake video depicting state security minister announcing emergency curfew directives and commercial bank liquidation trending with 92,000 shares across 18 regional groups.',
+      title: 'Deepfake video of political official gaining viral traction in Hyderabad groups',
+      content: 'Synthesized AI deepfake video depicting Hyderabad security minister announcing emergency curfew directives and commercial bank liquidation trending with 92,000 shares across 18 regional groups.',
       link: 'https://facebook.com/crowdtangle/intel/post_deepfake_curfew',
       timestamp: '7m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
-      riskLevel: 'High'
+      riskLevel: 'High',
+      mentioned_locations: ['Hyderabad']
     },
     {
       id: 'FACEBOOK-OSINT-02',
       title: 'Coordinated hate speech campaign detected in public comments',
-      content: 'Automated bot swarm deploying coordinated inflammatory hate speech narratives across municipal news discussion threads to incite sectarian unrest and disrupt public order.',
+      content: 'Automated bot swarm deploying coordinated inflammatory hate speech narratives across Kolkata municipal news discussion threads to incite sectarian unrest and disrupt public order.',
       link: 'https://facebook.com/crowdtangle/intel/hate_campaign_swarm',
       timestamp: '18m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
-      riskLevel: 'High'
+      riskLevel: 'High',
+      mentioned_locations: ['Kolkata']
     },
     {
       id: 'FACEBOOK-OSINT-03',
-      title: 'Phishing link disguised as government welfare scheme',
-      content: "Viral sponsored Facebook posts promoting fake 'PM Direct Citizen Relief Subsidy $5,000' linking to credential-harvesting phishing portal capturing bank account credentials and SMS OTPs.",
+      title: 'Phishing link disguised as government welfare scheme in Lucknow',
+      content: "Viral sponsored Facebook posts promoting fake 'UP Direct Citizen Relief Subsidy $5,000' across Lucknow linking to credential-harvesting phishing portal capturing bank account credentials and SMS OTPs.",
       link: 'https://facebook.com/crowdtangle/intel/welfare_phishing_alert',
       timestamp: '27m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
-      riskLevel: 'High'
+      riskLevel: 'High',
+      mentioned_locations: ['Lucknow']
     },
     {
       id: 'FACEBOOK-OSINT-04',
-      title: 'Fabricated rumor claiming toxic chemical contamination in municipal water supply',
-      content: 'Coordinated viral post spreading false claims of cyanide contamination in city reservoir, triggering localized civil panic, supermarket run, and emergency hospital inquiries.',
+      title: 'Fabricated rumor claiming toxic chemical contamination in Pune water supply',
+      content: 'Coordinated viral post spreading false claims of cyanide contamination in Pune city reservoir, triggering localized civil panic, supermarket run, and emergency hospital inquiries.',
       link: 'https://facebook.com/crowdtangle/intel/water_contamination_hoax',
       timestamp: '40m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
-      riskLevel: 'High'
+      riskLevel: 'High',
+      mentioned_locations: ['Pune']
     }
   ];
 }
 
 /**
  * Normalizes any threat object into the strict Government Cyber Threat Intelligence schema:
- * { id, title, content, link, timestamp, source, platform, riskLevel }
+ * { id, title, content, link, timestamp, source, platform, riskLevel, mentioned_locations }
  */
 export function normalizeThreatObject(rawThreat, defaultPlatform = 'OSINT') {
   const cleanId = rawThreat.id || `THREAT-${Math.random().toString(36).substring(7).toUpperCase()}`;
@@ -248,6 +256,7 @@ export function normalizeThreatObject(rawThreat, defaultPlatform = 'OSINT') {
     'Reddit Native API'
   );
   const riskLevel = rawThreat.riskLevel || rawThreat.threatLevel || 'Medium';
+  const mentioned_locations = Array.isArray(rawThreat.mentioned_locations) ? rawThreat.mentioned_locations : [];
 
   return {
     id: cleanId,
@@ -257,7 +266,8 @@ export function normalizeThreatObject(rawThreat, defaultPlatform = 'OSINT') {
     timestamp: cleanTimestamp,
     source,
     platform,
-    riskLevel
+    riskLevel,
+    mentioned_locations
   };
 }
 
@@ -326,6 +336,7 @@ export async function fetchNormalizedMultiPlatformThreats() {
     const norm = normalizeThreatObject(t, t.platform);
     return {
       ...norm,
+      mentioned_locations: Array.isArray(t.mentioned_locations) ? t.mentioned_locations : (norm.mentioned_locations || []),
       riskLevel: t.riskLevel || norm.riskLevel || 'Medium',
       aiExplanation: t.aiExplanation || 'Evaluated by Government Cyber Threat Intelligence Engine.',
       aiConfidence: t.riskLevel === 'Critical' ? 98.4 : t.riskLevel === 'High' ? 95.1 : 89.6,

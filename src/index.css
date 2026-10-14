@@ -4,19 +4,19 @@
 
 @layer base {
   :root {
-    --bg-main: #F0F3F8;
+    --bg-main: #F3F5F6;
     --card-surface: #FFFFFF;
-    --border-stroke: #E5E9F2;
-    --accent-cobalt: #2563EB;
-    --accent-dark-cobalt: #172554;
-    --text-primary: #1A253C;
+    --border-stroke: #E5E7EB;
+    --accent-cobalt: #0B2115;
+    --accent-dark-cobalt: #0B2115;
+    --text-primary: #0B2115;
     --text-muted: #64748B;
-    --neu-base: #F0F3F8;
-    --neu-shadow-dark: #A3B1C6;
+    --neu-base: #F3F5F6;
+    --neu-shadow-dark: #CBD5E1;
     --neu-shadow-light: #FFFFFF;
-    --neu-text: #1A253C;
+    --neu-text: #0B2115;
     --neu-text-muted: #52607B;
-    --neu-accent: #2563EB;
+    --neu-accent: #9FE846;
   }
 
   .dark {
@@ -144,24 +144,23 @@
   transform: translateY(0);
 }
 
-/* Custom Soft Scrollbar */
+/* Custom Modern SaaS Scrollbar */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #E0E5EC;
+  background: #F3F5F6;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #B0BAC8;
+  background: #D1D5DB;
   border-radius: 9999px;
-  box-shadow: inset 1px 1px 2px #A3B1C6;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #8F9EB4;
+  background: #9CA3AF;
 }
 
 /* ==============================================================================
@@ -417,21 +416,56 @@ html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   outline: 3px solid #1A253C;
 }
 
-/* Custom Neumorphic Scrollbar */
+/* Custom Modern Scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #E0E5EC;
+  background: #F3F5F6;
   border-radius: 9999px;
-  box-shadow: inset 1px 1px 3px #A3B1C6, inset -1px -1px 3px #FFFFFF;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #A3B1C6;
+  background: #D1D5DB;
   border-radius: 9999px;
   transition: background 0.2s;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #52607B;
+  background: #9CA3AF;
+}
+
+/* Leaflet Custom Theme for Dark Forest & Vibrant Lime */
+.leaflet-popup-content-wrapper {
+  background-color: #0B2115 !important;
+  color: #F3F5F6 !important;
+  border: 1px solid #153423 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5) !important;
+  padding: 0 !important;
+}
+
+.leaflet-popup-tip {
+  background-color: #0B2115 !important;
+  border: 1px solid #153423 !important;
+}
+
+.leaflet-popup-content {
+  margin: 0 !important;
+  line-height: 1.4 !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+  color: #9FE846 !important;
+  padding: 6px !important;
+  top: 6px !important;
+  right: 6px !important;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+  color: #FFFFFF !important;
+}
+
+.custom-lime-marker-wrapper {
+  background: transparent !important;
+  border: none !important;
 }

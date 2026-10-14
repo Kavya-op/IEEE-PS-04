@@ -28,7 +28,10 @@ import analyzeThreatPost, {
   createReviewerAlertTicket,
   generateReviewerTicket,
   synthesizeReviewerTicket,
-  getOfflineReviewerTicketFallback
+  getOfflineReviewerTicketFallback,
+  analyzeMultimodalThreat,
+  getOfflineMultimodalFallback,
+  fileToBase64
 } from '../geminiAnalyzer';
 
 export {
@@ -62,7 +65,10 @@ export {
   createReviewerAlertTicket,
   generateReviewerTicket,
   synthesizeReviewerTicket,
-  getOfflineReviewerTicketFallback
+  getOfflineReviewerTicketFallback,
+  analyzeMultimodalThreat,
+  getOfflineMultimodalFallback,
+  fileToBase64
 };
 export default analyzeThreatPost;
 

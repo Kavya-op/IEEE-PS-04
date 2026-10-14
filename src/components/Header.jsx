@@ -83,38 +83,36 @@ export default function Header({
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full bg-[#E0E5EC] py-3 px-4 sm:px-6 lg:px-8 select-none">
-      <div className="bg-[#E0E5EC] rounded-3xl p-3 sm:p-4 shadow-[9px_9px_16px_#A3B1C6,-9px_-9px_16px_#FFFFFF] flex items-center justify-between gap-4">
+    <header className="sticky top-0 z-30 w-full bg-white border-b border-gray-200 py-3 px-4 sm:px-6 lg:px-8 select-none">
+      <div className="flex items-center justify-between gap-4">
         {/* Left: Mobile Menu & Platform Title */}
         <div className="flex items-center gap-3 min-w-0">
-          <motion.button
+          <button
             onClick={() => setMobileOpen(true)}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.05 }}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.95 }}
-            className="lg:hidden p-2.5 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-[#1A253C] focus:outline-none focus:ring-4 focus:ring-blue-400 cursor-pointer"
+            className="lg:hidden p-2 rounded-lg border border-gray-200 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 cursor-pointer"
             aria-label="Open mobile navigation menu"
           >
             <Menu className="w-5 h-5" />
-          </motion.button>
+          </button>
 
           <div className="flex flex-col min-w-0">
-            <h1 className="text-sm sm:text-base md:text-lg font-black tracking-tight text-[#1A253C] flex items-center gap-2 truncate">
+            <h1 className="text-sm sm:text-base font-bold tracking-tight text-gray-900 flex items-center gap-2 truncate">
               <span>AI Social Media Threat Monitoring System</span>
-              <span className="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[10px] font-mono font-bold text-blue-700 bg-[#E0E5EC] shadow-[inset_2px_2px_4px_#A3B1C6,inset_-2px_-2px_4px_#FFFFFF]">
+              <span className="hidden sm:inline-flex px-2 py-0.5 rounded text-[10px] font-mono font-bold text-gray-600 bg-gray-100 border border-gray-200">
                 SKIT004
               </span>
             </h1>
-            <div className="flex items-center gap-2 text-[11px] text-[#52607B] font-mono hidden md:flex">
+            <div className="flex items-center gap-2 text-[11px] text-gray-500 font-mono hidden md:flex">
               <span>Ingress: <strong className="text-emerald-700">{activeIngressRate}</strong></span>
               <span>&bull;</span>
-              <span>Synced: <strong className="text-[#1A253C]">{lastIngestedAt}</strong></span>
+              <span>Synced: <strong className="text-gray-900">{lastIngestedAt}</strong></span>
               <span>&bull;</span>
-              <span className="text-[#2563EB] font-bold">Verified Source: r/cybersecurity (Reddit Native API)</span>
+              <span className="text-blue-600 font-bold">Verified Source: r/cybersecurity (Reddit Native API)</span>
               <a
                 href={liveThreats[0]?.link || "https://www.reddit.com/r/cybersecurity"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#2563EB] hover:underline font-bold"
+                className="text-blue-600 hover:underline font-bold"
               >
                 [View Original Reddit Post ↗]
               </a>
@@ -122,72 +120,63 @@ export default function Header({
           </div>
         </div>
 
-        {/* Center: Inset Search Bar */}
+        {/* Center: Search Bar */}
         <div className="relative hidden md:block flex-1 max-w-xs">
           <label htmlFor="header-search-input" className="sr-only">
             Search Threat Indicators, Handles, or CVEs
           </label>
-          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#52607B] pointer-events-none" />
+          <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
           <input
             id="header-search-input"
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search threats, IOCs, #hashtags..."
-            className="w-full bg-[#E0E5EC] text-xs font-mono text-[#1A253C] pl-10 pr-4 py-2.5 rounded-2xl shadow-[inset_6px_6px_12px_#A3B1C6,inset_-6px_-6px_12px_#FFFFFF] placeholder:text-[#52607B] focus:outline-none focus:ring-4 focus:ring-blue-400 transition-all"
+            className="w-full bg-white border border-gray-300 text-xs font-mono text-gray-900 pl-9 pr-3 py-1.5 rounded-lg placeholder-gray-400 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors"
           />
         </div>
 
-        {/* Right Controls: Refresh, Simulation, UTC Clock (spaced for floating a11y panel) */}
-        <div className="flex items-center gap-2.5 shrink-0 pr-0 lg:pr-40">
-          {/* Simulated Inbound Spike Button with whileHover/whileTap */}
+        {/* Right Controls: Refresh, Simulation, UTC Clock */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          {/* Simulated Inbound Spike Button */}
           {onSimulateAlert && (
-            <motion.button
+            <button
               onClick={onSimulateAlert}
-              whileHover={shouldReduceMotion ? {} : { scale: 1.02, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-              whileTap={shouldReduceMotion ? {} : { scale: 0.98, boxShadow: 'inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF' }}
-              transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 450, damping: 25 }}
               aria-label="Simulate Inbound Threat Spike"
               title="Simulate Inbound Threat Spike"
-              className="px-3.5 py-2 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-xs font-mono font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+              className="px-3 py-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 shadow-sm text-xs font-mono font-bold text-rose-600 flex items-center gap-1.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
             >
               <Zap className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">Simulate Spike</span>
-            </motion.button>
+            </button>
           )}
 
-          {/* Refresh Telemetry Button with whileHover/whileTap */}
-          <motion.button
+          {/* Refresh Telemetry Button */}
+          <button
             onClick={handleManualRefresh}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.05, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.95, boxShadow: 'inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 450, damping: 25 }}
             aria-label="Refresh telemetry data"
             title="Refresh Telemetry"
-            className="p-2.5 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-[#52607B] hover:text-[#1A253C] cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400"
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 shadow-sm text-gray-600 hover:text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin text-blue-600' : ''}`} />
-          </motion.button>
+          </button>
 
           {/* Dark Mode Theme Toggle Button */}
-          <motion.button
+          <button
             onClick={handleToggleTheme}
-            whileHover={shouldReduceMotion ? {} : { scale: 1.05, boxShadow: '12px 12px 20px #A3B1C6, -12px -12px 20px #FFFFFF' }}
-            whileTap={shouldReduceMotion ? {} : { scale: 0.95, boxShadow: 'inset 6px 6px 12px #A3B1C6, inset -6px -6px 12px #FFFFFF' }}
-            transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 450, damping: 25 }}
             aria-label={isDark ? 'Switch to Light Theme' : 'Switch to Dark Theme'}
-            title={isDark ? 'Dark Theme: Active (Click for Light Theme)' : 'Light Theme: Active (Click for Dark Theme)'}
-            className="p-2.5 rounded-2xl bg-[#E0E5EC] shadow-[4px_4px_8px_#A3B1C6,-4px_-4px_8px_#FFFFFF] text-[#52607B] hover:text-[#1A253C] cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-400 flex items-center justify-center transition-colors"
+            title={isDark ? 'Dark Theme: Active' : 'Light Theme: Active'}
+            className="p-1.5 rounded-lg border border-gray-200 bg-white hover:bg-gray-50 shadow-sm text-gray-600 hover:text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 flex items-center justify-center transition-colors"
           >
             {isDark ? (
               <Moon className="w-4 h-4 text-blue-400" />
             ) : (
               <Sun className="w-4 h-4 text-amber-500" />
             )}
-          </motion.button>
+          </button>
 
           {/* Live UTC Clock */}
-          <div className="hidden xl:flex items-center px-3 py-2 rounded-2xl bg-[#E0E5EC] shadow-[inset_3px_3px_6px_#A3B1C6,inset_-3px_-3px_6px_#FFFFFF] text-[11px] font-mono font-bold text-[#1A253C]">
+          <div className="hidden xl:flex items-center px-2.5 py-1 rounded-lg border border-gray-200 bg-gray-50 text-[11px] font-mono font-bold text-gray-700">
             {time || 'SYNCING...'}
           </div>
         </div>
