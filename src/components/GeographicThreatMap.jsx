@@ -58,25 +58,55 @@ function createPulsingLimeIcon(count = 1, severity = 'High') {
   });
 }
 
-export default function GeographicThreatMap({ threats = [] }) {
+/**
+ * Primary regional node coordinates strictly defined
+ */
+export const PRIMARY_NODAL_POINTS = {
+  Delhi: [28.7041, 77.1025],
+  Mumbai: [19.0760, 72.8777],
+  Jaipur: [26.9124, 75.7873],
+  Bangalore: [12.9716, 77.5946]
+};
+
+export default function GeographicThreatMap({ threats = [], liveThreatData: propLiveThreatData }) {
   const [selectedCoords, setSelectedCoords] = useState(null);
   const [activeFilter, setActiveFilter] = useState('ALL');
 
+  // Maintain dynamic liveThreatData state for reactive marker rendering
+  const [liveThreatData, setLiveThreatData] = useState(() => {
+    return (Array.isArray(propLiveThreatData) && propLiveThreatData.length > 0)
+      ? propLiveThreatData
+      : (Array.isArray(threats) ? threats : []);
+  });
+
+  // Keep liveThreatData synchronized when incoming live intelligence updates
+  React.useEffect(() => {
+    const nextThreats = propLiveThreatData || threats || [];
+    setLiveThreatData(nextThreats);
+  }, [propLiveThreatData, threats]);
+
   // Aggregate threats by resolved geographic coordinates using Gemini NER results
   const geoClusters = useMemo(() => {
-    return aggregateThreatsByLocation(threats);
-  }, [threats]);
+    return aggregateThreatsByLocation(liveThreatData);
+  }, [liveThreatData]);
 
   // Total active nodal reports count
   const totalReports = useMemo(() => {
     return geoClusters.reduce((sum, c) => sum + (c.reportCount || 1), 0);
   }, [geoClusters]);
 
-  // Center coordinate of India [21.5, 78.9]
-  const defaultCenter = [22.0, 79.5];
+  // Exact coordinates of India center [20.5937, 78.9629]
+  const indiaCenter = [20.5937, 78.9629];
 
   return (
     <div className="bg-white border border-[#E5E7EB] rounded-xl overflow-hidden p-4 shadow-sm select-none">
+      {/* Dark theme CSS filter for OpenStreetMap tiles without external API keys */}
+      <style>{`
+        .dark-map-tiles {
+          filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+        }
+      `}</style>
+
       {/* Map Card Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3.5 mb-3 border-b border-[#E5E7EB]">
         <div>
@@ -101,7 +131,7 @@ export default function GeographicThreatMap({ threats = [] }) {
         <div className="flex flex-wrap items-center gap-1.5 self-start sm:self-auto">
           {['Delhi', 'Mumbai', 'Jaipur', 'Bangalore'].map((city) => {
             const hasCluster = geoClusters.find((c) => c.locationName.toLowerCase() === city.toLowerCase());
-            const coords = MAJOR_NODAL_POINTS[city];
+            const coords = PRIMARY_NODAL_POINTS[city] || MAJOR_NODAL_POINTS[city];
 
             return (
               <button
@@ -126,22 +156,23 @@ export default function GeographicThreatMap({ threats = [] }) {
       {/* Map Container: Fixed height h-[400px] w-full rounded-lg z-0 */}
       <div className="h-[400px] w-full rounded-lg z-0 relative overflow-hidden border border-[#E5E7EB]">
         <MapContainer
-          center={defaultCenter}
+          center={[20.5937, 78.9629]}
           zoom={5}
           scrollWheelZoom={false}
           className="h-full w-full z-0"
           style={{ background: '#0B2115' }}
         >
-          {/* Dark-themed tile layer matching Forest Green aesthetic */}
+          {/* Dark-themed tile layer using standard OpenStreetMap endpoint with CSS inversion */}
           <TileLayer
-            attribution='&copy; <a href="https://carto.com/">CARTO</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            url="https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png"
+            className="dark-map-tiles"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
 
           {/* Programmatic fly-to handler */}
           {selectedCoords && <MapFlyToController targetCoords={selectedCoords} />}
 
-          {/* Render Pulsing Lime Markers */}
+          {/* Render Dynamic Marker components mapping over liveThreatData state */}
           {geoClusters.map((cluster) => {
             return (
               <Marker

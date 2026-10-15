@@ -469,3 +469,9 @@ html.dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: transparent !important;
   border: none !important;
 }
+
+/* Dark theme CSS filter for OpenStreetMap tiles without external API keys */
+.dark-map-tiles {
+  filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+}
+

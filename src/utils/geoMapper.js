@@ -115,12 +115,40 @@ export function aggregateThreatsByLocation(threats = []) {
   const clustersMap = new Map();
 
   threats.forEach((threat) => {
+    // Direct coordinate support
+    if (Array.isArray(threat.coordinates) && threat.coordinates.length === 2) {
+      const locName = threat.locationName || threat.location || threat.city || threat.title || 'Regional Threat Node';
+      if (!clustersMap.has(locName)) {
+        clustersMap.set(locName, {
+          locationName: locName,
+          coordinates: threat.coordinates,
+          reportCount: 0,
+          threats: [],
+          maxSeverity: 'Low',
+          lastReportTime: threat.timestamp || 'Recent'
+        });
+      }
+      const cluster = clustersMap.get(locName);
+      cluster.reportCount += 1;
+      cluster.threats.push({
+        id: threat.id,
+        title: threat.title,
+        platform: threat.platform || threat.source || 'OSINT',
+        riskLevel: threat.riskLevel || 'Medium',
+        timestamp: threat.timestamp || 'Just now',
+        summary: threat.aiExplanation || threat.content
+      });
+      return;
+    }
+
     // Collect mentioned locations from threat object or extract on the fly
     let locations = [];
+    if (threat.location) locations.push(threat.location);
+    if (threat.city) locations.push(threat.city);
     if (Array.isArray(threat.mentioned_locations) && threat.mentioned_locations.length > 0) {
-      locations = threat.mentioned_locations;
+      locations.push(...threat.mentioned_locations);
     } else if (Array.isArray(threat.mentionedLocations) && threat.mentionedLocations.length > 0) {
-      locations = threat.mentionedLocations;
+      locations.push(...threat.mentionedLocations);
     } else {
       // Heuristic fallback search on title and content
       const text = `${threat.title || ''} ${threat.content || ''}`.toLowerCase();

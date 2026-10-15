@@ -113,7 +113,7 @@ export default function ThreatAnalyticsView() {
       </div>
 
       {/* Real-Time Geographic Threat Mapping Engine */}
-      <GeographicThreatMap threats={liveThreats} />
+      <GeographicThreatMap threats={liveThreats} liveThreatData={liveThreats} />
 
       {/* MITRE ATT&CK Matrix Card */}
       <div className="p-5 sm:p-6 rounded-xl bg-white border border-[#E5E7EB] shadow-sm">

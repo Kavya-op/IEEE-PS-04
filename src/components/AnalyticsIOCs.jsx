@@ -255,7 +255,7 @@ export default function AnalyticsIOCs() {
 
         {/* Widget 2: Geographic Map with Leaflet Error Boundary */}
         <SafeWidgetBoundary fallbackTitle="Geographic Threat Visualization Unavailable">
-          <GeographicThreatMap threats={liveThreats} />
+          <GeographicThreatMap threats={liveThreats} liveThreatData={liveThreats} />
         </SafeWidgetBoundary>
       </div>
 
