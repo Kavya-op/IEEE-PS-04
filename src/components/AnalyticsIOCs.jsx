@@ -131,6 +131,24 @@ export default function AnalyticsIOCs() {
       vector: 'Living off the Land (LotL)',
       confidence: '92%',
       status: 'Monitored'
+    },
+    {
+      id: 'IOC-07',
+      type: 'Suspect Mobile',
+      value: '+91-9829014521',
+      threat: 'UPI Cyber Extortion Syndicate',
+      vector: 'Jaipur (West) FIR Vector',
+      confidence: '95%',
+      status: 'Active Surveillance'
+    },
+    {
+      id: 'IOC-08',
+      type: 'Suspect Mobile',
+      value: '+91-9414029182',
+      threat: 'Fake Electricity Bill APK Ingress',
+      vector: 'Kotputli-Behror FIR Vector',
+      confidence: '97%',
+      status: 'Telecom Trace'
     }
   ];
 

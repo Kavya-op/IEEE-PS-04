@@ -1,80 +1,46 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  ResponsiveContainer,
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend
+} from 'recharts';
 import { useOSINT } from '../context/OSINTContext';
+import { fetchRajasthanData, aggregateTimelineTrends } from '../rajasthanPoliceIngester';
+import { TrendingUp, ShieldAlert, Sparkles } from 'lucide-react';
 
 export default function SaaSChartsSection() {
   const { activeIngressRate, severeRisksCount, totalScannedPosts } = useOSINT();
-  const [activeTimeRange, setActiveTimeRange] = useState('24H');
-  const [hoveredPoint, setHoveredPoint] = useState(null);
+  const [activeTimeRange, setActiveTimeRange] = useState('ALL');
   const [hoveredDonutSlice, setHoveredDonutSlice] = useState(null);
+  const [timelineTrends, setTimelineTrends] = useState(() => aggregateTimelineTrends());
 
-  const timeRanges = ['1H', '24H', '7D', '1M'];
+  useEffect(() => {
+    fetchRajasthanData().then((data) => {
+      if (data && data.length > 0) {
+        setTimelineTrends(aggregateTimelineTrends(data));
+      }
+    });
+  }, []);
 
-  // Data for Threat Timeline
-  const timelineData = {
-    '1H': [
-      { time: '10m', value: 18, label: '18 alerts/min' },
-      { time: '20m', value: 24, label: '24 alerts/min' },
-      { time: '30m', value: 46, label: '46 alerts/min (Spike)' },
-      { time: '40m', value: 32, label: '32 alerts/min' },
-      { time: '50m', value: 28, label: '28 alerts/min' },
-      { time: 'Live', value: 42, label: '42 alerts/min' }
-    ],
-    '24H': [
-      { time: '00:00', value: 16, label: '16 alerts/min' },
-      { time: '04:00', value: 22, label: '22 alerts/min' },
-      { time: '08:00', value: 52, label: '52 alerts/min (Peak Surges)' },
-      { time: '12:00', value: 38, label: '38 alerts/min' },
-      { time: '16:00', value: 31, label: '31 alerts/min' },
-      { time: '20:00', value: 44, label: '44 alerts/min' },
-      { time: 'Live', value: 49, label: '49 alerts/min (Active)' }
-    ],
-    '7D': [
-      { time: 'Mon', value: 120, label: '120k posts' },
-      { time: 'Tue', value: 160, label: '160k posts' },
-      { time: 'Wed', value: 280, label: '280k posts (Bot Swarm)' },
-      { time: 'Thu', value: 195, label: '195k posts' },
-      { time: 'Fri', value: 240, label: '240k posts' },
-      { time: 'Sat', value: 180, label: '180k posts' },
-      { time: 'Sun', value: 245, label: '245k posts' }
-    ],
-    '1M': [
-      { time: 'W1', value: 650, label: '650k posts' },
-      { time: 'W2', value: 920, label: '920k posts' },
-      { time: 'W3', value: 1420, label: '1.42M posts (DDoS surge)' },
-      { time: 'W4', value: 1100, label: '1.10M posts' }
-    ]
-  };
+  const timeRanges = ['7D', '14D', 'ALL'];
 
-  const points = timelineData[activeTimeRange] || timelineData['24H'];
-  const maxVal = Math.max(...points.map((p) => p.value)) * 1.15 || 100;
-  const svgWidth = 620;
-  const svgHeight = 200;
-
-  // Compute smooth spline coordinates
-  const coords = points.map((pt, i) => {
-    const x = (i / (points.length - 1)) * (svgWidth - 60) + 30;
-    const y = svgHeight - (pt.value / maxVal) * (svgHeight - 60) - 20;
-    return { ...pt, x, y };
-  });
-
-  const pathD = coords.reduce((acc, curr, i) => {
-    if (i === 0) return `M ${curr.x} ${curr.y}`;
-    const prev = coords[i - 1];
-    const cpX1 = prev.x + (curr.x - prev.x) / 2;
-    const cpY1 = prev.y;
-    const cpX2 = prev.x + (curr.x - prev.x) / 2;
-    const cpY2 = curr.y;
-    return `${acc} C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${curr.x} ${curr.y}`;
-  }, '');
-
-  const areaD = `${pathD} L ${coords[coords.length - 1].x} ${svgHeight} L ${coords[0].x} ${svgHeight} Z`;
+  const displayTrends = useMemo(() => {
+    if (activeTimeRange === '7D') return timelineTrends.slice(-7);
+    if (activeTimeRange === '14D') return timelineTrends.slice(-14);
+    return timelineTrends;
+  }, [timelineTrends, activeTimeRange]);
 
   // Donut chart distribution data (Platform Telemetry / Bot Swarm)
   const donutPlatforms = [
-    { name: 'Reddit OSINT Stream', percent: 38, count: '540,240', color: '#9FE846' },
-    { name: 'X (Twitter API v2)', percent: 30, count: '426,500', color: '#0B2115' },
-    { name: 'Telegram Dark Mesh', percent: 20, count: '284,330', color: '#2D6A4F' },
-    { name: 'Meta CrowdTangle Bridge', percent: 12, count: '170,600', color: '#52B788' }
+    { name: 'State Cyber Police Desk', percent: 44, count: '648,100', color: '#9FE846' },
+    { name: 'Reddit OSINT Stream', percent: 26, count: '382,240', color: '#0B2115' },
+    { name: 'X (Twitter API v2)', percent: 18, count: '264,500', color: '#2D6A4F' },
+    { name: 'Telegram Dark Mesh', percent: 12, count: '176,330', color: '#52B788' }
   ];
 
   // Circle radius and circumference
@@ -89,11 +55,14 @@ export default function SaaSChartsSection() {
         {/* Header & Controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#E5E7EB] gap-3">
           <div>
-            <h3 className="text-sm font-bold text-[#0B2115] tracking-tight">
-              Threat & Incident Timeline
-            </h3>
+            <div className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#5C901A]" />
+              <h3 className="text-sm font-bold text-[#0B2115] tracking-tight">
+                Threat Velocity & Incident Surge Dynamics
+              </h3>
+            </div>
             <p className="text-xs text-gray-500 mt-0.5">
-              Live payload ingress velocity and surge detection
+              State Cyber Incident Timeline: Online Financial Fraud vs Social Media Crime
             </p>
           </div>
 
@@ -115,68 +84,98 @@ export default function SaaSChartsSection() {
           </div>
         </div>
 
-        {/* SVG Spline Chart */}
-        <div className="relative w-full h-52 pt-3">
-          <svg
-            viewBox={`0 0 ${svgWidth} ${svgHeight}`}
-            className="w-full h-full overflow-visible"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient id="saasLimeGradient" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#9FE846" stopOpacity="0.35" />
-                <stop offset="100%" stopColor="#9FE846" stopOpacity="0.0" />
-              </linearGradient>
-            </defs>
-
-            {/* Muted Grid Lines */}
-            <line x1="30" y1="40" x2="590" y2="40" stroke="#F3F4F6" strokeWidth="1" />
-            <line x1="30" y1="90" x2="590" y2="90" stroke="#F3F4F6" strokeWidth="1" />
-            <line x1="30" y1="140" x2="590" y2="140" stroke="#F3F4F6" strokeWidth="1" />
-
-            {/* Gradient Fill under Curve */}
-            <path d={areaD} fill="url(#saasLimeGradient)" />
-
-            {/* Smooth Spline Line */}
-            <path
-              d={pathD}
-              fill="none"
-              stroke="#0B2115"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-
-            {/* Data Points */}
-            {coords.map((pt, i) => (
-              <circle
-                key={i}
-                cx={pt.x}
-                cy={pt.y}
-                r={hoveredPoint === i ? 6 : 4}
-                className="fill-[#9FE846] stroke-[#0B2115] stroke-2 cursor-pointer transition-all"
-                onMouseEnter={() => setHoveredPoint(i)}
-                onMouseLeave={() => setHoveredPoint(null)}
+        {/* Recharts Timeline Velocity Chart */}
+        <div className="relative w-full h-56 pt-2">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={displayTrends} margin={{ top: 10, right: 12, left: -24, bottom: 0 }}>
+              <defs>
+                <linearGradient id="financialFraudGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#9FE846" stopOpacity={0.45} />
+                  <stop offset="95%" stopColor="#9FE846" stopOpacity={0.0} />
+                </linearGradient>
+                <linearGradient id="socialMediaGradient" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#0B2115" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#0B2115" stopOpacity={0.0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" vertical={false} />
+              <XAxis
+                dataKey="date"
+                stroke="#0B2115"
+                tick={{ fill: '#0B2115', fontSize: 11, fontFamily: 'monospace' }}
+                tickLine={false}
               />
-            ))}
-          </svg>
-
-          {/* Dark Forest Hover Tooltip */}
-          {hoveredPoint !== null && coords[hoveredPoint] && (
-            <div
-              className="absolute pointer-events-none transform -translate-x-1/2 -top-2 bg-[#0B2115] text-white text-xs px-2.5 py-1 rounded shadow-md z-20 whitespace-nowrap border border-[#153423]"
-              style={{ left: `${(coords[hoveredPoint].x / svgWidth) * 100}%` }}
-            >
-              <div className="font-semibold text-[#9FE846]">{coords[hoveredPoint].label}</div>
-              <div className="text-[10px] text-gray-300">{coords[hoveredPoint].time}</div>
-            </div>
-          )}
+              <YAxis
+                stroke="#0B2115"
+                tick={{ fill: '#0B2115', fontSize: 11, fontFamily: 'monospace' }}
+                tickLine={false}
+                allowDecimals={false}
+              />
+              <Tooltip
+                content={({ active, payload, label }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-[#0B2115] border border-[#153423] text-white p-3 rounded-xl shadow-xl text-xs font-mono">
+                        <div className="font-bold text-[#9FE846] mb-1.5 flex items-center justify-between gap-4">
+                          <span>Incident Date: {label}</span>
+                          <span className="text-[10px] bg-[#153423] px-1.5 py-0.5 rounded text-white font-bold">STATE FIRs</span>
+                        </div>
+                        {payload.map((entry, index) => (
+                          <div key={index} className="flex items-center justify-between gap-4 py-0.5">
+                            <span className="flex items-center gap-1.5 text-gray-300">
+                              <span className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: entry.color }} />
+                              <span>{entry.name}:</span>
+                            </span>
+                            <span className="font-bold text-white">{entry.value} cases</span>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Legend
+                verticalAlign="top"
+                align="right"
+                iconType="circle"
+                wrapperStyle={{ paddingBottom: '8px', fontSize: '11px', fontFamily: 'monospace' }}
+              />
+              {/* Primary trend line: #9FE846 */}
+              <Area
+                type="monotone"
+                dataKey="onlineFinancialFraud"
+                name="Online Financial Fraud"
+                stroke="#9FE846"
+                strokeWidth={2.5}
+                fillOpacity={1}
+                fill="url(#financialFraudGradient)"
+                activeDot={{ r: 6, fill: '#9FE846', stroke: '#0B2115', strokeWidth: 2 }}
+              />
+              {/* Secondary comparison line: Social Media Crime */}
+              <Area
+                type="monotone"
+                dataKey="socialMediaCrime"
+                name="Social Media Crime"
+                stroke="#0B2115"
+                strokeWidth={2}
+                fillOpacity={1}
+                fill="url(#socialMediaGradient)"
+                activeDot={{ r: 5, fill: '#0B2115', stroke: '#9FE846', strokeWidth: 2 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
 
-        {/* X-Axis Labels */}
-        <div className="flex justify-between text-xs text-gray-400 pt-2 border-t border-[#E5E7EB] font-mono">
-          {coords.map((c, i) => (
-            <span key={i}>{c.time}</span>
-          ))}
+        {/* Footer Metrics */}
+        <div className="flex items-center justify-between text-xs text-gray-500 pt-3 border-t border-[#E5E7EB] font-mono">
+          <span className="flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-[#9FE846] animate-pulse" />
+            <span>Telemetry Source: Rajasthan Cyber Crime Dataset Aggregations</span>
+          </span>
+          <span className="text-[#0B2115] font-semibold">
+            Primary Surge Vector: <strong className="text-[#5C901A]">Online Financial Fraud</strong>
+          </span>
         </div>
       </div>
 

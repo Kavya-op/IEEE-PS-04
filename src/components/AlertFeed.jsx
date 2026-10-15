@@ -8,6 +8,10 @@ import {
 } from '../services/liveDataFetcher';
 import { fetchLiveRedditThreats } from '../redditFetcher';
 import { FALLBACK_THREAT_DATA } from '../multiPlatformFetcher';
+import {
+  fetchRajasthanData,
+  normalizeRajasthanPoliceThreats
+} from '../rajasthanPoliceIngester';
 import { db } from '../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { NeumorphicAlertCardSkeleton } from './NeumorphicSkeleton';
@@ -62,7 +66,7 @@ import {
   Filter
 } from 'lucide-react';
 
-export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
+export default function AlertFeed({ onInvestigate, liveOSINTThreats = [], initialFeedMode = 'social' }) {
   const { shouldReduceMotion, getStaggerContainer, staggerItemVariants, neuButtonProps } = useAppMotion();
   const {
     liveThreats,
@@ -74,6 +78,8 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     setVectorFilter,
     matchesThreatVector
   } = useOSINT();
+  const [feedMode, setFeedMode] = useState(initialFeedMode); // 'social' | 'police'
+  const [policeThreats, setPoliceThreats] = useState(() => normalizeRajasthanPoliceThreats());
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const isLoading = loading;
@@ -88,6 +94,30 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
   const [loadingTicket, setLoadingTicket] = useState(false);
   const [copiedTicket, setCopiedTicket] = useState(false);
   const [selectedDossierThreat, setSelectedDossierThreat] = useState(null);
+
+  // Synchronize feedMode if parent subTab changes
+  useEffect(() => {
+    if (initialFeedMode) {
+      setFeedMode(initialFeedMode);
+    }
+  }, [initialFeedMode]);
+
+  // Load Rajasthan Police Cyber Security dataset asynchronously
+  useEffect(() => {
+    let isMounted = true;
+    fetchRajasthanData()
+      .then((data) => {
+        if (isMounted && Array.isArray(data) && data.length > 0) {
+          setPoliceThreats(normalizeRajasthanPoliceThreats(data));
+        }
+      })
+      .catch((err) => {
+        console.warn('[AlertFeed] Note loading Rajasthan police data:', err);
+      });
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   // Synchronize AI-analyzed threat objects into Firebase Firestore
   const saveThreatsToFirestore = async (threatsToSave) => {
@@ -556,10 +586,12 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     return () => window.removeEventListener('vector-filter-change', handleVectorFilterChange);
   }, []);
 
-  const effectivePosts = (liveThreats && liveThreats.length > 0)
-    ? liveThreats
-    : (posts && posts.length > 0 ? posts : FALLBACK_THREAT_DATA);
-  const isFeedLoading = loading && (osintLoading && effectivePosts.length === 0);
+  const effectivePosts = feedMode === 'police'
+    ? (policeThreats && policeThreats.length > 0 ? policeThreats : normalizeRajasthanPoliceThreats())
+    : ((liveThreats && liveThreats.length > 0)
+        ? liveThreats
+        : (posts && posts.length > 0 ? posts : FALLBACK_THREAT_DATA));
+  const isFeedLoading = feedMode === 'police' ? false : (loading && (osintLoading && effectivePosts.length === 0));
 
   const activeFilter = filter;
   const allThreats = effectivePosts;
@@ -568,6 +600,7 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     ? allThreats
     : allThreats.filter((threat) => {
         const cat = (threat.category || '').toLowerCase();
+        const sub = (threat.subCategory || '').toLowerCase();
         const target = activeFilter.toLowerCase();
         if (target === 'critical') {
           return threat.threatLevel === 'Critical' || threat.riskLevel === 'Critical' || cat === 'critical';
@@ -575,6 +608,7 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
         return (
           cat === target ||
           cat.includes(target) ||
+          sub.includes(target) ||
           (threat.cybercrime?.threatSubcategory && threat.cybercrime.threatSubcategory.toLowerCase() === target) ||
           (threat.thematicCategory && threat.thematicCategory.toLowerCase().includes(target))
         );
@@ -590,15 +624,18 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     // 2. Search query filter
     if (search.trim()) {
       const q = search.toLowerCase();
-      const contentMatch = post.content?.toLowerCase().includes(q);
+      const contentMatch = (post.complaintAdditionalInfo || post.content)?.toLowerCase().includes(q);
+      const titleMatch = post.title?.toLowerCase().includes(q);
+      const districtMatch = post.district?.toLowerCase().includes(q);
+      const firMatch = post.firNumber?.toLowerCase().includes(q);
+      const mobileMatch = post.suspectMobile?.toLowerCase().includes(q);
       const platformMatch = post.platform?.toLowerCase().includes(q) || post.sourcePlatform?.toLowerCase().includes(q);
       const keywordMatch = post.keywords?.some((k) => k.toLowerCase().includes(q));
-      const subcatMatch = post.cybercrime?.threatSubcategory?.toLowerCase().includes(q);
+      const subcatMatch = (post.subCategory || post.cybercrime?.threatSubcategory)?.toLowerCase().includes(q);
       const phraseMatch = post.cybercrime?.flaggedPhrases?.some((p) => p.toLowerCase().includes(q));
       const claimMatch = post.misinformation?.detectedClaims?.some((c) => c.toLowerCase().includes(q));
-      const titleMatch = post.title?.toLowerCase().includes(q);
       const explanationMatch = post.aiExplanation?.toLowerCase().includes(q);
-      return contentMatch || titleMatch || explanationMatch || platformMatch || keywordMatch || subcatMatch || phraseMatch || claimMatch;
+      return contentMatch || titleMatch || explanationMatch || platformMatch || keywordMatch || subcatMatch || phraseMatch || claimMatch || districtMatch || firMatch || mobileMatch;
     }
 
     return true;
@@ -610,22 +647,62 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
   return (
     <div className="bg-white flex flex-col w-full h-full text-gray-900 relative">
       {/* Header */}
-      <div className="pb-4 border-b border-[#E5E7EB] flex items-center justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-[#0B2115] animate-pulse" />
-            <h3 className="text-base sm:text-lg font-bold text-[#0B2115] tracking-tight">
-              Live Threat Alert Feed
-            </h3>
+      <div className="pb-4 border-b border-[#E5E7EB] flex flex-col md:flex-row md:items-center justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Radio className="w-4 h-4 text-[#0B2115] animate-pulse" />
+              <h3 className="text-base sm:text-lg font-bold text-[#0B2115] tracking-tight">
+                {feedMode === 'police' ? 'State Police Cyber Telemetry' : 'Live Threat Alert Feed'}
+              </h3>
+            </div>
+            <p className="text-xs text-gray-500 mt-0.5">
+              {feedMode === 'police'
+                ? 'Official State Cyber Security FIRs, incident complaints & suspect IOC surveillance'
+                : 'Real-time cyber threat inspection, phishing/malware detection & claim verification'}
+            </p>
           </div>
-          <p className="text-xs text-gray-500 mt-0.5">
-            Real-time cyber threat inspection, phishing/malware detection & claim verification
-          </p>
+
+          {/* Toggle pill next to Social Threat Feed (OSINT) */}
+          <div className="flex items-center p-1 bg-[#F3F5F6] rounded-xl border border-[#E5E7EB] gap-1 self-start sm:self-auto">
+            <button
+              type="button"
+              onClick={() => setFeedMode('social')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                feedMode === 'social'
+                  ? 'bg-[#0B2115] text-[#9FE846] shadow-sm'
+                  : 'text-gray-600 hover:text-[#0B2115]'
+              }`}
+            >
+              <Radio className="w-3.5 h-3.5" />
+              <span>Social Threat Feed (OSINT)</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setFeedMode('police')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                feedMode === 'police'
+                  ? 'bg-[#0B2115] text-[#9FE846] shadow-sm'
+                  : 'text-gray-600 hover:text-[#0B2115]'
+              }`}
+            >
+              <Shield className="w-3.5 h-3.5 text-[#9FE846]" />
+              <span>🛡️ State Police Telemetry</span>
+            </button>
+          </div>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* Live Stream Telemetry Indicator */}
-          {isLiveStream ? (
+          {feedMode === 'police' ? (
+            <span
+              className="border border-[#9FE846]/40 text-[#5C901A] bg-[#F3FAEB] shadow-sm px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5"
+              title="Official Rajasthan Police Cyber Crime FIR Ingestion Pipeline Active"
+            >
+              <span className="w-2 h-2 rounded-full bg-[#9FE846] animate-pulse" />
+              <span>STATE POLICE TELEMETRY</span>
+            </span>
+          ) : isLiveStream ? (
             <span
               className="border border-[#9FE846]/40 text-[#5C901A] bg-[#F3FAEB] shadow-sm px-2.5 py-1 rounded-lg text-xs font-medium flex items-center gap-1.5"
               title="Streaming real-time posts from live public Reddit JSON endpoints"
@@ -1348,13 +1425,11 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                       </span>
                     )}
 
-                    {/* Threat Subcategory */}
-                    {cyber?.threatSubcategory && cyber.threatSubcategory !== 'None' && (
-                      <span className="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs font-medium flex items-center gap-1 border border-[#E5E7EB]">
-                        {cyber.threatSubcategory === 'Phishing' && <KeyRound className="w-3 h-3 text-[#0B2115]" />}
-                        {cyber.threatSubcategory === 'Malware' && <Bug className="w-3 h-3 text-rose-600" />}
-                        {cyber.threatSubcategory === 'Scam/Fraud' && <DollarSign className="w-3 h-3 text-amber-600" />}
-                        <span>{cyber.threatSubcategory}</span>
+                    {/* Threat Sub Category Badge (Vibrant Lime flat badge tags) */}
+                    {(threat.subCategory || (cyber?.threatSubcategory && cyber.threatSubcategory !== 'None')) && (
+                      <span className="bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40 px-2 py-1 rounded text-xs font-medium flex items-center gap-1">
+                        <Tag className="w-3 h-3 text-[#5C901A]" />
+                        <span>{threat.subCategory || cyber.threatSubcategory}</span>
                       </span>
                     )}
 
@@ -1367,13 +1442,23 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                     )}
 
                     {/* Legal Compliance Chain-of-Custody Attribution Badge */}
-                    <span
-                      className="bg-gray-100 text-gray-600 border border-[#E5E7EB] px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1"
-                      title={`Chain of Custody: ${threat.chainOfCustodyHash || 'COC-SHA256:VERIFIED'} | Ingested via: ${threat.telemetryMethod || threat.ingestionMethod || 'Reddit Native API'}`}
-                    >
-                      <ShieldCheck className="w-3.5 h-3.5 text-[#0B2115]" />
-                      <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
-                    </span>
+                    {threat.platform === 'Rajasthan Police' || threat.district ? (
+                      <span
+                        className="bg-[#F3FAEB] text-[#0B2115] border border-[#9FE846]/40 px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1"
+                        title={`FIR: ${threat.firNumber || 'N/A'} | Station: ${threat.policeStation || 'Cyber Police'} | District: ${threat.district || 'Rajasthan'}`}
+                      >
+                        <Shield className="w-3.5 h-3.5 text-[#5C901A]" />
+                        <span>Rajasthan Police &bull; {threat.district || 'Jaipur'} Unit</span>
+                      </span>
+                    ) : (
+                      <span
+                        className="bg-gray-100 text-gray-600 border border-[#E5E7EB] px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1"
+                        title={`Chain of Custody: ${threat.chainOfCustodyHash || 'COC-SHA256:VERIFIED'} | Ingested via: ${threat.telemetryMethod || threat.ingestionMethod || 'Reddit Native API'}`}
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5 text-[#0B2115]" />
+                        <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
+                      </span>
+                    )}
 
                     {/* Direct Origin Link Badge */}
                     <a
@@ -1422,11 +1507,11 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                   </h4>
                 )}
 
-                {/* Content Snippet (Dimmed and struck-through when mitigated) */}
+                {/* Content Snippet (Renders Complaint Additional Info text as card body) */}
                 <p className={`text-xs font-sans mb-3 leading-relaxed font-medium transition-all ${
                   isMitigated ? 'text-gray-400 opacity-50 line-through' : 'text-gray-700'
                 }`}>
-                  "{post.content}"
+                  "{threat.complaintAdditionalInfo || threat.content || post.content}"
                 </p>
 
                 {/* Flagged Phrases Micro-Pills */}
@@ -1455,6 +1540,23 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                       : 'Standard informational payload. No malicious zero-day or phishing indicators matched.')}
                   </p>
                 </div>
+
+                {/* IOC Indicator Section: Maps Suspect Mobile */}
+                {(threat.suspectMobile || threat.iocIndicators?.length > 0) && (
+                  <div className="mb-3 px-3 py-2 rounded-lg bg-gray-50 border border-[#E5E7EB] flex items-center justify-between text-xs font-mono">
+                    <span className="text-gray-500 font-semibold flex items-center gap-1.5">
+                      <ShieldAlert className="w-3.5 h-3.5 text-[#0B2115]" />
+                      <span>IOC Indicator:</span>
+                    </span>
+                    <span className="font-bold text-[#0B2115] bg-[#F3FAEB] px-2 py-0.5 rounded border border-[#9FE846]/40">
+                      {threat.suspectMobile
+                        ? (threat.suspectMobile.startsWith('Suspect Indicator:')
+                            ? threat.suspectMobile
+                            : `Suspect Indicator: ${threat.suspectMobile}`)
+                        : `Suspect Indicator: ${threat.iocIndicators?.[0] || '+91-9829XXXXXX'}`}
+                    </span>
+                  </div>
+                )}
 
                 {/* Fix 2: Push Footer to Bottom (Alignment) */}
                 <div className="mt-auto flex flex-col gap-3 pt-4 border-t border-[#E5E7EB]">
@@ -1552,11 +1654,17 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
 
             <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
               <h4 id="investigate-modal-title" className="text-base font-bold text-[#0B2115]">
-                Platform Source: Reddit (r/cybersecurity)
+                {investigatingPost.platform === 'Rajasthan Police'
+                  ? `State Police Telemetry: ${investigatingPost.district || 'Rajasthan'} Cyber Unit`
+                  : 'Platform Source: Reddit (r/cybersecurity)'}
               </h4>
               <span className="text-xs font-mono font-medium px-2.5 py-1 rounded-md bg-[#F3FAEB] text-[#5C901A] border border-[#9FE846]/40 flex items-center gap-1">
                 <ShieldCheck className="w-3.5 h-3.5 text-[#5C901A]" />
-                <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
+                <span>
+                  {investigatingPost.platform === 'Rajasthan Police'
+                    ? `Official FIR: ${investigatingPost.firNumber || 'Rajasthan State'}`
+                    : 'Verified Source: r/cybersecurity (Reddit Native API)'}
+                </span>
               </span>
             </div>
 
@@ -1568,16 +1676,29 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
               </div>
               <div>
                 <span className="font-bold text-[#0B2115]">Verified Timestamp: </span>
-                <span>{investigatingPost.verificationTimestamp || investigatingPost.isoTimestamp || 'Current UTC'}</span>
+                <span>{investigatingPost.verificationTimestamp || investigatingPost.isoTimestamp || investigatingPost.incidentDate || 'Current UTC'}</span>
               </div>
               <div>
                 <span className="font-bold text-[#0B2115]">Ingestion Protocol: </span>
-                <span>{investigatingPost.ingestionMethod || 'Subreddit Webhook'}</span>
+                <span>{investigatingPost.platform === 'Rajasthan Police' ? 'State Police Cyber Crime Ingestion Pipeline' : (investigatingPost.ingestionMethod || 'Subreddit Webhook')}</span>
               </div>
             </div>
 
+            {/* Suspect Mobile IOC indicator in Modal */}
+            {investigatingPost.suspectMobile && (
+              <div className="mb-3 px-3 py-2 rounded-lg bg-[#F3FAEB] border border-[#9FE846]/40 flex items-center justify-between text-xs font-mono">
+                <span className="text-[#0B2115] font-semibold flex items-center gap-1.5">
+                  <ShieldAlert className="w-3.5 h-3.5 text-[#5C901A]" />
+                  <span>Suspect IOC Indicator:</span>
+                </span>
+                <span className="font-bold text-[#0B2115] bg-white px-2 py-0.5 rounded border border-[#9FE846]/40">
+                  Suspect Indicator: {investigatingPost.suspectMobile}
+                </span>
+              </div>
+            )}
+
             <div className="p-3.5 rounded-xl bg-gray-50 border border-[#E5E7EB] text-xs font-sans text-gray-800 mb-4 leading-relaxed font-medium">
-              "{investigatingPost.content}"
+              "{investigatingPost.complaintAdditionalInfo || investigatingPost.content}"
             </div>
 
             {/* Cybercrime Threat Breakdown */}

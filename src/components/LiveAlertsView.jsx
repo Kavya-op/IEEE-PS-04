@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import {
   ShieldAlert,
+  Shield,
   AlertTriangle,
   Search,
   Filter,
@@ -68,6 +69,18 @@ export default function LiveAlertsView({ alerts = [], onIsolateThreat, onMitigat
         </button>
 
         <button
+          onClick={() => setSubTab('police')}
+          className={`flex items-center space-x-2 py-1.5 px-3.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            subTab === 'police'
+              ? 'bg-[#0B2115] text-[#9FE846]'
+              : 'text-gray-600 hover:text-[#0B2115]'
+          }`}
+        >
+          <Shield className="w-3.5 h-3.5 text-[#9FE846]" />
+          <span>🛡️ State Police Telemetry</span>
+        </button>
+
+        <button
           onClick={() => setSubTab('sweep')}
           className={`flex items-center space-x-2 py-1.5 px-3.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
             subTab === 'sweep'
@@ -94,9 +107,13 @@ export default function LiveAlertsView({ alerts = [], onIsolateThreat, onMitigat
 
       {subTab === 'sweep' ? (
         <TargetedSweepPanel />
+      ) : subTab === 'police' ? (
+        <div className="space-y-6">
+          <AlertFeed initialFeedMode="police" />
+        </div>
       ) : subTab === 'social' ? (
         <div className="space-y-6">
-          <AlertFeed />
+          <AlertFeed initialFeedMode="social" />
         </div>
       ) : (
         <div className="space-y-6">

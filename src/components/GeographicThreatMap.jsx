@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, Tooltip, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import {
@@ -11,9 +11,23 @@ import {
   Crosshair,
   ExternalLink,
   Info,
-  Compass
+  Compass,
+  Shield
 } from 'lucide-react';
 import { aggregateThreatsByLocation, MAJOR_NODAL_POINTS } from '../utils/geoMapper';
+import { aggregateRajasthanClusters } from '../rajasthanPoliceIngester';
+
+/**
+ * Coordinate mapping dictionary for the top districts in the Rajasthan dataset
+ * strictly defined as requested:
+ */
+export const RAJASTHAN_DISTRICT_COORDINATES = {
+  "JAIPUR (WEST)": [26.9200, 75.7600],
+  "KOTPUTLI-BEHROR": [27.7000, 76.2000],
+  "SIKAR": [27.6094, 75.1398],
+  "BARAN": [25.1011, 76.5132],
+  "JAIPUR": [26.9124, 75.7873]
+};
 
 /**
  * Helper component to pan/zoom map programmatically when a node pill is clicked
@@ -85,9 +99,39 @@ export default function GeographicThreatMap({ threats = [], liveThreatData: prop
     setLiveThreatData(nextThreats);
   }, [propLiveThreatData, threats]);
 
-  // Aggregate threats by resolved geographic coordinates using Gemini NER results
+  // Aggregate threats by resolved geographic coordinates using Gemini NER results & Rajasthan Police telemetry
   const geoClusters = useMemo(() => {
-    return aggregateThreatsByLocation(liveThreatData);
+    const baseClusters = aggregateThreatsByLocation(liveThreatData);
+    const rajClusters = aggregateRajasthanClusters();
+
+    const mergedMap = new Map();
+
+    // Seed with Rajasthan state cyber telemetry districts
+    rajClusters.forEach((rc) => {
+      mergedMap.set(rc.locationName.toUpperCase(), { ...rc });
+    });
+
+    // Merge baseline national corridors (Delhi, Mumbai, Bangalore, etc.)
+    baseClusters.forEach((bc) => {
+      const key = bc.locationName.toUpperCase();
+      if (mergedMap.has(key)) {
+        const existing = mergedMap.get(key);
+        existing.reportCount += bc.reportCount;
+        existing.threats = [...existing.threats, ...bc.threats];
+        if (bc.maxSeverity === 'Critical') existing.maxSeverity = 'Critical';
+      } else {
+        mergedMap.set(key, { ...bc, dominantVector: bc.dominantVector || 'Social Threat' });
+      }
+    });
+
+    // Requirement: When the map renders, for every incident in "JAIPUR", increase cluster count for that node
+    const jaipurNode = mergedMap.get('JAIPUR');
+    const jaipurWestNode = mergedMap.get('JAIPUR (WEST)');
+    if (jaipurNode && jaipurWestNode) {
+      jaipurNode.reportCount += jaipurWestNode.reportCount;
+    }
+
+    return Array.from(mergedMap.values());
   }, [liveThreatData]);
 
   // Total active nodal reports count
@@ -105,6 +149,17 @@ export default function GeographicThreatMap({ threats = [], liveThreatData: prop
         .dark-map-tiles {
           filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
         }
+        .custom-dark-tooltip {
+          background-color: #0B2115 !important;
+          color: #9FE846 !important;
+          border: 1px solid #153423 !important;
+          border-radius: 6px !important;
+          padding: 5px 9px !important;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+        }
+        .custom-dark-tooltip::before {
+          border-top-color: #0B2115 !important;
+        }
       `}</style>
 
       {/* Map Card Header */}
@@ -119,25 +174,25 @@ export default function GeographicThreatMap({ threats = [], liveThreatData: prop
             </h3>
             <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#F3FAEB] text-[#0B2115] border border-[#9FE846]">
               <span className="w-2 h-2 rounded-full bg-[#9FE846] animate-pulse"></span>
-              LIVE NER SENSORS
+              LIVE NER & STATE POLICE TELEMETRY
             </span>
           </div>
           <p className="text-xs text-gray-500 mt-0.5">
-            Real-time geospatial entity resolution extracted from social threat telemetry via Gemini AI NER.
+            Real-time geospatial entity resolution from social threat streams and Rajasthan Police cyber telemetry.
           </p>
         </div>
 
         {/* Nodal Quick-Jump Navigation Chips */}
         <div className="flex flex-wrap items-center gap-1.5 self-start sm:self-auto">
-          {['Delhi', 'Mumbai', 'Jaipur', 'Bangalore'].map((city) => {
+          {['JAIPUR (WEST)', 'KOTPUTLI-BEHROR', 'SIKAR', 'BARAN', 'JAIPUR', 'Delhi', 'Mumbai', 'Bangalore'].map((city) => {
             const hasCluster = geoClusters.find((c) => c.locationName.toLowerCase() === city.toLowerCase());
-            const coords = PRIMARY_NODAL_POINTS[city] || MAJOR_NODAL_POINTS[city];
+            const coords = RAJASTHAN_DISTRICT_COORDINATES[city] || PRIMARY_NODAL_POINTS[city] || MAJOR_NODAL_POINTS[city];
 
             return (
               <button
                 key={city}
                 onClick={() => setSelectedCoords(coords)}
-                className="text-[11px] font-mono font-semibold px-2.5 py-1 rounded-md bg-[#F3F5F6] hover:bg-[#9FE846] hover:text-[#0B2115] text-[#0B2115] border border-[#E5E7EB] transition-all cursor-pointer flex items-center gap-1"
+                className="text-[11px] font-mono font-semibold px-2 py-1 rounded-md bg-[#F3F5F6] hover:bg-[#9FE846] hover:text-[#0B2115] text-[#0B2115] border border-[#E5E7EB] transition-all cursor-pointer flex items-center gap-1"
                 title={`Center map on ${city} node`}
               >
                 <Crosshair className="w-3 h-3 text-[#0B2115]" />
@@ -180,6 +235,13 @@ export default function GeographicThreatMap({ threats = [], liveThreatData: prop
                 position={cluster.coordinates}
                 icon={createPulsingLimeIcon(cluster.reportCount, cluster.maxSeverity)}
               >
+                {/* Styled Leaflet Tooltip displaying: [District Name] - [Count] Active FIRs (Dominant Vector: UPI Fraud) */}
+                <Tooltip direction="top" offset={[0, -14]} opacity={0.95} className="custom-dark-tooltip">
+                  <span className="font-mono text-xs font-bold text-[#9FE846]">
+                    {cluster.locationName} - {cluster.reportCount} Active FIRs (Dominant Vector: {cluster.dominantVector || 'UPI Fraud'})
+                  </span>
+                </Tooltip>
+
                 {/* Styled Leaflet Popup: bg-[#0B2115] text-[#F3F5F6] border-none */}
                 <Popup className="custom-dark-popup">
                   <div className="bg-[#0B2115] text-[#F3F5F6] p-4 rounded-xl border border-[#153423] min-w-[260px] max-w-[320px]">
