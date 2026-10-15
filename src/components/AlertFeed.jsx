@@ -7,6 +7,7 @@ import {
   DEFAULT_CACHED_POSTS
 } from '../services/liveDataFetcher';
 import { fetchLiveRedditThreats } from '../redditFetcher';
+import { FALLBACK_THREAT_DATA } from '../multiPlatformFetcher';
 import { db } from '../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import { NeumorphicAlertCardSkeleton } from './NeumorphicSkeleton';
@@ -65,6 +66,8 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
   const { liveThreats, loading: osintLoading, lastIngestedAt, mitigationStates } = useOSINT();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const isLoading = loading;
+  const setIsLoading = setLoading;
   const [isLiveStream, setIsLiveStream] = useState(false);
   const [lastSyncedTime, setLastSyncedTime] = useState(null);
   const [firestoreSynced, setFirestoreSynced] = useState(false);
@@ -292,38 +295,43 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
       setIsLiveStream(true);
       setLastSyncedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
 
-      // 4. Save these completed, AI-analyzed threat objects into our Firebase Firestore database
-      await saveThreatsToFirestore(completedThreats);
+      // 4. Save these completed, AI-analyzed threat objects into our Firebase Firestore database (non-blocking)
+      saveThreatsToFirestore(completedThreats).catch(() => {});
     } catch (err) {
-      console.warn('[AlertFeed] Error during live fetch & analysis, engaging resilient fallback:', err);
-      // Fallback mechanism switches back to verified default data and evaluates via heuristic model
-      const analyzedFallback = DEFAULT_CACHED_POSTS.map((p) => {
-        const fallbackEval = getOfflinePostRiskFallback(p.content, p.title);
-        return {
-          ...p,
-          riskLevel: fallbackEval.riskLevel,
-          threatLevel: fallbackEval.riskLevel,
-          aiSummary: fallbackEval.aiExplanation,
-          aiExplanation: fallbackEval.aiExplanation,
-          keywords: ['#zero-day', '#osint-feed', '#databreach'],
-          aiCategory: 'Threat Vector',
-          aiConfidence: 94,
-          recommendedAction: 'Perimeter quarantine & deep heuristic inspection.',
-          misinformation: getOfflineMisinformationFallback(p.content),
-          cybercrime: getOfflineCybercrimeFallback(p.content)
-        };
-      });
-      setPosts(analyzedFallback);
+      console.warn("Live fetch failed, deploying failsafe data", err);
+      // Fallback mechanism deploys verified failsafe data
+      setPosts(FALLBACK_THREAT_DATA);
       setIsLiveStream(false);
       setLastSyncedTime(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-      await saveThreatsToFirestore(analyzedFallback);
+      saveThreatsToFirestore(FALLBACK_THREAT_DATA).catch(() => {});
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    runInitialAnalysis();
+    let isMounted = true;
+
+    // Safety watchdog timer: forces skeleton disappearance within 4.5 seconds under any network failure
+    const watchdogTimer = setTimeout(() => {
+      if (isMounted) {
+        console.warn("Live fetch watchdog timer expired: resolving loading state with failsafe data.");
+        setLoading(false);
+        setPosts((current) => (current.length > 0 ? current : FALLBACK_THREAT_DATA));
+      }
+    }, 4500);
+
+    runInitialAnalysis().finally(() => {
+      if (isMounted) {
+        setLoading(false);
+        clearTimeout(watchdogTimer);
+      }
+    });
+
+    return () => {
+      isMounted = false;
+      clearTimeout(watchdogTimer);
+    };
   }, []);
 
   // Sync incoming real-time threat items from the 30-second OSINT polling hook
@@ -520,8 +528,10 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [investigatingPost]);
 
-  const effectivePosts = (liveThreats && liveThreats.length > 0) ? liveThreats : posts;
-  const isFeedLoading = loading && (osintLoading || effectivePosts.length === 0);
+  const effectivePosts = (liveThreats && liveThreats.length > 0)
+    ? liveThreats
+    : (posts && posts.length > 0 ? posts : FALLBACK_THREAT_DATA);
+  const isFeedLoading = loading && (osintLoading && effectivePosts.length === 0);
 
   const filteredPosts = effectivePosts.filter((post) => {
     const isCritical = post.threatLevel === 'Critical' || post.threatLevel === 'High';

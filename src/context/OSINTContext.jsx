@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { fetchNormalizedMultiPlatformThreats } from '../multiPlatformFetcher';
+import { fetchNormalizedMultiPlatformThreats, FALLBACK_THREAT_DATA } from '../multiPlatformFetcher';
 import { db } from '../firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 
@@ -154,16 +154,33 @@ export function OSINTProvider({ children }) {
       // Save to Firestore in background
       await saveThreatsToFirestore(completedThreats);
     } catch (err) {
-      console.warn('[OSINTContext] Live stream fetch note, engaging fallback:', err?.message);
+      console.warn("Live fetch failed, deploying failsafe data", err);
+      setLiveThreats(FALLBACK_THREAT_DATA);
+      setIsLive(false);
+      setLastIngestedAt(new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     } finally {
       setLoading(false);
     }
   }, []);
 
-  // Initial fetch and automatic 30-second interval polling
+  // Initial fetch and automatic 30-second interval polling with failsafe watchdog
   useEffect(() => {
     let active = true;
-    fetchAndHydrateLiveData();
+
+    // Safety watchdog to guarantee skeleton loader disappears even if proxy hangs
+    const watchdogTimer = setTimeout(() => {
+      if (active) {
+        setLoading(false);
+        setLiveThreats((current) => (current.length > 0 ? current : FALLBACK_THREAT_DATA));
+      }
+    }, 4500);
+
+    fetchAndHydrateLiveData().finally(() => {
+      if (active) {
+        setLoading(false);
+        clearTimeout(watchdogTimer);
+      }
+    });
 
     const intervalTimer = setInterval(() => {
       if (active) {
@@ -179,6 +196,7 @@ export function OSINTProvider({ children }) {
 
     return () => {
       active = false;
+      clearTimeout(watchdogTimer);
       clearInterval(intervalTimer);
       clearInterval(countdownTimer);
     };
