@@ -58,6 +58,7 @@ export function formatRelativeTime(epochSeconds) {
 export const DEFAULT_CACHED_POSTS = [
   tagDataProvenance({
     id: 'THREAT-LIVE-01',
+    category: 'Credential Harvesting',
     platform: 'X (Twitter)',
     author: '@dark_recon_intel',
     title: 'CRITICAL LEAK: Just dumped 2.4TB of customer records from national retail bank',
@@ -70,6 +71,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'X_TWITTER'),
   tagDataProvenance({
     id: 'THREAT-LIVE-02',
+    category: 'Malware',
     platform: 'Reddit',
     author: 'u/zero_day_recon',
     title: 'Found an unpatched zero-day remote code execution vulnerability in enterprise VPN gateway',
@@ -83,6 +85,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'REDDIT'),
   tagDataProvenance({
     id: 'THREAT-LIVE-03',
+    category: 'Misinformation',
     platform: 'Telegram',
     author: '@shadow_mesh_relay',
     title: 'URGENT NOTICE: City municipal water treatment SCADA system infiltrated by foreign malware',
@@ -95,6 +98,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'TELEGRAM'),
   tagDataProvenance({
     id: 'THREAT-LIVE-04',
+    category: 'Malware',
     platform: 'Facebook',
     author: 'Metro Health Watch Group',
     title: 'Ransomware group locks all hypervisors and encrypted offsite backups for Metro Healthcare Alliance',
@@ -107,6 +111,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'FACEBOOK'),
   tagDataProvenance({
     id: 'THREAT-LIVE-05',
+    category: 'Cybercrime',
     platform: 'Telegram',
     author: '@c2_dark_wire',
     title: 'Anomalous DNS tunneling on port 53 observed across cloud VPCs',
@@ -119,6 +124,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'TELEGRAM'),
   tagDataProvenance({
     id: 'THREAT-LIVE-06',
+    category: 'Misinformation',
     platform: 'X (Twitter)',
     author: '@election_guard_bot',
     title: 'CONFIRMED: Voting registration databases wiped clean using injected wiper malware',
@@ -131,6 +137,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'X_TWITTER'),
   tagDataProvenance({
     id: 'THREAT-LIVE-07',
+    category: 'Credential Harvesting',
     platform: 'Reddit',
     author: 'u/credential_broker',
     title: 'Fresh combo list available: 850,000 corporate credentials harvested via reverse-proxy phishing kits',
@@ -144,6 +151,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'REDDIT'),
   tagDataProvenance({
     id: 'THREAT-LIVE-08',
+    category: 'Cybercrime',
     platform: 'Telegram',
     author: '@botnet_mesh_intel',
     title: 'New Mirai IoT botnet variant targeting unpatched SOHO routers for multi-vector 800Gbps DDoS flood',
@@ -156,6 +164,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'TELEGRAM'),
   tagDataProvenance({
     id: 'THREAT-LIVE-09',
+    category: 'Phishing',
     platform: 'X (Twitter)',
     author: '@fraud_sentinel',
     title: 'Phishing Alert: Deepfake executive voice clones requesting urgent multi-million offshore wire transfers',
@@ -168,6 +177,7 @@ export const DEFAULT_CACHED_POSTS = [
   }, 'X_TWITTER'),
   tagDataProvenance({
     id: 'THREAT-LIVE-10',
+    category: 'Malware',
     platform: 'Facebook',
     author: 'CloudSec Professionals Community',
     title: 'Cloud IAM privilege escalation vector disclosed in Kubernetes cluster ingress controller',

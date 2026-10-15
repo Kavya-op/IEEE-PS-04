@@ -181,6 +181,7 @@ export function OSINTProvider({ children }) {
 
         return {
           id: post.id || `THREAT-${idx}`,
+          category: post.category || subcat,
           title: post.title || 'Live Cyber Intelligence Intercept',
           content: post.content || 'Real-time telemetry packet intercepted from multi-platform intelligence stream.',
           sourceUrl: post.sourceUrl || post.link || 'https://www.reddit.com/r/cybersecurity/',

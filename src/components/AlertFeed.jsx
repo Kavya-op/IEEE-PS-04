@@ -561,7 +561,25 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     : (posts && posts.length > 0 ? posts : FALLBACK_THREAT_DATA);
   const isFeedLoading = loading && (osintLoading && effectivePosts.length === 0);
 
-  const filteredPosts = effectivePosts.filter((post) => {
+  const activeFilter = filter;
+  const allThreats = effectivePosts;
+
+  const displayedThreats = (activeFilter === 'All'
+    ? allThreats
+    : allThreats.filter((threat) => {
+        const cat = (threat.category || '').toLowerCase();
+        const target = activeFilter.toLowerCase();
+        if (target === 'critical') {
+          return threat.threatLevel === 'Critical' || threat.riskLevel === 'Critical' || cat === 'critical';
+        }
+        return (
+          cat === target ||
+          cat.includes(target) ||
+          (threat.cybercrime?.threatSubcategory && threat.cybercrime.threatSubcategory.toLowerCase() === target) ||
+          (threat.thematicCategory && threat.thematicCategory.toLowerCase().includes(target))
+        );
+      })
+  ).filter((post) => {
     // 1. Global Selected Vector filtering from SaaSHeader
     if (selectedVector && selectedVector !== 'All Vectors' && matchesThreatVector) {
       if (!matchesThreatVector(post, selectedVector, selectedVectorCategory)) {
@@ -569,24 +587,7 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
       }
     }
 
-    // 2. Category tab filtering
-    const isCritical = post.threatLevel === 'Critical' || post.threatLevel === 'High' || post.riskLevel === 'Critical' || post.riskLevel === 'High';
-    const isEmerging = post.threatLevel === 'Medium' || post.threatLevel === 'Low' || post.riskLevel === 'Medium' || post.riskLevel === 'Low';
-    const isMisleading = post.misinformation?.isMisleading || post.thematicCategory?.includes('Disinformation');
-    const isCybercrime = post.cybercrime?.isCybercrimeThreat || post.thematicCategory?.includes('Botnet') || post.thematicCategory?.includes('Exploit');
-    const subcat = post.cybercrime?.threatSubcategory || post.aiCategory;
-
-    if (filter === 'Critical' && !isCritical) return false;
-    if (filter === 'Emerging' && !isEmerging) return false;
-    if (filter === 'Cybercrime' && !isCybercrime) return false;
-    if (filter === 'Misinformation' && !isMisleading) return false;
-    if (['Phishing', 'Malware', 'Credential Harvesting', 'Scam/Fraud'].includes(filter)) {
-      const catText = `${subcat || ''} ${post.thematicCategory || ''}`.toLowerCase();
-      if (!catText.includes(filter.toLowerCase())) {
-        return false;
-      }
-    }
-
+    // 2. Search query filter
     if (search.trim()) {
       const q = search.toLowerCase();
       const contentMatch = post.content?.toLowerCase().includes(q);
@@ -603,7 +604,8 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     return true;
   });
 
-  const redditPosts = filteredPosts;
+  const filteredPosts = displayedThreats;
+  const redditPosts = displayedThreats;
 
   return (
     <div className="bg-white flex flex-col w-full h-full text-gray-900 relative">
@@ -1288,12 +1290,14 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
             </div>
             <NeumorphicAlertCardSkeleton count={3} />
           </div>
-        ) : redditPosts.length === 0 ? (
-          <div className="py-12 text-center text-[#52607B] font-mono text-xs">
-            No threat packets match current filter.
+        ) : displayedThreats.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-white border border-[#E5E7EB] rounded-xl text-center">
+            <span className="text-4xl mb-3">🛡️</span>
+            <h3 className="text-[#0B2115] text-lg font-semibold">No active threats detected</h3>
+            <p className="text-gray-500 text-sm mt-1">Our telemetry indicates zero current matches for the "{activeFilter}" vector.</p>
           </div>
         ) : (
-          redditPosts.map((post) => {
+          displayedThreats.map((post) => {
             const threat = post;
             const isCritical = threat.riskLevel === 'Critical';
             const isHigh = threat.riskLevel === 'High';

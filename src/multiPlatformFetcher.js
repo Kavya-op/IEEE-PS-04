@@ -33,7 +33,98 @@ export const NITTER_RSS_QUERY_URL =
  */
 export const FALLBACK_THREAT_DATA = [
   {
+    id: 'phish-1',
+    category: 'Phishing',
+    title: 'Spear-phishing campaign impersonating Tax Department',
+    content: 'Bulk emails detected containing malicious PDF attachments masking as tax return forms to exfiltrate taxpayer financial records.',
+    source: 'CERT-In Advisory Desk (Failsafe)',
+    platform: 'X (Twitter)',
+    sourcePlatform: 'X (Twitter)',
+    riskLevel: 'High',
+    threatLevel: 'High',
+    timestamp: new Date().toISOString(),
+    sourceUrl: 'https://cert-in.org.in/',
+    link: 'https://cert-in.org.in/',
+    aiExplanation: 'Targeted spear-phishing distribution imitating official Income Tax authority documents with weaponized PDF macros.',
+    aiConfidence: 96.8,
+    status: 'active',
+    mentioned_locations: ['Delhi', 'Mumbai']
+  },
+  {
+    id: 'mal-1',
+    category: 'Malware',
+    title: 'New ransomware strain targeting healthcare APIs',
+    content: 'Automated lateral movement detected exploiting CVE-2024-XXXX in regional hospital networks and encrypting diagnostic systems.',
+    source: 'r/cybersecurity (Failsafe)',
+    platform: 'Reddit',
+    sourcePlatform: 'Reddit',
+    riskLevel: 'Critical',
+    threatLevel: 'Critical',
+    timestamp: new Date().toISOString(),
+    sourceUrl: 'https://github.com/advisories',
+    link: 'https://github.com/advisories',
+    aiExplanation: 'Automated ransomware variant propagating via unauthenticated healthcare REST API endpoints.',
+    aiConfidence: 98.7,
+    status: 'active',
+    mentioned_locations: ['Bangalore', 'Pune']
+  },
+  {
+    id: 'cred-1',
+    category: 'Credential Harvesting',
+    title: 'Fake SSO portal capturing Gov credentials',
+    content: 'Spoofed domain mimicking official employee login portal circulating via SMS to harvest administrative authentication tokens.',
+    source: 'MTProto Dark Mesh Intercept (Failsafe)',
+    platform: 'Telegram',
+    sourcePlatform: 'Telegram',
+    riskLevel: 'Critical',
+    threatLevel: 'Critical',
+    timestamp: new Date().toISOString(),
+    sourceUrl: 'https://thehackernews.com/',
+    link: 'https://thehackernews.com/',
+    aiExplanation: 'Smishing campaign redirecting personnel to reverse-proxy phishing gateway collecting 2FA OTPs.',
+    aiConfidence: 97.4,
+    status: 'active',
+    mentioned_locations: ['Jaipur', 'Hyderabad']
+  },
+  {
+    id: 'scam-1',
+    category: 'Scam/Fraud',
+    title: 'Fraudulent electricity bill disconnection SMS scam circulating statewide',
+    content: 'Mass automated SMS phishing network threatening immediate power cut within 2 hours unless fraudulent APK payment gateway is installed.',
+    source: 'CrowdTangle Public Graph (Failsafe)',
+    platform: 'Facebook',
+    sourcePlatform: 'Facebook',
+    riskLevel: 'Medium',
+    threatLevel: 'Medium',
+    timestamp: new Date().toISOString(),
+    sourceUrl: 'https://cert-in.org.in/',
+    link: 'https://cert-in.org.in/',
+    aiExplanation: 'Financial fraud scam masquerading as state utility provider to coerce victims into remote-access trojan installation.',
+    aiConfidence: 93.5,
+    status: 'active',
+    mentioned_locations: ['Lucknow', 'Kolkata']
+  },
+  {
+    id: 'cyber-1',
+    category: 'Cybercrime',
+    title: 'Coordinated Mirai-variant IoT botnet launching volumetric DDoS on municipal servers',
+    content: 'Over 45,000 compromised edge routers generating 120 Gbps UDP reflection flood targeting smart-city traffic and telemetry infrastructure.',
+    source: 'MTProto Dark Mesh Intercept (Failsafe)',
+    platform: 'Telegram',
+    sourcePlatform: 'Telegram',
+    riskLevel: 'Critical',
+    threatLevel: 'Critical',
+    timestamp: new Date().toISOString(),
+    sourceUrl: 'https://thehackernews.com/',
+    link: 'https://thehackernews.com/',
+    aiExplanation: 'Distributed denial-of-service botnet attack disrupting regional municipal administration gateways.',
+    aiConfidence: 99.2,
+    status: 'active',
+    mentioned_locations: ['Chennai', 'Ahmedabad']
+  },
+  {
     id: 'fb-01',
+    category: 'Credential Harvesting',
     title: 'Leaked Aadhaar database sample uploaded to open channel',
     content: "Threat actor 'SpectreSec' uploaded a 500MB sample of citizen Aadhaar records containing full demographic profiles, biometric enrollment IDs, and mobile links. Offering full 40M records database for 3.5 XMR.",
     source: 'r/cybersecurity (Failsafe)',
@@ -51,6 +142,7 @@ export const FALLBACK_THREAT_DATA = [
   },
   {
     id: 'fb-02',
+    category: 'Malware',
     title: 'Zero-Day Remote Code Execution vulnerability in enterprise VPN edge appliances',
     content: 'Unauthenticated attacker can achieve root shell via crafted HTTP POST headers (CVE-2026-4401). Active in-the-wild exploitation confirmed across enterprise telework gateways in Mumbai.',
     source: 'GitHub Advisories (Failsafe)',
@@ -68,6 +160,7 @@ export const FALLBACK_THREAT_DATA = [
   },
   {
     id: 'fb-03',
+    category: 'Cybercrime',
     title: 'Weaponized SCADA command injection script targeting Bangalore power grid',
     content: 'Dark forum relay shared Modbus/DNP3 industrial controller command injection payload designed to trip circuit breakers at Bangalore 400kV regional electrical substations.',
     source: 'MTProto Dark Mesh Intercept (Failsafe)',
@@ -85,6 +178,7 @@ export const FALLBACK_THREAT_DATA = [
   },
   {
     id: 'fb-04',
+    category: 'Misinformation',
     title: 'Deepfake video of political official gaining viral traction in Hyderabad groups',
     content: 'Synthesized AI deepfake video depicting state security minister announcing emergency curfew directives and commercial bank liquidation trending with 92,000 shares across regional channels.',
     source: 'CrowdTangle Public Graph (Failsafe)',
@@ -102,6 +196,7 @@ export const FALLBACK_THREAT_DATA = [
   },
   {
     id: 'fb-05',
+    category: 'Credential Harvesting',
     title: 'Fresh combo list: 850,000 corporate credentials harvested via reverse-proxy phishing kits',
     content: 'Exfiltrated SSO session tokens and hashed passwords dumped on dark web forums in Jaipur sector. High hit rate on corporate Active Directory endpoints.',
     source: 'r/cybersecurity (Failsafe)',
@@ -209,9 +304,11 @@ export function getMockTelegramThreats() {
   return [
     {
       id: 'TELEGRAM-LEA-01',
+      category: 'Credential Harvesting',
       title: 'Leaked Aadhaar database sample uploaded to open channel',
       content: "Threat actor 'SpectreSec' uploaded a 500MB sample of Delhi & NCR citizen Aadhaar records containing full demographic profiles, biometric enrollment IDs, and mobile links. Offering full 40M records database for 3.5 XMR.",
       link: 'https://t.me/dark_mesh_intel/aadhaar_dump_99',
+      sourceUrl: 'https://thehackernews.com/',
       timestamp: '5m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
@@ -220,9 +317,11 @@ export function getMockTelegramThreats() {
     },
     {
       id: 'TELEGRAM-LEA-02',
+      category: 'Cybercrime',
       title: 'New DDoS botnet script being shared targeting Mumbai infrastructure',
       content: 'Mirai-variant DDoS botnet script with automated telnet scanner targeting IoT routers, Mumbai municipal surveillance cameras, and police emergency dispatch infrastructure circulating in underground channels.',
       link: 'https://t.me/dark_mesh_intel/botnet_mirai_v3',
+      sourceUrl: 'https://thehackernews.com/',
       timestamp: '14m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
@@ -231,9 +330,11 @@ export function getMockTelegramThreats() {
     },
     {
       id: 'TELEGRAM-LEA-03',
+      category: 'Cybercrime',
       title: 'Coordinated transit blockades organizing in Jaipur capital zone',
       content: 'Encrypted channel with 42,000 members broadcasting coordinated plans for Jaipur transit hub blockades and law enforcement radio jamming in capital zone.',
       link: 'https://t.me/dark_mesh_intel/dispatch_organize_cell',
+      sourceUrl: 'https://thehackernews.com/',
       timestamp: '22m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
@@ -242,9 +343,11 @@ export function getMockTelegramThreats() {
     },
     {
       id: 'TELEGRAM-LEA-04',
+      category: 'Cybercrime',
       title: 'Weaponized SCADA command injection script targeting Bangalore power grid',
       content: 'Dark forum relay shared Modbus/DNP3 industrial controller command injection payload designed to trip circuit breakers at Bangalore 400kV regional electrical substations.',
       link: 'https://t.me/dark_mesh_intel/scada_substation_ioc',
+      sourceUrl: 'https://thehackernews.com/',
       timestamp: '35m ago',
       source: 'MTProto Dark Mesh Intercept',
       platform: 'Telegram',
@@ -262,9 +365,11 @@ export function getMockFacebookThreats() {
   return [
     {
       id: 'FACEBOOK-OSINT-01',
+      category: 'Misinformation',
       title: 'Deepfake video of political official gaining viral traction in Hyderabad groups',
       content: 'Synthesized AI deepfake video depicting Hyderabad security minister announcing emergency curfew directives and commercial bank liquidation trending with 92,000 shares across 18 regional groups.',
       link: 'https://facebook.com/crowdtangle/intel/post_deepfake_curfew',
+      sourceUrl: 'https://thehackernews.com/',
       timestamp: '7m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
@@ -273,9 +378,11 @@ export function getMockFacebookThreats() {
     },
     {
       id: 'FACEBOOK-OSINT-02',
+      category: 'Misinformation',
       title: 'Coordinated hate speech campaign detected in public comments',
       content: 'Automated bot swarm deploying coordinated inflammatory hate speech narratives across Kolkata municipal news discussion threads to incite sectarian unrest and disrupt public order.',
       link: 'https://facebook.com/crowdtangle/intel/hate_campaign_swarm',
+      sourceUrl: 'https://thehackernews.com/',
       timestamp: '18m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
@@ -284,9 +391,11 @@ export function getMockFacebookThreats() {
     },
     {
       id: 'FACEBOOK-OSINT-03',
+      category: 'Phishing',
       title: 'Phishing link disguised as government welfare scheme in Lucknow',
       content: "Viral sponsored Facebook posts promoting fake 'UP Direct Citizen Relief Subsidy $5,000' across Lucknow linking to credential-harvesting phishing portal capturing bank account credentials and SMS OTPs.",
       link: 'https://facebook.com/crowdtangle/intel/welfare_phishing_alert',
+      sourceUrl: 'https://cert-in.org.in/',
       timestamp: '27m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
@@ -295,9 +404,11 @@ export function getMockFacebookThreats() {
     },
     {
       id: 'FACEBOOK-OSINT-04',
+      category: 'Misinformation',
       title: 'Fabricated rumor claiming toxic chemical contamination in Pune water supply',
       content: 'Coordinated viral post spreading false claims of cyanide contamination in Pune city reservoir, triggering localized civil panic, supermarket run, and emergency hospital inquiries.',
       link: 'https://facebook.com/crowdtangle/intel/water_contamination_hoax',
+      sourceUrl: 'https://thehackernews.com/',
       timestamp: '40m ago',
       source: 'CrowdTangle Public Graph',
       platform: 'Facebook',
@@ -326,6 +437,14 @@ export function normalizeThreatObject(rawThreat, defaultPlatform = 'OSINT') {
     'Reddit Native API'
   );
   const riskLevel = rawThreat.riskLevel || rawThreat.threatLevel || 'Medium';
+  const category = rawThreat.category || (
+    cleanTitle.toLowerCase().includes('phish') || cleanContent.toLowerCase().includes('phish') ? 'Phishing' :
+    cleanTitle.toLowerCase().includes('malware') || cleanTitle.toLowerCase().includes('ransomware') || cleanContent.toLowerCase().includes('ransomware') ? 'Malware' :
+    cleanTitle.toLowerCase().includes('credential') || cleanTitle.toLowerCase().includes('aadhaar') || cleanContent.toLowerCase().includes('credential') || cleanContent.toLowerCase().includes('sso') ? 'Credential Harvesting' :
+    cleanTitle.toLowerCase().includes('scam') || cleanTitle.toLowerCase().includes('fraud') || cleanContent.toLowerCase().includes('scam') ? 'Scam/Fraud' :
+    cleanTitle.toLowerCase().includes('deepfake') || cleanTitle.toLowerCase().includes('rumor') || cleanContent.toLowerCase().includes('rumor') || cleanContent.toLowerCase().includes('misinformation') ? 'Misinformation' :
+    'Cybercrime'
+  );
   const mentioned_locations = Array.isArray(rawThreat.mentioned_locations) ? rawThreat.mentioned_locations : [];
 
   return {
@@ -337,6 +456,7 @@ export function normalizeThreatObject(rawThreat, defaultPlatform = 'OSINT') {
     timestamp: cleanTimestamp,
     source,
     platform,
+    category,
     riskLevel,
     mentioned_locations
   };
@@ -415,6 +535,7 @@ export async function fetchNormalizedMultiPlatformThreats() {
         const norm = normalizeThreatObject(t, t.platform);
         return {
           ...norm,
+          category: t.category || norm.category,
           mentioned_locations: Array.isArray(t.mentioned_locations) ? t.mentioned_locations : (norm.mentioned_locations || []),
           riskLevel: t.riskLevel || norm.riskLevel || 'Medium',
           aiExplanation: t.aiExplanation || 'Evaluated by Government Cyber Threat Intelligence Engine.',
