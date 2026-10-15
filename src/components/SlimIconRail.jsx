@@ -28,12 +28,23 @@ export default function SlimIconRail({
     { id: 'Alerts', alias: 'Live Alerts', label: 'Threat Feed', icon: ShieldAlert, badge: alertCount },
     { id: 'BotSwarms', alias: 'Bot Swarms', label: 'Bot Swarms & Clusters', icon: Bot },
     { id: 'TargetedSweep', alias: 'Targeted Sweep', label: 'Investigations & Sweep', icon: Scan },
-    { id: 'Misinformation', alias: 'Threat Analytics', label: 'Analytics & IOCs', icon: Flame },
+    { id: 'AnalyticsIOCs', alias: 'Analytics', to: '/analytics', path: '/analytics', label: 'Analytics & IOCs', icon: Flame },
     { id: 'Settings', alias: 'Settings', label: 'System Configuration', icon: SlidersHorizontal }
   ];
 
   const isItemActive = (item) => {
-    return activeTab === item.id || activeTab === item.alias;
+    if (activeTab === item.id || activeTab === item.alias) return true;
+    if (item.id === 'AnalyticsIOCs') {
+      return (
+        activeTab === 'AnalyticsIOCs' ||
+        activeTab === 'Analytics & IOCs' ||
+        activeTab === 'Analytics' ||
+        activeTab === 'Threat Analytics' ||
+        activeTab === 'Misinformation' ||
+        activeTab === '/analytics'
+      );
+    }
+    return false;
   };
 
   return (

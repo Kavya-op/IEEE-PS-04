@@ -40,7 +40,7 @@ export default function SaaSSidebar({
         { id: 'Alerts', alias: 'Live Alerts', label: 'Alert Feed', icon: ShieldAlert, badge: alertCount },
         { id: 'MediaInterrogation', alias: 'Media Interrogation', label: 'Media Interrogation', icon: Search },
         { id: 'TargetedSweep', alias: 'Targeted Sweep', label: 'Targeted Sweep', icon: Compass },
-        { id: 'Misinformation', alias: 'Threat Analytics', label: 'Analytics & IOCs', icon: Flame },
+        { id: 'AnalyticsIOCs', alias: 'Analytics', to: '/analytics', path: '/analytics', label: 'Analytics & IOCs', icon: Flame },
         { id: 'BotSwarms', alias: 'Bot Swarms', label: 'Bot Swarms', icon: Bot }
       ]
     },
@@ -54,7 +54,18 @@ export default function SaaSSidebar({
   ];
 
   const isItemActive = (item) => {
-    return activeTab === item.id || activeTab === item.alias;
+    if (activeTab === item.id || activeTab === item.alias || activeTab === item.to || activeTab === item.path) return true;
+    if (item.id === 'AnalyticsIOCs') {
+      return (
+        activeTab === 'AnalyticsIOCs' ||
+        activeTab === 'Analytics & IOCs' ||
+        activeTab === 'Analytics' ||
+        activeTab === 'Threat Analytics' ||
+        activeTab === 'Misinformation' ||
+        activeTab === '/analytics'
+      );
+    }
+    return false;
   };
 
   return (

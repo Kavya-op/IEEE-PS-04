@@ -13,6 +13,90 @@ export function useOSINT() {
   return context;
 }
 
+export function matchesThreatVector(threat, vectorName = 'All Vectors', vectorCategory = 'All') {
+  if (!threat) return false;
+  if (!vectorName || vectorName === 'All Vectors' || vectorCategory === 'All') return true;
+
+  const text = `${threat.title || ''} ${threat.content || ''} ${threat.thematicCategory || ''} ${threat.aiCategory || ''} ${threat.vector || ''} ${threat.source || ''} ${threat.platform || ''} ${threat.target || ''}`.toLowerCase();
+  const cat = (threat.thematicCategory || '').toLowerCase();
+  const aiCat = (threat.aiCategory || '').toLowerCase();
+  const subcat = (threat.cybercrime?.threatSubcategory || '').toLowerCase();
+
+  switch (vectorName) {
+    case 'Zero-Day Exploits & Botnets':
+      return (
+        text.includes('zero-day') ||
+        text.includes('0day') ||
+        text.includes('rce') ||
+        text.includes('botnet') ||
+        text.includes('exploit') ||
+        text.includes('mirai') ||
+        cat.includes('zero-day') ||
+        cat.includes('malware') ||
+        aiCat.includes('malware') ||
+        subcat.includes('malware')
+      );
+    case 'Credential & Identity Leaks':
+      return (
+        text.includes('aadhaar') ||
+        text.includes('credential') ||
+        text.includes('dump') ||
+        text.includes('sso') ||
+        text.includes('leak') ||
+        text.includes('spectresec') ||
+        text.includes('breach') ||
+        text.includes('identity') ||
+        cat.includes('credential') ||
+        cat.includes('identity') ||
+        aiCat.includes('data breach') ||
+        subcat.includes('credential')
+      );
+    case 'Phishing Lures & Scams':
+      return (
+        text.includes('phish') ||
+        text.includes('scam') ||
+        text.includes('fraud') ||
+        text.includes('lure') ||
+        text.includes('welfare') ||
+        text.includes('subsidy') ||
+        text.includes('lottery') ||
+        cat.includes('phish') ||
+        aiCat.includes('phishing') ||
+        subcat.includes('phishing')
+      );
+    case 'Disinformation & Deepfakes':
+      return (
+        text.includes('deepfake') ||
+        text.includes('disinformation') ||
+        text.includes('misinformation') ||
+        text.includes('rumor') ||
+        text.includes('hoax') ||
+        text.includes('panic') ||
+        text.includes('hate speech') ||
+        cat.includes('disinformation') ||
+        aiCat.includes('disinformation') ||
+        threat.misinformation?.isMisleading === true
+      );
+    case 'SCADA & Infrastructure Sabotage':
+      return (
+        text.includes('scada') ||
+        text.includes('modbus') ||
+        text.includes('grid') ||
+        text.includes('power') ||
+        text.includes('water treatment') ||
+        text.includes('infrastructure') ||
+        text.includes('sabotage') ||
+        cat.includes('infrastructure') ||
+        cat.includes('scada')
+      );
+    default:
+      if (vectorCategory && vectorCategory !== 'All') {
+        return cat.includes(vectorCategory.toLowerCase()) || aiCat.includes(vectorCategory.toLowerCase()) || subcat.includes(vectorCategory.toLowerCase());
+      }
+      return true;
+  }
+}
+
 export function OSINTProvider({ children }) {
   const [liveThreats, setLiveThreats] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -21,6 +105,8 @@ export function OSINTProvider({ children }) {
   const [pollCountdown, setPollCountdown] = useState(30);
   const [pollCount, setPollCount] = useState(0);
   const [firestoreSynced, setFirestoreSynced] = useState(false);
+  const [selectedVector, setSelectedVector] = useState('All Vectors');
+  const [selectedVectorCategory, setSelectedVectorCategory] = useState('All');
 
   // Synchronize AI-analyzed threat objects into Firebase Firestore
   const saveThreatsToFirestore = async (threatsToSave) => {
@@ -97,7 +183,8 @@ export function OSINTProvider({ children }) {
           id: post.id || `THREAT-${idx}`,
           title: post.title || 'Live Cyber Intelligence Intercept',
           content: post.content || 'Real-time telemetry packet intercepted from multi-platform intelligence stream.',
-          link: post.link || 'https://www.cisa.gov/known-exploited-vulnerabilities',
+          sourceUrl: post.sourceUrl || post.link || 'https://www.reddit.com/r/cybersecurity/',
+          link: post.sourceUrl || post.link || 'https://www.reddit.com/r/cybersecurity/',
           timestamp: post.timestamp || new Date().toLocaleTimeString(),
           source,
           platform,
@@ -399,8 +486,25 @@ export function OSINTProvider({ children }) {
     }, 2500);
   }, [addAuditLog]);
 
+  const setVectorFilter = useCallback((vectorName, category = 'All') => {
+    setSelectedVector(vectorName);
+    setSelectedVectorCategory(category);
+  }, []);
+
+  const filteredLiveThreats = useMemo(() => {
+    return liveThreats.filter((threat) =>
+      matchesThreatVector(threat, selectedVector, selectedVectorCategory)
+    );
+  }, [liveThreats, selectedVector, selectedVectorCategory]);
+
   const contextValue = {
     liveThreats,
+    filteredLiveThreats,
+    selectedVector,
+    selectedVectorCategory,
+    setSelectedVector,
+    setVectorFilter,
+    matchesThreatVector,
     loading,
     isLive,
     lastIngestedAt,

@@ -19,8 +19,15 @@ import {
 } from 'lucide-react';
 import AlertFeed from './AlertFeed';
 import TargetedSweepPanel from './TargetedSweepPanel';
+import { useOSINT } from '../context/OSINTContext';
 
 export default function LiveAlertsView({ alerts = [], onIsolateThreat, onMitigateThreat, onSimulateAlert }) {
+  const {
+    selectedVector = 'All Vectors',
+    selectedVectorCategory = 'All',
+    matchesThreatVector,
+    setVectorFilter
+  } = useOSINT();
   const [subTab, setSubTab] = useState('social'); // 'social' | 'sweep' | 'infra'
   const [severityFilter, setSeverityFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -28,6 +35,11 @@ export default function LiveAlertsView({ alerts = [], onIsolateThreat, onMitigat
   const [expandedId, setExpandedId] = useState(alerts[0]?.id || null);
 
   const filteredAlerts = alerts.filter((alert) => {
+    if (selectedVector && selectedVector !== 'All Vectors' && matchesThreatVector) {
+      if (!matchesThreatVector(alert, selectedVector, selectedVectorCategory)) {
+        return false;
+      }
+    }
     const matchesSeverity = severityFilter === 'all' || alert.severity === severityFilter;
     const matchesStatus = statusFilter === 'all' || alert.status === statusFilter;
     const matchesSearch =

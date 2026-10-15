@@ -7,6 +7,7 @@ import { OfficerClearanceCard, IncidentDispatchCard, SystemSopChecklistCard, Sys
 import OverviewView from './components/OverviewView';
 import LiveAlertsView from './components/LiveAlertsView';
 import ThreatAnalyticsView from './components/ThreatAnalyticsView';
+import AnalyticsIOCs from './components/AnalyticsIOCs';
 import SettingsView from './components/SettingsView';
 import TargetedSweepPanel from './components/TargetedSweepPanel';
 import MediaInterrogationView from './components/MediaInterrogationView';
@@ -237,8 +238,15 @@ export default function App() {
                   refreshNow();
                   showToast('Telemetry Synced', 'Live multi-platform OSINT stream refreshed', 'info');
                 }}
-                onExportReport={() => {
-                  showToast('Exporting Report', 'Synthesizing SKIT004 Government Evidence Dossier...', 'success');
+                onExportReport={(result) => {
+                  showToast(
+                    'Report Downloaded to Storage',
+                    `Archived ${result?.filename || 'evidence dossier'} to local and system storage.`,
+                    'success'
+                  );
+                }}
+                onVectorChange={(vector) => {
+                  showToast('Threat Vector Filter', `Telemetry filtered by: ${vector}`, 'info');
                 }}
               />
 
@@ -298,8 +306,8 @@ export default function App() {
                       <TargetedSweepPanel />
                     )}
 
-                    {(activeTab === 'Misinformation' || activeTab === 'Threat Analytics' || activeTab === 'Analytics') && (
-                      <ThreatAnalyticsView />
+                    {(activeTab === 'AnalyticsIOCs' || activeTab === 'Analytics & IOCs' || activeTab === 'Analytics' || activeTab === 'Threat Analytics' || activeTab === 'Misinformation' || activeTab === '/analytics') && (
+                      <AnalyticsIOCs />
                     )}
 
                     {activeTab === 'Settings' && <SettingsView />}

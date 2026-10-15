@@ -58,12 +58,22 @@ import {
   Clock,
   ShieldCheck,
   Database,
-  User
+  User,
+  Filter
 } from 'lucide-react';
 
 export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
   const { shouldReduceMotion, getStaggerContainer, staggerItemVariants, neuButtonProps } = useAppMotion();
-  const { liveThreats, loading: osintLoading, lastIngestedAt, mitigationStates } = useOSINT();
+  const {
+    liveThreats,
+    loading: osintLoading,
+    lastIngestedAt,
+    mitigationStates,
+    selectedVector = 'All Vectors',
+    selectedVectorCategory = 'All',
+    setVectorFilter,
+    matchesThreatVector
+  } = useOSINT();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const isLoading = loading;
@@ -249,7 +259,8 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           id: post.id,
           title: post.title,
           content: post.content,
-          link: post.link,
+          sourceUrl: post.sourceUrl || post.link || 'https://www.reddit.com/r/cybersecurity/',
+          link: post.sourceUrl || post.link || 'https://www.reddit.com/r/cybersecurity/',
           timestamp: post.timestamp || 'Live',
           source: post.source || 'Reddit Native API',
           sourcePlatform: post.source || 'Reddit Native API',
@@ -354,6 +365,8 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           telemetryMethod: threat.telemetryMethod || 'RSS-to-JSON Bridge (CORS Bypassed)',
           title: threat.title,
           content: threat.content,
+          sourceUrl: threat.sourceUrl || threat.link || 'https://www.reddit.com/r/cybersecurity/',
+          link: threat.sourceUrl || threat.link || 'https://www.reddit.com/r/cybersecurity/',
           timestamp: threat.timestamp || 'Live',
           threatLevel: threat.riskLevel || 'Medium',
           riskLevel: threat.riskLevel || 'Medium',
@@ -528,30 +541,56 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [investigatingPost]);
 
+  // Synchronize with global vector filter change event
+  useEffect(() => {
+    const handleVectorFilterChange = (e) => {
+      if (e.detail?.vector) {
+        if (e.detail.category && e.detail.category !== 'All') {
+          setFilter(e.detail.category);
+        } else if (e.detail.vector === 'All Vectors') {
+          setFilter('All');
+        }
+      }
+    };
+    window.addEventListener('vector-filter-change', handleVectorFilterChange);
+    return () => window.removeEventListener('vector-filter-change', handleVectorFilterChange);
+  }, []);
+
   const effectivePosts = (liveThreats && liveThreats.length > 0)
     ? liveThreats
     : (posts && posts.length > 0 ? posts : FALLBACK_THREAT_DATA);
   const isFeedLoading = loading && (osintLoading && effectivePosts.length === 0);
 
   const filteredPosts = effectivePosts.filter((post) => {
-    const isCritical = post.threatLevel === 'Critical' || post.threatLevel === 'High';
-    const isEmerging = post.threatLevel === 'Medium' || post.threatLevel === 'Low';
-    const isMisleading = post.misinformation?.isMisleading;
-    const isCybercrime = post.cybercrime?.isCybercrimeThreat;
-    const subcat = post.cybercrime?.threatSubcategory;
+    // 1. Global Selected Vector filtering from SaaSHeader
+    if (selectedVector && selectedVector !== 'All Vectors' && matchesThreatVector) {
+      if (!matchesThreatVector(post, selectedVector, selectedVectorCategory)) {
+        return false;
+      }
+    }
+
+    // 2. Category tab filtering
+    const isCritical = post.threatLevel === 'Critical' || post.threatLevel === 'High' || post.riskLevel === 'Critical' || post.riskLevel === 'High';
+    const isEmerging = post.threatLevel === 'Medium' || post.threatLevel === 'Low' || post.riskLevel === 'Medium' || post.riskLevel === 'Low';
+    const isMisleading = post.misinformation?.isMisleading || post.thematicCategory?.includes('Disinformation');
+    const isCybercrime = post.cybercrime?.isCybercrimeThreat || post.thematicCategory?.includes('Botnet') || post.thematicCategory?.includes('Exploit');
+    const subcat = post.cybercrime?.threatSubcategory || post.aiCategory;
 
     if (filter === 'Critical' && !isCritical) return false;
     if (filter === 'Emerging' && !isEmerging) return false;
     if (filter === 'Cybercrime' && !isCybercrime) return false;
     if (filter === 'Misinformation' && !isMisleading) return false;
-    if (['Phishing', 'Malware', 'Credential Harvesting', 'Scam/Fraud'].includes(filter) && subcat !== filter) {
-      return false;
+    if (['Phishing', 'Malware', 'Credential Harvesting', 'Scam/Fraud'].includes(filter)) {
+      const catText = `${subcat || ''} ${post.thematicCategory || ''}`.toLowerCase();
+      if (!catText.includes(filter.toLowerCase())) {
+        return false;
+      }
     }
 
     if (search.trim()) {
       const q = search.toLowerCase();
       const contentMatch = post.content?.toLowerCase().includes(q);
-      const platformMatch = post.platform?.toLowerCase().includes(q);
+      const platformMatch = post.platform?.toLowerCase().includes(q) || post.sourcePlatform?.toLowerCase().includes(q);
       const keywordMatch = post.keywords?.some((k) => k.toLowerCase().includes(q));
       const subcatMatch = post.cybercrime?.threatSubcategory?.toLowerCase().includes(q);
       const phraseMatch = post.cybercrime?.flaggedPhrases?.some((p) => p.toLowerCase().includes(q));
@@ -1183,6 +1222,23 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
         </div>
       )}
 
+      {/* Active Vector Filter Pill Indicator */}
+      {selectedVector && selectedVector !== 'All Vectors' && (
+        <div className="flex items-center justify-between px-3.5 py-2 my-2 rounded-lg bg-[#F3FAEB] border border-[#9FE846]/40 text-xs font-mono text-[#0B2115]">
+          <div className="flex items-center gap-2">
+            <Filter className="w-3.5 h-3.5 text-[#5C901A]" />
+            <span>Active Vector: <strong className="font-bold">{selectedVector}</strong> ({filteredPosts.length} threats matching)</span>
+          </div>
+          <button
+            onClick={() => setVectorFilter && setVectorFilter('All Vectors', 'All')}
+            className="flex items-center gap-1 text-[11px] font-semibold text-[#5C901A] hover:text-[#0B2115] cursor-pointer bg-white px-2 py-0.5 rounded border border-[#9FE846]/40 hover:border-[#0B2115] transition-all"
+          >
+            <X className="w-3 h-3" />
+            <span>Reset to All Vectors</span>
+          </button>
+        </div>
+      )}
+
       {/* Filter & Search Bar */}
       <div className="py-3 flex flex-wrap items-center justify-between gap-2 border-b border-[#E5E7EB]">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 max-w-full">
@@ -1238,17 +1294,18 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
           </div>
         ) : (
           redditPosts.map((post) => {
-            const isCritical = post.riskLevel === 'Critical';
-            const isHigh = post.riskLevel === 'High';
-            const isMedium = post.riskLevel === 'Medium';
-            const isLow = post.riskLevel === 'Low';
-            const misinfo = post.misinformation;
-            const cyber = post.cybercrime;
-            const isMitigated = mitigationStates?.[post.id] === 'mitigated' || post.status === 'mitigated';
+            const threat = post;
+            const isCritical = threat.riskLevel === 'Critical';
+            const isHigh = threat.riskLevel === 'High';
+            const isMedium = threat.riskLevel === 'Medium';
+            const isLow = threat.riskLevel === 'Low';
+            const misinfo = threat.misinformation;
+            const cyber = threat.cybercrime;
+            const isMitigated = mitigationStates?.[threat.id] === 'mitigated' || threat.status === 'mitigated';
 
             return (
               <motion.article
-                key={post.id}
+                key={threat.id}
                 variants={staggerItemVariants}
                 whileHover={shouldReduceMotion ? {} : { scale: 1.01 }}
                 transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 350, damping: 25 }}
@@ -1308,7 +1365,7 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                     {/* Legal Compliance Chain-of-Custody Attribution Badge */}
                     <span
                       className="bg-gray-100 text-gray-600 border border-[#E5E7EB] px-2.5 py-1 rounded text-xs font-medium flex items-center gap-1"
-                      title={`Chain of Custody: ${post.chainOfCustodyHash || 'COC-SHA256:VERIFIED'} | Ingested via: ${post.telemetryMethod || post.ingestionMethod || 'Reddit Native API'}`}
+                      title={`Chain of Custody: ${threat.chainOfCustodyHash || 'COC-SHA256:VERIFIED'} | Ingested via: ${threat.telemetryMethod || threat.ingestionMethod || 'Reddit Native API'}`}
                     >
                       <ShieldCheck className="w-3.5 h-3.5 text-[#0B2115]" />
                       <span>Verified Source: r/cybersecurity (Reddit Native API)</span>
@@ -1316,39 +1373,47 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
 
                     {/* Direct Origin Link Badge */}
                     <a
-                      href={post.link || "https://www.reddit.com/r/cybersecurity"}
-                      target="_blank"
+                      href={threat.sourceUrl ? threat.sourceUrl : "#"}
+                      target={threat.sourceUrl ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      className="bg-white border border-[#E5E7EB] text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] px-2.5 py-1 rounded text-xs font-medium inline-flex items-center gap-1 transition-colors"
-                      onClick={(e) => e.stopPropagation()}
+                      className={`bg-white border border-[#E5E7EB] px-2.5 py-1 rounded text-xs font-medium inline-flex items-center gap-1 transition-colors ${
+                        threat.sourceUrl
+                          ? 'text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] cursor-pointer'
+                          : 'text-gray-400 cursor-not-allowed opacity-60 pointer-events-none'
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!threat.sourceUrl) e.preventDefault();
+                      }}
+                      aria-disabled={!threat.sourceUrl}
                     >
-                      <span>[View Original Reddit Post ↗]</span>
+                      <span>[View Original Post ↗]</span>
                     </a>
                   </div>
 
                   <span className="text-xs text-gray-400 font-mono">
-                    {post.timestamp || 'Live'}
+                    {threat.timestamp || 'Live'}
                   </span>
                 </div>
 
-                {/* Post Title with optional Reddit link */}
-                {post.title && (
+                {/* Post Title with optional Reddit/source link */}
+                {threat.title && (
                   <h4 className={`text-sm font-bold font-mono mb-1.5 flex items-center gap-1.5 transition-all ${
                     isMitigated ? 'text-gray-400 opacity-50 line-through' : 'text-[#0B2115]'
                   }`}>
-                    {post.link ? (
+                    {threat.sourceUrl ? (
                       <a
-                        href={post.link}
+                        href={threat.sourceUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="hover:text-[#5C901A] hover:underline flex items-center gap-1 transition-colors"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <span>{post.title}</span>
+                        <span>{threat.title}</span>
                         <ExternalLink className="w-3.5 h-3.5 shrink-0 text-gray-400" />
                       </a>
                     ) : (
-                      <span>{post.title}</span>
+                      <span>{threat.title}</span>
                     )}
                   </h4>
                 )}
@@ -1409,11 +1474,19 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
                   {/* Fix 3 & 4: Button Row Wrapping and whitespace-nowrap */}
                   <div className="flex flex-row flex-wrap items-center gap-2">
                     <a
-                      href={post.link || "https://www.reddit.com/r/cybersecurity"}
-                      target="_blank"
+                      href={threat.sourceUrl ? threat.sourceUrl : "#"}
+                      target={threat.sourceUrl ? "_blank" : undefined}
                       rel="noopener noreferrer"
-                      className="px-2.5 py-1 rounded-lg border border-[#E5E7EB] text-xs font-semibold text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] transition-colors flex items-center gap-1 whitespace-nowrap shrink-0"
-                      onClick={(e) => e.stopPropagation()}
+                      className={`px-2.5 py-1 rounded-lg border border-[#E5E7EB] text-xs font-semibold transition-colors flex items-center gap-1 whitespace-nowrap shrink-0 ${
+                        threat.sourceUrl
+                          ? 'text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] cursor-pointer'
+                          : 'text-gray-400 cursor-not-allowed opacity-60 pointer-events-none'
+                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (!threat.sourceUrl) e.preventDefault();
+                      }}
+                      aria-disabled={!threat.sourceUrl}
                     >
                       <span>[View Source ↗]</span>
                     </a>
@@ -1667,12 +1740,20 @@ export default function AlertFeed({ onInvestigate, liveOSINTThreats = [] }) {
 
             <div className="mt-5 flex items-center justify-between gap-2">
               <a
-                href={investigatingPost.link || "https://www.reddit.com/r/cybersecurity"}
-                target="_blank"
+                href={investigatingPost.sourceUrl ? investigatingPost.sourceUrl : (investigatingPost.link || "#")}
+                target={investigatingPost.sourceUrl || investigatingPost.link ? "_blank" : undefined}
                 rel="noopener noreferrer"
-                className="px-4 py-2 rounded-lg bg-white border border-[#E5E7EB] text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] text-xs font-mono font-bold flex items-center gap-1.5 transition-colors"
+                className={`px-4 py-2 rounded-lg bg-white border border-[#E5E7EB] text-xs font-mono font-bold flex items-center gap-1.5 transition-colors ${
+                  investigatingPost.sourceUrl || investigatingPost.link
+                    ? 'text-gray-700 hover:text-[#0B2115] hover:border-[#0B2115] cursor-pointer'
+                    : 'text-gray-400 cursor-not-allowed opacity-60 pointer-events-none'
+                }`}
+                onClick={(e) => {
+                  if (!investigatingPost.sourceUrl && !investigatingPost.link) e.preventDefault();
+                }}
+                aria-disabled={!investigatingPost.sourceUrl && !investigatingPost.link}
               >
-                <span>[View Original Reddit Post ↗]</span>
+                <span>[View Original Post ↗]</span>
               </a>
               <button
                 onClick={() => setInvestigatingPost(null)}

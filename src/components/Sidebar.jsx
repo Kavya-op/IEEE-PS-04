@@ -50,8 +50,10 @@ export default function Sidebar({
       badge: 'Gov'
     },
     {
-      id: 'Misinformation',
-      alias: 'Threat Analytics',
+      id: 'AnalyticsIOCs',
+      alias: 'Analytics',
+      to: '/analytics',
+      path: '/analytics',
       label: 'Analytics & IOCs',
       icon: Flame,
       badge: 'Live'
@@ -66,7 +68,18 @@ export default function Sidebar({
   ];
 
   const isItemActive = (item) => {
-    return activeTab === item.id || activeTab === item.alias;
+    if (activeTab === item.id || activeTab === item.alias) return true;
+    if (item.id === 'AnalyticsIOCs') {
+      return (
+        activeTab === 'AnalyticsIOCs' ||
+        activeTab === 'Analytics & IOCs' ||
+        activeTab === 'Analytics' ||
+        activeTab === 'Threat Analytics' ||
+        activeTab === 'Misinformation' ||
+        activeTab === '/analytics'
+      );
+    }
+    return false;
   };
 
   const handleNavClick = (item) => {
